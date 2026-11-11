@@ -1,0 +1,44 @@
+flowchart LR
+  user["사용자"]
+  admin["관리자"]
+  official["공식 결과 사이트"]
+
+  subgraph shells["앱 셸 (apps)"]
+    mobile["모바일 Capacitor 8"]
+    desktop["Windows Tauri 2"]
+    web["웹 Next.js (P1)"]
+  end
+
+  subgraph shared["공유 패키지 (packages)"]
+    ui["ui · design-tokens"]
+    core["app-core"]
+    engine["lotto/pension-engine · lottery-core"]
+    stats["statistics · validation · types"]
+  end
+
+  subgraph backend["Supabase"]
+    auth["Auth"]
+    db[("Postgres + RLS")]
+    fn["Edge Function /v1/* (판정·관리자·waitlist)"]
+  end
+
+  worker["analytics-worker (Python)"]
+
+  user --> mobile
+  user --> desktop
+  user --> web
+  admin --> web
+  mobile --> ui
+  desktop --> ui
+  web --> ui
+  ui --> core
+  core --> engine
+  core --> stats
+  engine --> stats
+  core -->|"로그인 JWT"| auth
+  core -->|"사용자 CRUD (RLS)"| db
+  core -->|"회차·통계 조회 (anon SELECT)"| db
+  core -->|"판정·관리자·waitlist"| fn
+  fn -->|"서버 키"| db
+  official --> worker
+  worker -->|"검증 후 UPSERT"| db

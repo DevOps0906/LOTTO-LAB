@@ -1,0 +1,4672 @@
+{
+ "version": "1",
+ "generated": "2026-11-11T20:39:06+00:00",
+ "docs": "docs",
+ "tokens": "packages/design-tokens/tokens.css",
+ "sources": {
+  "docs/03_SCREENS_UX.md": "4f0fc69ab0e1",
+  "docs/04_API.md": "e4c787dc5e77",
+  "docs/05_DATA_MODEL.md": "f53fa70b9547"
+ },
+ "changed": [
+  "M-01",
+  "M-02",
+  "M-03",
+  "M-07",
+  "M-08",
+  "M-09",
+  "M-10",
+  "M-14",
+  "D-01",
+  "D-02",
+  "D-03",
+  "D-05",
+  "D-06",
+  "D-07",
+  "D-12",
+  "W-01",
+  "W-04"
+ ],
+ "removed": [],
+ "screens": {
+  "M-01": {
+   "id": "M-01",
+   "name": "홈",
+   "type_raw": "대시보드",
+   "route": "/m/home",
+   "purpose": "최신 결과와 내 기록에서 시작",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "알림·설정",
+     "items": [
+      "알림",
+      "설정"
+     ]
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "데이터로 살펴보는 번호",
+     "items": [
+      "데이터로 살펴보는 번호"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "최신 회차·추첨일·번호·보너스·공식 출처",
+     "items": [
+      "최신 회차",
+      "추첨일",
+      "번호",
+      "보너스",
+      "공식 출처"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "로또·연금 진입",
+     "items": [
+      "로또",
+      "연금 진입"
+     ]
+    },
+    {
+     "type": "daterange",
+     "label": "요약 기간",
+     "items": [
+      "요약 기간"
+     ]
+    },
+    {
+     "type": "stat",
+     "label": "저장 수·구매등록 수·확인대기 수",
+     "items": [
+      "저장 수",
+      "구매등록 수",
+      "확인대기 수"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "최근 회차",
+     "items": [
+      "최근 회차"
+     ]
+    },
+    {
+     "type": "updated",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "1게임 빠른 생성",
+     "items": [
+      "1게임 빠른 생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "지난 설정 재생성",
+     "items": [
+      "지난 설정 재생성"
+     ]
+    },
+    {
+     "type": "list",
+     "label": "알림·미갱신 안내",
+     "items": [
+      "알림",
+      "미갱신 안내"
+     ]
+    }
+   ],
+   "data": [
+    "draws_lotto",
+    "draws_pension",
+    "saved_tickets",
+    "draw_checks"
+   ],
+   "api": [
+    "A-01",
+    "A-02",
+    "A-08"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-02",
+    "M-03",
+    "M-04",
+    "M-07",
+    "M-11",
+    "M-12",
+    "M-13",
+    "M-15",
+    "M-16"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "dashboard",
+   "must_missing": [],
+   "should_missing": [
+    "이전 기간 대비(증감)",
+    "내보내기(CSV·PDF)",
+    "세그먼트·담당자 필터"
+   ],
+   "states_missing": [],
+   "hash": "90a4f8b7774d",
+   "wireframe": "design/wireframes/M-01.html"
+  },
+  "M-02": {
+   "id": "M-02",
+   "name": "로또 생성",
+   "type_raw": "폼",
+   "route": "/m/generate/lotto",
+   "purpose": "고정·제외 조건으로 생성하고 저장",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "번호 선택·추천 결과·분석 정보",
+     "items": [
+      "번호 선택",
+      "추천 결과",
+      "분석 정보"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "고정수 0~6·제외수 0~39·모드*·게임 수*·기간·고급 조건",
+     "items": [
+      "고정수 0~6",
+      "제외수 0~39",
+      "모드*",
+      "게임 수*",
+      "기간",
+      "고급 조건"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "1~45 격자·선택 재탭 해제·고정/제외 분리",
+     "items": [
+      "1~45 격자",
+      "선택 재탭 해제",
+      "고정",
+      "제외 분리"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "생성 게임·번호·저장 상태",
+     "items": [
+      "생성 게임",
+      "번호",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "통계 보기",
+     "items": [
+      "통계 보기"
+     ]
+    }
+   ],
+   "data": [
+    "generator_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-06",
+    "A-07"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-04",
+    "M-07",
+    "M-08",
+    "M-15"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "83c83778d642",
+   "wireframe": "design/wireframes/M-02.html"
+  },
+  "M-03": {
+   "id": "M-03",
+   "name": "연금 생성",
+   "type_raw": "폼",
+   "route": "/m/generate/pension",
+   "purpose": "조와 자리 조건으로 낱장/세트 생성",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "번호 생성·당첨 구조·분석 통계",
+     "items": [
+      "번호 생성",
+      "당첨 구조",
+      "분석 통계"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "조 1~5 또는 자동*·각 자리 0~9 또는 자동*·낱장/선택조/5조 세트*·기본번호 수*·끝자리 조건",
+     "items": [
+      "조 1~5 또는 자동*",
+      "각 자리 0~9 또는 자동*",
+      "낱장",
+      "선택조",
+      "5조 세트*",
+      "기본번호 수*",
+      "끝자리 조건"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "십만~일 자리 라벨·베이스 수와 총 장수 구분",
+     "items": [
+      "십만~일 자리 라벨",
+      "베이스 수와 총 장수 구분"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "조·여섯 자리 문자열·저장 상태",
+     "items": [
+      "조",
+      "여섯 자리 문자열",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "세트/낱장 저장",
+     "items": [
+      "세트",
+      "낱장 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "통계 보기",
+     "items": [
+      "통계 보기"
+     ]
+    }
+   ],
+   "data": [
+    "generator_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-06",
+    "A-07"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-04",
+    "M-07",
+    "M-08",
+    "M-15"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "eb9d8c57e96d",
+   "wireframe": "design/wireframes/M-03.html"
+  },
+  "M-04": {
+   "id": "M-04",
+   "name": "통계",
+   "type_raw": "대시보드",
+   "route": "/m/statistics",
+   "purpose": "기간별 분포를 비교하고 회차 확인",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "로또·연금·일반·보너스",
+     "items": [
+      "로또",
+      "연금",
+      "일반",
+      "보너스"
+     ]
+    },
+    {
+     "type": "daterange",
+     "label": "최근 20/50/100/전체 회차",
+     "items": [
+      "최근 20",
+      "50",
+      "100",
+      "전체 회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "빈도·미출현·홀짝·합계·구간·조·자리·끝자리",
+     "items": [
+      "빈도",
+      "미출현",
+      "홀짝",
+      "합계",
+      "구간",
+      "조",
+      "자리",
+      "끝자리"
+     ]
+    },
+    {
+     "type": "stat",
+     "label": "표본 회차 수·선택 번호 출현 수·이전 동일 길이 기간 대비",
+     "items": [
+      "표본 회차 수",
+      "선택 번호 출현 수",
+      "이전 동일 길이 기간 대비"
+     ]
+    },
+    {
+     "type": "chart",
+     "label": "번호 빈도 막대·여섯 자리별 0~9 히트맵·조별 분포",
+     "items": [
+      "번호 빈도 막대",
+      "여섯 자리별 0~9 히트맵",
+      "조별 분포"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "차트 대체 표·최근 추첨 결과",
+     "items": [
+      "차트 대체 표",
+      "최근 추첨 결과"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "기간·표본·무작위 기준선·공식 출처·미래 예측 아님",
+     "items": [
+      "기간",
+      "표본",
+      "무작위 기준선",
+      "공식 출처",
+      "미래 예측 아님"
+     ]
+    },
+    {
+     "type": "updated",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "선택 회차 상세",
+     "items": [
+      "선택 회차 상세"
+     ]
+    }
+   ],
+   "data": [
+    "statistics_cache",
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-06",
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-11",
+    "M-16",
+    "M-02",
+    "M-03"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "dashboard",
+   "must_missing": [],
+   "should_missing": [
+    "내보내기(CSV·PDF)",
+    "할 일·알림(지표가 행동으로 이어지게)"
+   ],
+   "states_missing": [],
+   "hash": "577bb6f02ae9",
+   "wireframe": "design/wireframes/M-04.html"
+  },
+  "M-05": {
+   "id": "M-05",
+   "name": "온보딩·19세 확인",
+   "type_raw": "마법사",
+   "route": "/m/onboarding",
+   "purpose": "서비스 안내 후 성인 여부 확인",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "steps",
+     "label": "서비스 안내·만 19세 확인·시작",
+     "items": [
+      "서비스 안내",
+      "만 19세 확인",
+      "시작"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "서비스 안내 확인*·만 19세 이상 여부*",
+     "items": [
+      "서비스 안내 확인*",
+      "만 19세 이상 여부*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "번호 생성·정보 관리 서비스·판매/구매대행 없음",
+     "items": [
+      "번호 생성",
+      "정보 관리 서비스",
+      "판매",
+      "구매대행 없음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전",
+     "items": [
+      "이전"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다음",
+     "items": [
+      "다음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "게스트 시작",
+     "items": [
+      "게스트 시작"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "로그인",
+     "items": [
+      "로그인"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "종료",
+     "items": [
+      "종료"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "약관·개인정보",
+     "items": [
+      "약관",
+      "개인정보"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "첫 실행 누구나",
+   "next": [
+    "M-01",
+    "M-06"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "wizard",
+   "must_missing": [],
+   "should_missing": [
+    "중간 저장·이어하기"
+   ],
+   "states_missing": [],
+   "hash": "ec2cad27f095",
+   "wireframe": "design/wireframes/M-05.html"
+  },
+  "M-06": {
+   "id": "M-06",
+   "name": "로그인·가입·재설정",
+   "type_raw": "로그인",
+   "route": "/m/auth",
+   "purpose": "선택 로그인 후 원래 작업 복귀",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "tabs",
+     "label": "로그인·가입·비밀번호 재설정",
+     "items": [
+      "로그인",
+      "가입",
+      "비밀번호 재설정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "이메일*·비밀번호*·필요 동의*",
+     "items": [
+      "이메일*",
+      "비밀번호*",
+      "필요 동의*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "현재 탭 제출",
+     "items": [
+      "현재 탭 제출"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "게스트로 계속·가입·비밀번호 찾기·약관·개인정보",
+     "items": [
+      "게스트로 계속",
+      "가입",
+      "비밀번호 찾기",
+      "약관",
+      "개인정보"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "로컬 번호는 로그인 전에 전송하지 않음",
+     "items": [
+      "로컬 번호는 로그인 전에 전송하지 않음"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "성인 확인 게스트",
+   "next": [
+    "M-01",
+    "M-07",
+    "M-12",
+    "M-14"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "auth",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "96d9b1c5b9f2",
+   "wireframe": "design/wireframes/M-06.html"
+  },
+  "M-07": {
+   "id": "M-07",
+   "name": "내 번호",
+   "type_raw": "목록",
+   "route": "/m/tickets",
+   "purpose": "생성·즐겨찾기·구매 기록을 구분해 찾기",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "search",
+     "label": "번호·회차",
+     "items": [
+      "번호",
+      "회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "복권·기간·generated/favorite/purchased·대조대기/checked",
+     "items": [
+      "복권",
+      "기간",
+      "generated",
+      "favorite",
+      "purchased",
+      "대조대기",
+      "checked"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "생성·즐겨찾기·실제 구매",
+     "items": [
+      "생성",
+      "즐겨찾기",
+      "실제 구매"
+     ]
+    },
+    {
+     "type": "list",
+     "label": "회차·번호·구매 상태·판정 상태",
+     "items": [
+      "회차",
+      "번호",
+      "구매 상태",
+      "판정 상태"
+     ]
+    },
+    {
+     "type": "sort",
+     "label": "회차·등록일",
+     "items": [
+      "회차",
+      "등록일"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "수동 등록",
+     "items": [
+      "수동 등록"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "QR 등록",
+     "items": [
+      "QR 등록"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 대조",
+     "items": [
+      "선택 대조"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "항목 상세",
+     "items": [
+      "항목 상세"
+     ]
+    }
+   ],
+   "data": [
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets",
+    "draw_checks"
+   ],
+   "api": [
+    "A-08",
+    "A-09"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "M-08",
+    "M-09",
+    "M-10",
+    "M-06",
+    "M-14",
+    "M-15"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "ce5b77ac3a41",
+   "wireframe": "design/wireframes/M-07.html"
+  },
+  "M-08": {
+   "id": "M-08",
+   "name": "내 번호 상세·당첨확인",
+   "type_raw": "상세",
+   "route": "/m/tickets/:id",
+   "purpose": "구매 상태와 공식 대조 결과 확인",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "회차·구매 상태·판정 상태",
+     "items": [
+      "회차",
+      "구매 상태",
+      "판정 상태"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "내 번호·상세",
+     "items": [
+      "내 번호",
+      "상세"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "복권·조·번호·등록 출처·구매일·사용자 입력 금액",
+     "items": [
+      "복권",
+      "조",
+      "번호",
+      "등록 출처",
+      "구매일",
+      "사용자 입력 금액"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "번호·대조 결과",
+     "items": [
+      "번호",
+      "대조 결과"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "미구매는 대조 대상 제외·공식 출처·결과 검증 시각·조회 시각",
+     "items": [
+      "미구매는 대조 대상 제외",
+      "공식 출처",
+      "결과 검증 시각",
+      "조회 시각"
+     ]
+    },
+    {
+     "type": "activity",
+     "label": "저장·구매등록·대조 이력",
+     "items": [
+      "저장",
+      "구매등록",
+      "대조 이력"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "즐겨찾기 저장",
+     "items": [
+      "즐겨찾기 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매등록",
+     "items": [
+      "구매등록"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매번호 대조",
+     "items": [
+      "구매번호 대조"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "공식 회차 상세",
+     "items": [
+      "공식 회차 상세"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets",
+    "draw_checks",
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-07",
+    "A-14",
+    "A-09",
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "M-07",
+    "M-09",
+    "M-11"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "a2db9f92f66a",
+   "wireframe": "design/wireframes/M-08.html"
+  },
+  "M-09": {
+   "id": "M-09",
+   "name": "수동 구매등록·확인",
+   "type_raw": "폼",
+   "route": "/m/tickets/register",
+   "purpose": "실제 구매한 번호를 확인해 기록",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "form",
+     "label": "복권*·회차*·로또 번호 또는 연금 조/여섯 자리*·구매일·금액 원·원본 번호 연결·실제 구매 확인*",
+     "items": [
+      "복권*",
+      "회차*",
+      "로또 번호 또는 연금 조",
+      "여섯 자리*",
+      "구매일",
+      "금액 원",
+      "원본 번호 연결",
+      "실제 구매 확인*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "추천 원본과 구매기록 연결·결제 기능 없음",
+     "items": [
+      "추천 원본과 구매기록 연결",
+      "결제 기능 없음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매등록 확정",
+     "items": [
+      "구매등록 확정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "QR로 입력",
+     "items": [
+      "QR로 입력"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets"
+   ],
+   "api": [
+    "A-07",
+    "A-14"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "M-08",
+    "M-07",
+    "M-10"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "9e34976fbb35",
+   "wireframe": "design/wireframes/M-09.html"
+  },
+  "M-10": {
+   "id": "M-10",
+   "name": "QR 구매등록(P1)",
+   "type_raw": "마법사",
+   "route": "/m/tickets/qr",
+   "purpose": "스캔 결과를 검토한 후 구매등록",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "steps",
+     "label": "카메라 권한·스캔·내용 확인·등록",
+     "items": [
+      "카메라 권한",
+      "스캔",
+      "내용 확인",
+      "등록"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "권한 요청*·스캔값·회차*·인식 번호*·실제 구매 확인*",
+     "items": [
+      "권한 요청*",
+      "스캔값",
+      "회차*",
+      "인식 번호*",
+      "실제 구매 확인*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "허용 QR 형식만 파싱·외부 주소 자동 열기 금지·연금 미지원 형식은 수동 전환",
+     "items": [
+      "허용 QR 형식만 파싱",
+      "외부 주소 자동 열기 금지",
+      "연금 미지원 형식은 수동 전환"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "인식 회차·복권·번호",
+     "items": [
+      "인식 회차",
+      "복권",
+      "번호"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전",
+     "items": [
+      "이전"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다음",
+     "items": [
+      "다음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다시 스캔",
+     "items": [
+      "다시 스캔"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "등록 확정",
+     "items": [
+      "등록 확정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "수동 등록·기기 권한 설정",
+     "items": [
+      "수동 등록",
+      "기기 권한 설정"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets"
+   ],
+   "api": [
+    "A-07"
+   ],
+   "role": "성인 확인 게스트/본인 회원·카메라는 진입 시 요청",
+   "next": [
+    "M-09",
+    "M-08",
+    "M-07"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "wizard",
+   "must_missing": [],
+   "should_missing": [
+    "중간 저장·이어하기"
+   ],
+   "states_missing": [],
+   "hash": "d20f57c89096",
+   "wireframe": "design/wireframes/M-10.html"
+  },
+  "M-11": {
+   "id": "M-11",
+   "name": "공식 회차 상세",
+   "type_raw": "상세",
+   "route": "/m/draws/:game/:round",
+   "purpose": "검증된 결과와 판정 근거 조회",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "복권·회차·검증 상태",
+     "items": [
+      "복권",
+      "회차",
+      "검증 상태"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "회차 목록·상세",
+     "items": [
+      "회차 목록",
+      "상세"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "추첨일·로또 번호/보너스 또는 연금 조/문자열·별도 보너스",
+     "items": [
+      "추첨일",
+      "로또 번호",
+      "보너스 또는 연금 조",
+      "문자열",
+      "별도 보너스"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "등위·일치 기준·공식 제공 당첨금",
+     "items": [
+      "등위",
+      "일치 기준",
+      "공식 제공 당첨금"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "공식 출처 링크·검증 시각·미갱신 여부",
+     "items": [
+      "공식 출처 링크",
+      "검증 시각",
+      "미갱신 여부"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매번호 확인",
+     "items": [
+      "구매번호 확인"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전/다음 회차",
+     "items": [
+      "이전",
+      "다음 회차"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "공식 결과",
+     "items": [
+      "공식 결과"
+     ]
+    }
+   ],
+   "data": [
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-07",
+    "M-16",
+    "M-04"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [
+    "관련 항목 탭",
+    "활동·변경 이력"
+   ],
+   "states_missing": [],
+   "hash": "ff939e66488e",
+   "wireframe": "design/wireframes/M-11.html"
+  },
+  "M-12": {
+   "id": "M-12",
+   "name": "설정·알림 설정",
+   "type_raw": "설정",
+   "route": "/m/settings",
+   "purpose": "화면·권한·알림·계정 관리",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "tabs",
+     "label": "화면·알림·데이터·계정",
+     "items": [
+      "화면",
+      "알림",
+      "데이터",
+      "계정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "테마·회차 알림·구매번호 결과 알림·기기 권한 상태",
+     "items": [
+      "테마",
+      "회차 알림",
+      "구매번호 결과 알림",
+      "기기 권한 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "저장",
+     "items": [
+      "저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "알림 사용 시 권한 요청",
+     "items": [
+      "알림 사용 시 권한 요청"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "기기 설정 열기",
+     "items": [
+      "기기 설정 열기"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "로그인·동기화·약관·개인정보",
+     "items": [
+      "로그인",
+      "동기화",
+      "약관",
+      "개인정보"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "계정 삭제는 별도 위험 구역에서 영향·확인 후 처리",
+     "items": [
+      "계정 삭제는 별도 위험 구역에서 영향",
+      "확인 후 처리"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "게스트 로컬 알림·회원 푸시는 P1·구매번호만 결과 알림",
+     "items": [
+      "게스트 로컬 알림",
+      "회원 푸시는 P1",
+      "구매번호만 결과 알림"
+     ]
+    }
+   ],
+   "data": [
+    "push_devices"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "M-01",
+    "M-06",
+    "M-13",
+    "M-14"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "settings",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "bf98d2128b6a",
+   "wireframe": "design/wireframes/M-12.html"
+  },
+  "M-13": {
+   "id": "M-13",
+   "name": "알림함(P1)",
+   "type_raw": "목록",
+   "route": "/m/notifications",
+   "purpose": "회차 갱신·구매번호 결과 확인",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "search",
+     "label": "회차·내용",
+     "items": [
+      "회차",
+      "내용"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "미읽음·회차·구매 결과·기간",
+     "items": [
+      "미읽음",
+      "회차",
+      "구매 결과",
+      "기간"
+     ]
+    },
+    {
+     "type": "list",
+     "label": "알림 종류·대상 회차/티켓·발생 시각·읽음",
+     "items": [
+      "알림 종류",
+      "대상 회차",
+      "티켓",
+      "발생 시각",
+      "읽음"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "최신순",
+     "items": [
+      "최신순"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 읽음",
+     "items": [
+      "선택 읽음"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "알림 설정·대상 상세",
+     "items": [
+      "알림 설정",
+      "대상 상세"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "구매하지 않은 추천번호에는 결과 알림 없음",
+     "items": [
+      "구매하지 않은 추천번호에는 결과 알림 없음"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "성인 확인 게스트 로컬/본인 회원",
+   "next": [
+    "M-08",
+    "M-11",
+    "M-12"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [
+    "새로 만들기",
+    "저장된 보기·열 설정"
+   ],
+   "states_missing": [],
+   "hash": "f9172bd022e7",
+   "wireframe": "design/wireframes/M-13.html"
+  },
+  "M-14": {
+   "id": "M-14",
+   "name": "로컬·클라우드 병합(P1)",
+   "type_raw": "마법사",
+   "route": "/m/sync",
+   "purpose": "로그인 후 보낼 기록을 직접 선택",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "steps",
+     "label": "로컬 미리보기·충돌 선택·동기화 결과",
+     "items": [
+      "로컬 미리보기",
+      "충돌 선택",
+      "동기화 결과"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "전송 대상*·충돌별 로컬/서버/둘 다 유지 선택*",
+     "items": [
+      "전송 대상*",
+      "충돌별 로컬",
+      "서버",
+      "둘 다 유지 선택*"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "로컬 상태·서버 상태·변경 예정",
+     "items": [
+      "로컬 상태",
+      "서버 상태",
+      "변경 예정"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "회차·복권·번호·등록 식별자 기준 중복 검토·구매 상태 임의 승격 금지",
+     "items": [
+      "회차",
+      "복권",
+      "번호",
+      "등록 식별자 기준 중복 검토",
+      "구매 상태 임의 승격 금지"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전",
+     "items": [
+      "이전"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다음",
+     "items": [
+      "다음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "동기화 확정",
+     "items": [
+      "동기화 확정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "나중에",
+     "items": [
+      "나중에"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets",
+    "generated_batches",
+    "generated_numbers"
+   ],
+   "api": [],
+   "role": "성인 확인 로그인 본인",
+   "next": [
+    "M-07",
+    "M-12"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "wizard",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "c5eb14dc29d5",
+   "wireframe": "design/wireframes/M-14.html"
+  },
+  "M-15": {
+   "id": "M-15",
+   "name": "추천 복권 선택",
+   "type_raw": "상세",
+   "route": "/m/generate",
+   "purpose": "복권별 생성기로 이동",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "번호 추천·기기 생성 가능",
+     "items": [
+      "번호 추천",
+      "기기 생성 가능"
+     ]
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "홈·추천",
+     "items": [
+      "홈",
+      "추천"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "로또·연금 생성 안내",
+     "items": [
+      "로또",
+      "연금 생성 안내"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "기기에서 실행·오프라인 생성 가능",
+     "items": [
+      "기기에서 실행",
+      "오프라인 생성 가능"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "로또 생성",
+     "items": [
+      "로또 생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "연금 생성",
+     "items": [
+      "연금 생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "지난 설정 재사용",
+     "items": [
+      "지난 설정 재사용"
+     ]
+    }
+   ],
+   "data": [
+    "generator_profiles"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-01",
+    "M-02",
+    "M-03"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [
+    "관련 항목 탭",
+    "활동·변경 이력"
+   ],
+   "states_missing": [],
+   "hash": "0a942635b896",
+   "wireframe": "design/wireframes/M-15.html"
+  },
+  "M-16": {
+   "id": "M-16",
+   "name": "회차 목록",
+   "type_raw": "목록",
+   "route": "/m/draws",
+   "purpose": "과거 회차를 찾아 상세 조회",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "search",
+     "label": "회차",
+     "items": [
+      "회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "복권·기간",
+     "items": [
+      "복권",
+      "기간"
+     ]
+    },
+    {
+     "type": "list",
+     "label": "회차·추첨일·번호·검증 상태·공식 출처·검증 시각",
+     "items": [
+      "회차",
+      "추첨일",
+      "번호",
+      "검증 상태",
+      "공식 출처",
+      "검증 시각"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "최신 회차",
+     "items": [
+      "최신 회차"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "회차 상세",
+     "items": [
+      "회차 상세"
+     ]
+    }
+   ],
+   "data": [
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-11",
+    "M-04"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [
+    "새로 만들기",
+    "일괄 작업(선택·삭제·내보내기)",
+    "저장된 보기·열 설정"
+   ],
+   "states_missing": [],
+   "hash": "af389c0beb9c",
+   "wireframe": "design/wireframes/M-16.html"
+  },
+  "D-01": {
+   "id": "D-01",
+   "name": "Windows 대시보드",
+   "type_raw": "대시보드",
+   "route": "/desktop/home",
+   "purpose": "기록·회차·대조대기를 넓게 비교",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "알림·설정",
+     "items": [
+      "알림",
+      "설정"
+     ]
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·통계·내번호·회차·알림·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "통계",
+      "내번호",
+      "회차",
+      "알림",
+      "설정"
+     ]
+    },
+    {
+     "type": "daterange",
+     "label": "집계 기간",
+     "items": [
+      "집계 기간"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "복권",
+     "items": [
+      "복권"
+     ]
+    },
+    {
+     "type": "stat",
+     "label": "저장 수·구매등록 수·확인대기 수·이전 기간 대비",
+     "items": [
+      "저장 수",
+      "구매등록 수",
+      "확인대기 수",
+      "이전 기간 대비"
+     ]
+    },
+    {
+     "type": "chart",
+     "label": "기간별 구매등록 건수",
+     "items": [
+      "기간별 구매등록 건수"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "최근 공식 결과·대조대기",
+     "items": [
+      "최근 공식 결과",
+      "대조대기"
+     ]
+    },
+    {
+     "type": "updated",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "list",
+     "label": "알림·미갱신 안내",
+     "items": [
+      "알림",
+      "미갱신 안내"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "빠른 생성",
+     "items": [
+      "빠른 생성"
+     ]
+    },
+    {
+     "type": "export",
+     "label": "요약 CSV",
+     "items": [
+      "요약 CSV"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "회차/구매기록 상세",
+     "items": [
+      "회차",
+      "구매기록 상세"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets",
+    "draw_checks",
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-01",
+    "A-02",
+    "A-08"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-02",
+    "D-03",
+    "D-04",
+    "D-05",
+    "D-08",
+    "D-09",
+    "D-13",
+    "D-14"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "dashboard",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "f792885cd203",
+   "wireframe": "design/wireframes/D-01.html"
+  },
+  "D-02": {
+   "id": "D-02",
+   "name": "Windows 로또 생성",
+   "type_raw": "폼",
+   "route": "/desktop/generate/lotto",
+   "purpose": "좌측 조건을 조정하며 우측 결과 비교",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·통계·내번호·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "통계",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "좌측 고정수·제외수·모드*·게임 수*·기간·구간/홀짝/합계/연속/공유 숫자 조건",
+     "items": [
+      "좌측 고정수",
+      "제외수",
+      "모드*",
+      "게임 수*",
+      "기간",
+      "구간",
+      "홀짝",
+      "합계",
+      "연속",
+      "공유 숫자 조건"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "우측 게임·번호·조건 요약·저장 상태",
+     "items": [
+      "우측 게임",
+      "번호",
+      "조건 요약",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "오프라인 기기 실행·고급 조건 P1",
+     "items": [
+      "오프라인 기기 실행",
+      "고급 조건 P1"
+     ]
+    }
+   ],
+   "data": [
+    "generator_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-06",
+    "A-07"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-03",
+    "D-04",
+    "D-05",
+    "D-06",
+    "D-01"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "963e354fd6c4",
+   "wireframe": "design/wireframes/D-02.html"
+  },
+  "D-03": {
+   "id": "D-03",
+   "name": "Windows 연금 생성",
+   "type_raw": "폼",
+   "route": "/desktop/generate/pension",
+   "purpose": "좌측 조·자리 조건과 우측 세트 비교",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·통계·내번호·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "통계",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "좌측 조*·여섯 자리별 자동/고정*·낱장/선택조/5조 세트*·기본번호 수*·끝자리 조건",
+     "items": [
+      "좌측 조*",
+      "여섯 자리별 자동",
+      "고정*",
+      "낱장",
+      "선택조",
+      "5조 세트*",
+      "기본번호 수*",
+      "끝자리 조건"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "우측 베이스번호·조·여섯 자리 문자열·총 장수·저장 상태",
+     "items": [
+      "우측 베이스번호",
+      "조",
+      "여섯 자리 문자열",
+      "총 장수",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "낱장/세트 저장",
+     "items": [
+      "낱장",
+      "세트 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "000719 앞자리 유지·기기 실행",
+     "items": [
+      "000719 앞자리 유지",
+      "기기 실행"
+     ]
+    }
+   ],
+   "data": [
+    "generator_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-06",
+    "A-07"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-02",
+    "D-04",
+    "D-05",
+    "D-06",
+    "D-01"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "5c70ab9a5a57",
+   "wireframe": "design/wireframes/D-03.html"
+  },
+  "D-04": {
+   "id": "D-04",
+   "name": "Windows 통계",
+   "type_raw": "대시보드",
+   "route": "/desktop/statistics",
+   "purpose": "넓은 차트와 표로 기간·복권 비교",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·통계·내번호·회차·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "통계",
+      "내번호",
+      "회차",
+      "설정"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "로또·연금·일반·보너스",
+     "items": [
+      "로또",
+      "연금",
+      "일반",
+      "보너스"
+     ]
+    },
+    {
+     "type": "daterange",
+     "label": "최근 20/50/100/전체 회차",
+     "items": [
+      "최근 20",
+      "50",
+      "100",
+      "전체 회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "번호·조·자리·지표",
+     "items": [
+      "번호",
+      "조",
+      "자리",
+      "지표"
+     ]
+    },
+    {
+     "type": "stat",
+     "label": "표본 회차 수·선택 항목 빈도·이전 동일 길이 기간 대비",
+     "items": [
+      "표본 회차 수",
+      "선택 항목 빈도",
+      "이전 동일 길이 기간 대비"
+     ]
+    },
+    {
+     "type": "chart",
+     "label": "대형 빈도 차트·여섯 자리별 0~9 히트맵·구간/끝자리 분포",
+     "items": [
+      "대형 빈도 차트",
+      "여섯 자리별 0~9 히트맵",
+      "구간",
+      "끝자리 분포"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "차트 대체 표·해당 회차",
+     "items": [
+      "차트 대체 표",
+      "해당 회차"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "기간·표본·무작위 기준선·공식 출처·미래 예측 아님",
+     "items": [
+      "기간",
+      "표본",
+      "무작위 기준선",
+      "공식 출처",
+      "미래 예측 아님"
+     ]
+    },
+    {
+     "type": "updated",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "선택 회차 상세",
+     "items": [
+      "선택 회차 상세"
+     ]
+    }
+   ],
+   "data": [
+    "statistics_cache",
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-06",
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-08",
+    "D-14",
+    "D-02",
+    "D-03"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "dashboard",
+   "must_missing": [],
+   "should_missing": [
+    "내보내기(CSV·PDF)",
+    "할 일·알림(지표가 행동으로 이어지게)"
+   ],
+   "states_missing": [],
+   "hash": "18f5b44c87ce",
+   "wireframe": "design/wireframes/D-04.html"
+  },
+  "D-05": {
+   "id": "D-05",
+   "name": "Windows 내 번호",
+   "type_raw": "목록",
+   "route": "/desktop/tickets",
+   "purpose": "넓은 표에서 기록 검색·CSV 내보내기",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·통계·내번호·회차·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "통계",
+      "내번호",
+      "회차",
+      "설정"
+     ]
+    },
+    {
+     "type": "search",
+     "label": "번호·회차",
+     "items": [
+      "번호",
+      "회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "복권·기간·구매 상태·판정 상태",
+     "items": [
+      "복권",
+      "기간",
+      "구매 상태",
+      "판정 상태"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "생성·즐겨찾기·실제 구매",
+     "items": [
+      "생성",
+      "즐겨찾기",
+      "실제 구매"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "선택·회차·복권·조·번호 문자열·구매일·금액 원·구매 상태·판정·검증 시각",
+     "items": [
+      "선택",
+      "회차",
+      "복권",
+      "조",
+      "번호 문자열",
+      "구매일",
+      "금액 원",
+      "구매 상태",
+      "판정",
+      "검증 시각"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "회차·구매일·금액",
+     "items": [
+      "회차",
+      "구매일",
+      "금액"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "수동 등록",
+     "items": [
+      "수동 등록"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 구매번호 대조",
+     "items": [
+      "선택 구매번호 대조"
+     ]
+    },
+    {
+     "type": "export",
+     "label": "선택/필터 전체 CSV",
+     "items": [
+      "선택",
+      "필터 전체 CSV"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "내보낼 범위·건수 미리보기·여섯 자리 문자열 보존 안내",
+     "items": [
+      "내보낼 범위",
+      "건수 미리보기",
+      "여섯 자리 문자열 보존 안내"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "행 상세",
+     "items": [
+      "행 상세"
+     ]
+    }
+   ],
+   "data": [
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets",
+    "draw_checks"
+   ],
+   "api": [
+    "A-08",
+    "A-09"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "D-06",
+    "D-07",
+    "D-12"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "770297a8d02e",
+   "wireframe": "design/wireframes/D-05.html"
+  },
+  "D-06": {
+   "id": "D-06",
+   "name": "Windows 내 번호 상세",
+   "type_raw": "상세",
+   "route": "/desktop/tickets/:id",
+   "purpose": "구매등록·공식 대조와 이력 검토",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "회차·구매 상태·판정 상태",
+     "items": [
+      "회차",
+      "구매 상태",
+      "판정 상태"
+     ]
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·통계·내번호·설정",
+     "items": [
+      "대시보드",
+      "통계",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "내 번호·상세",
+     "items": [
+      "내 번호",
+      "상세"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "번호·조·등록 출처·구매일·사용자 입력 금액",
+     "items": [
+      "번호",
+      "조",
+      "등록 출처",
+      "구매일",
+      "사용자 입력 금액"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "번호·대조 결과",
+     "items": [
+      "번호",
+      "대조 결과"
+     ]
+    },
+    {
+     "type": "activity",
+     "label": "생성·저장·구매등록·대조",
+     "items": [
+      "생성",
+      "저장",
+      "구매등록",
+      "대조"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "공식 출처·검증 시각·조회 시각·미구매 대조 제외",
+     "items": [
+      "공식 출처",
+      "검증 시각",
+      "조회 시각",
+      "미구매 대조 제외"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "즐겨찾기 저장",
+     "items": [
+      "즐겨찾기 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매등록",
+     "items": [
+      "구매등록"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매번호 대조",
+     "items": [
+      "구매번호 대조"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사",
+     "items": [
+      "복사"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets",
+    "draw_checks",
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-07",
+    "A-14",
+    "A-09",
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "D-05",
+    "D-07",
+    "D-08"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "d263e48e83fa",
+   "wireframe": "design/wireframes/D-06.html"
+  },
+  "D-07": {
+   "id": "D-07",
+   "name": "Windows 구매등록",
+   "type_raw": "폼",
+   "route": "/desktop/tickets/register",
+   "purpose": "실물 구매 내용을 확인해 기록",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·내번호·설정",
+     "items": [
+      "대시보드",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "복권*·회차*·번호/조/여섯 자리*·구매일·금액 원·원본 번호 연결·실제 구매 확인*",
+     "items": [
+      "복권*",
+      "회차*",
+      "번호",
+      "조",
+      "여섯 자리*",
+      "구매일",
+      "금액 원",
+      "원본 번호 연결",
+      "실제 구매 확인*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매등록 확정",
+     "items": [
+      "구매등록 확정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "생성 원본과 구매기록 연결·중복 등록 경고·결제 없음",
+     "items": [
+      "생성 원본과 구매기록 연결",
+      "중복 등록 경고",
+      "결제 없음"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets"
+   ],
+   "api": [
+    "A-07",
+    "A-14"
+   ],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "D-06",
+    "D-05"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "29db3769664c",
+   "wireframe": "design/wireframes/D-07.html"
+  },
+  "D-08": {
+   "id": "D-08",
+   "name": "Windows 회차 상세",
+   "type_raw": "상세",
+   "route": "/desktop/draws/:game/:round",
+   "purpose": "공식 결과와 등위 기준 검토",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "복권·회차·검증 상태",
+     "items": [
+      "복권",
+      "회차",
+      "검증 상태"
+     ]
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·통계·내번호·회차·설정",
+     "items": [
+      "대시보드",
+      "통계",
+      "내번호",
+      "회차",
+      "설정"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "회차 목록·상세",
+     "items": [
+      "회차 목록",
+      "상세"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "추첨일·번호·조·별도 보너스",
+     "items": [
+      "추첨일",
+      "번호",
+      "조",
+      "별도 보너스"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "등위·일치 기준·공식 제공 당첨금",
+     "items": [
+      "등위",
+      "일치 기준",
+      "공식 제공 당첨금"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "공식 출처·검증 시각·미갱신 상태",
+     "items": [
+      "공식 출처",
+      "검증 시각",
+      "미갱신 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전/다음 회차",
+     "items": [
+      "이전",
+      "다음 회차"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "구매번호 확인",
+     "items": [
+      "구매번호 확인"
+     ]
+    }
+   ],
+   "data": [
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [
+    "A-03"
+   ],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-05",
+    "D-14",
+    "D-04"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [
+    "관련 항목 탭",
+    "활동·변경 이력"
+   ],
+   "states_missing": [],
+   "hash": "c8e67d1f7cfc",
+   "wireframe": "design/wireframes/D-08.html"
+  },
+  "D-09": {
+   "id": "D-09",
+   "name": "Windows 설정",
+   "type_raw": "설정",
+   "route": "/desktop/settings",
+   "purpose": "표시·알림·계정·데이터 설정",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·내번호·알림·설정",
+     "items": [
+      "대시보드",
+      "내번호",
+      "알림",
+      "설정"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "화면·알림·데이터·계정",
+     "items": [
+      "화면",
+      "알림",
+      "데이터",
+      "계정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "테마·로컬 알림·구매번호 결과 알림·권한 상태",
+     "items": [
+      "테마",
+      "로컬 알림",
+      "구매번호 결과 알림",
+      "권한 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "저장",
+     "items": [
+      "저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "알림 사용 시 권한 요청",
+     "items": [
+      "알림 사용 시 권한 요청"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "로그인·동기화·약관·개인정보",
+     "items": [
+      "로그인",
+      "동기화",
+      "약관",
+      "개인정보"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "계정 삭제 별도 위험 구역·영향 확인",
+     "items": [
+      "계정 삭제 별도 위험 구역",
+      "영향 확인"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "로그아웃 시 클라우드 캐시 처리 안내·게스트 기록 보존 선택",
+     "items": [
+      "로그아웃 시 클라우드 캐시 처리 안내",
+      "게스트 기록 보존 선택"
+     ]
+    }
+   ],
+   "data": [
+    "push_devices"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/본인 회원",
+   "next": [
+    "D-01",
+    "D-10",
+    "D-12",
+    "D-13"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "settings",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "c27951703ade",
+   "wireframe": "design/wireframes/D-09.html"
+  },
+  "D-10": {
+   "id": "D-10",
+   "name": "Windows 로그인",
+   "type_raw": "로그인",
+   "route": "/desktop/auth",
+   "purpose": "선택 로그인 후 이전 화면 복귀",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "tabs",
+     "label": "로그인·가입·비밀번호 재설정",
+     "items": [
+      "로그인",
+      "가입",
+      "비밀번호 재설정"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "이메일*·비밀번호*·필요 동의*",
+     "items": [
+      "이메일*",
+      "비밀번호*",
+      "필요 동의*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "현재 탭 제출",
+     "items": [
+      "현재 탭 제출"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "게스트로 계속·가입·비밀번호 찾기·약관·개인정보",
+     "items": [
+      "게스트로 계속",
+      "가입",
+      "비밀번호 찾기",
+      "약관",
+      "개인정보"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "성인 확인 게스트",
+   "next": [
+    "D-01",
+    "D-09",
+    "D-12"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "auth",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "7b98a83d14fb",
+   "wireframe": "design/wireframes/D-10.html"
+  },
+  "D-11": {
+   "id": "D-11",
+   "name": "Windows 온보딩·19세 확인",
+   "type_raw": "마법사",
+   "route": "/desktop/onboarding",
+   "purpose": "성인 확인 후 대시보드 시작",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "steps",
+     "label": "서비스 안내·만 19세 확인·시작",
+     "items": [
+      "서비스 안내",
+      "만 19세 확인",
+      "시작"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "서비스 안내 확인*·만 19세 이상 여부*",
+     "items": [
+      "서비스 안내 확인*",
+      "만 19세 이상 여부*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "번호 생성·개인 기록 서비스·판매/구매대행 없음",
+     "items": [
+      "번호 생성",
+      "개인 기록 서비스",
+      "판매",
+      "구매대행 없음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전",
+     "items": [
+      "이전"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다음",
+     "items": [
+      "다음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "게스트 시작",
+     "items": [
+      "게스트 시작"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "로그인",
+     "items": [
+      "로그인"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "종료",
+     "items": [
+      "종료"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "약관·개인정보",
+     "items": [
+      "약관",
+      "개인정보"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "첫 실행 누구나",
+   "next": [
+    "D-01",
+    "D-10"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "wizard",
+   "must_missing": [],
+   "should_missing": [
+    "중간 저장·이어하기"
+   ],
+   "states_missing": [],
+   "hash": "a3808f1581bd",
+   "wireframe": "design/wireframes/D-11.html"
+  },
+  "D-12": {
+   "id": "D-12",
+   "name": "Windows 동기화(P1)",
+   "type_raw": "마법사",
+   "route": "/desktop/sync",
+   "purpose": "로컬·서버 기록 차이 검토 후 병합",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·내번호·설정",
+     "items": [
+      "대시보드",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "steps",
+     "label": "미리보기·충돌 선택·결과",
+     "items": [
+      "미리보기",
+      "충돌 선택",
+      "결과"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "전송 대상*·충돌별 로컬/서버/둘 다 유지 선택*",
+     "items": [
+      "전송 대상*",
+      "충돌별 로컬",
+      "서버",
+      "둘 다 유지 선택*"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "로컬 기록·서버 기록·적용 예정 상태",
+     "items": [
+      "로컬 기록",
+      "서버 기록",
+      "적용 예정 상태"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "원본 식별자 유지·중복 검토·구매 상태 임의 승격 금지",
+     "items": [
+      "원본 식별자 유지",
+      "중복 검토",
+      "구매 상태 임의 승격 금지"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "이전",
+     "items": [
+      "이전"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "다음",
+     "items": [
+      "다음"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "동기화 확정",
+     "items": [
+      "동기화 확정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "나중에",
+     "items": [
+      "나중에"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    }
+   ],
+   "data": [
+    "saved_tickets",
+    "generated_batches",
+    "generated_numbers"
+   ],
+   "api": [],
+   "role": "성인 확인 로그인 본인",
+   "next": [
+    "D-05",
+    "D-09"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "wizard",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "cbccd24eed60",
+   "wireframe": "design/wireframes/D-12.html"
+  },
+  "D-13": {
+   "id": "D-13",
+   "name": "Windows 알림함(P1)",
+   "type_raw": "목록",
+   "route": "/desktop/notifications",
+   "purpose": "회차·구매결과 알림에서 상세 이동",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·내번호·회차·알림·설정",
+     "items": [
+      "대시보드",
+      "내번호",
+      "회차",
+      "알림",
+      "설정"
+     ]
+    },
+    {
+     "type": "search",
+     "label": "회차·내용",
+     "items": [
+      "회차",
+      "내용"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "미읽음·종류·기간",
+     "items": [
+      "미읽음",
+      "종류",
+      "기간"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "종류·대상·시각·읽음",
+     "items": [
+      "종류",
+      "대상",
+      "시각",
+      "읽음"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "최신순",
+     "items": [
+      "최신순"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 읽음",
+     "items": [
+      "선택 읽음"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "대상 상세·설정",
+     "items": [
+      "대상 상세",
+      "설정"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "구매등록된 번호에만 결과 알림",
+     "items": [
+      "구매등록된 번호에만 결과 알림"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "성인 확인 게스트 로컬/본인 회원",
+   "next": [
+    "D-06",
+    "D-08",
+    "D-09"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [
+    "새로 만들기",
+    "저장된 보기·열 설정"
+   ],
+   "states_missing": [],
+   "hash": "5a7396710c0f",
+   "wireframe": "design/wireframes/D-13.html"
+  },
+  "D-14": {
+   "id": "D-14",
+   "name": "Windows 회차 목록",
+   "type_raw": "목록",
+   "route": "/desktop/draws",
+   "purpose": "회차 검색 후 결과 상세 확인",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·통계·내번호·회차·설정",
+     "items": [
+      "대시보드",
+      "통계",
+      "내번호",
+      "회차",
+      "설정"
+     ]
+    },
+    {
+     "type": "search",
+     "label": "회차",
+     "items": [
+      "회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "복권·기간",
+     "items": [
+      "복권",
+      "기간"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "회차·추첨일·번호·공식 출처·검증 시각·상태",
+     "items": [
+      "회차",
+      "추첨일",
+      "번호",
+      "공식 출처",
+      "검증 시각",
+      "상태"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "최신 회차",
+     "items": [
+      "최신 회차"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "행 상세",
+     "items": [
+      "행 상세"
+     ]
+    }
+   ],
+   "data": [
+    "draws_lotto",
+    "draws_pension"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-08",
+    "D-04"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [
+    "새로 만들기",
+    "일괄 작업(선택·삭제·내보내기)",
+    "저장된 보기·열 설정"
+   ],
+   "states_missing": [],
+   "hash": "43d9faea6fba",
+   "wireframe": "design/wireframes/D-14.html"
+  },
+  "W-01": {
+   "id": "W-01",
+   "name": "웹 랜딩(P1 가정)",
+   "type_raw": "랜딩",
+   "route": "/",
+   "purpose": "제품 안내와 앱 설치 진입",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "hero",
+     "label": "데이터로 살펴보는 로또·연금 번호와 개인 기록",
+     "items": [
+      "데이터로 살펴보는 로또",
+      "연금 번호와 개인 기록"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "생성·통계·내번호 화면 안내",
+     "items": [
+      "생성",
+      "통계",
+      "내번호 화면 안내"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "만 19세 이상·판매/구매대행 없음·미래 예측 아님",
+     "items": [
+      "만 19세 이상",
+      "판매",
+      "구매대행 없음",
+      "미래 예측 아님"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "Android 설치 안내",
+     "items": [
+      "Android 설치 안내"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "Windows 설치 안내",
+     "items": [
+      "Windows 설치 안내"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "배포 전 준비 중 안내·실제 배포 URL만 연결",
+     "items": [
+      "배포 전 준비 중 안내",
+      "실제 배포 URL만 연결"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "사전알림 이메일*·알림 수신 동의*·만 19세 이상 확인*",
+     "items": [
+      "사전알림 이메일*",
+      "알림 수신 동의*",
+      "만 19세 이상 확인*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "사전알림 신청",
+     "items": [
+      "사전알림 신청"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "수집 목적·보관 6개월",
+     "items": [
+      "수집 목적",
+      "보관 6개월"
+     ]
+    },
+    {
+     "type": "faq",
+     "label": "게스트·로컬 저장·데이터 출처",
+     "items": [
+      "게스트",
+      "로컬 저장",
+      "데이터 출처"
+     ]
+    },
+    {
+     "type": "footer",
+     "label": "약관·개인정보·운영 주체·문의",
+     "items": [
+      "약관",
+      "개인정보",
+      "운영 주체",
+      "문의"
+     ]
+    }
+   ],
+   "data": [
+    "waitlist_signups"
+   ],
+   "api": [
+    "A-15"
+   ],
+   "role": "공개",
+   "next": [],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "landing",
+   "must_missing": [],
+   "should_missing": [
+    "근거(사례·수치·후기 — 실제만)",
+    "가격"
+   ],
+   "states_missing": [],
+   "hash": "dc13d96bb223",
+   "wireframe": "design/wireframes/W-01.html"
+  },
+  "W-02": {
+   "id": "W-02",
+   "name": "관리자 로그인(P1)",
+   "type_raw": "로그인",
+   "route": "/admin/login",
+   "purpose": "운영 계정 인증 후 권한 검사",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "form",
+     "label": "운영 이메일*·비밀번호*",
+     "items": [
+      "운영 이메일*",
+      "비밀번호*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "로그인",
+     "items": [
+      "로그인"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "비밀번호 재설정·랜딩·약관·개인정보",
+     "items": [
+      "비밀번호 재설정",
+      "랜딩",
+      "약관",
+      "개인정보"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "인증 후 서버 관리자 역할 검사",
+     "items": [
+      "인증 후 서버 관리자 역할 검사"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "운영 계정 인증 전",
+   "next": [
+    "W-01",
+    "W-03"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "auth",
+   "must_missing": [],
+   "should_missing": [],
+   "states_missing": [],
+   "hash": "d93de2d513b7",
+   "wireframe": "design/wireframes/W-02.html"
+  },
+  "W-03": {
+   "id": "W-03",
+   "name": "관리자 수집 검토 목록(P1)",
+   "type_raw": "목록",
+   "route": "/admin/collections",
+   "purpose": "검증 실패·미갱신 회차 찾기",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "수집 검토",
+     "items": [
+      "수집 검토"
+     ]
+    },
+    {
+     "type": "search",
+     "label": "복권·회차",
+     "items": [
+      "복권",
+      "회차"
+     ]
+    },
+    {
+     "type": "filter",
+     "label": "검증실패·미갱신·검토대기·기간",
+     "items": [
+      "검증실패",
+      "미갱신",
+      "검토대기",
+      "기간"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "복권·회차·출처·수집 시각·검증 시각·오류 요약·발송중단 상태",
+     "items": [
+      "복권",
+      "회차",
+      "출처",
+      "수집 시각",
+      "검증 시각",
+      "오류 요약",
+      "발송중단 상태"
+     ]
+    },
+    {
+     "type": "pagination",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sort",
+     "label": "최근 실패",
+     "items": [
+      "최근 실패"
+     ]
+    },
+    {
+     "type": "updated",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "목록 새로고침",
+     "items": [
+      "목록 새로고침"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "검토 상세",
+     "items": [
+      "검토 상세"
+     ]
+    }
+   ],
+   "data": [
+    "ingestion_runs"
+   ],
+   "api": [
+    "A-11"
+   ],
+   "role": "서버에서 관리자 역할 확인",
+   "next": [
+    "W-04",
+    "W-02"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "list",
+   "must_missing": [],
+   "should_missing": [
+    "일괄 작업(선택·삭제·내보내기)",
+    "저장된 보기·열 설정"
+   ],
+   "states_missing": [],
+   "hash": "6c41d3c21511",
+   "wireframe": "design/wireframes/W-03.html"
+  },
+  "W-04": {
+   "id": "W-04",
+   "name": "관리자 수집 검토 상세(P1)",
+   "type_raw": "상세",
+   "route": "/admin/collections/:id",
+   "purpose": "출처 대조·재검증 후 처리",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "회차·검증/발송 상태",
+     "items": [
+      "회차",
+      "검증",
+      "발송 상태"
+     ]
+    },
+    {
+     "type": "sidebar",
+     "label": "수집 검토",
+     "items": [
+      "수집 검토"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "수집 검토·상세",
+     "items": [
+      "수집 검토",
+      "상세"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "원본 출처·수집/검증 시각·마지막 정상본",
+     "items": [
+      "원본 출처",
+      "수집",
+      "검증 시각",
+      "마지막 정상본"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "수집값·공식 대조값·회차/날짜/범위/중복/연금 문자열 검증",
+     "items": [
+      "수집값",
+      "공식 대조값",
+      "회차",
+      "날짜",
+      "범위",
+      "중복",
+      "연금 문자열 검증"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "검토 사유*·처리 선택*",
+     "items": [
+      "검토 사유*",
+      "처리 선택*"
+     ]
+    },
+    {
+     "type": "activity",
+     "label": "재검증·승인/반려 이력",
+     "items": [
+      "재검증",
+      "승인",
+      "반려 이력"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "재검증 요청",
+     "items": [
+      "재검증 요청"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "승인",
+     "items": [
+      "승인"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "반려",
+     "items": [
+      "반려"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "검증 성공과 공식 대조 확인 후 승인·실패 중 발송 재개 불가",
+     "items": [
+      "검증 성공과 공식 대조 확인 후 승인",
+      "실패 중 발송 재개 불가"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "비밀키·개인 티켓·푸시 토큰 노출 없음",
+     "items": [
+      "비밀키",
+      "개인 티켓",
+      "푸시 토큰 노출 없음"
+     ]
+    }
+   ],
+   "data": [
+    "ingestion_runs",
+    "draws_lotto",
+    "draws_pension",
+    "statistics_cache"
+   ],
+   "api": [
+    "A-11",
+    "A-16",
+    "A-12",
+    "A-13"
+   ],
+   "role": "서버에서 관리자 역할 확인·쓰기 재검사",
+   "next": [
+    "W-03",
+    "W-02"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [
+    "관련 항목 탭"
+   ],
+   "states_missing": [],
+   "hash": "9c87ed4759d4",
+   "wireframe": "design/wireframes/W-04.html"
+  }
+ },
+ "states": {
+  "M-01": {
+   "빈": "기록 없음은 생성 CTA·회차 없음은 미수집 안내",
+   "로딩": "회차·지표 스켈레톤",
+   "오류": "마지막 정상본·출처·검증 시각 유지·재시도",
+   "성공": "최신 결과와 사용자 기록 요약 표시"
+  },
+  "M-02": {
+   "빈": "조건 기본값·생성 결과 없음 안내",
+   "로딩": "생성 중 중복 제출 잠금·취소 가능·시도 상한 적용",
+   "오류": "입력 오류 필드 수정·엔진 충돌 오류는 조건 완화/게임 수 축소·저장 실패 시 결과 보존",
+   "성공": "생성 카드 표시·선택 저장 완료·복사/공유 완료 안내"
+  },
+  "M-03": {
+   "빈": "자동 자리·기본 조 설정·생성 전 안내",
+   "로딩": "기기 생성/저장 중 버튼 잠금·취소 가능",
+   "오류": "엔진 충돌 오류(고정 여섯 자리와 다중 베이스)·요청 수 축소·저장 실패 시 결과 보존",
+   "성공": "앞자리 0 보존·동일 베이스의 선택 조 확장·저장 완료"
+  },
+  "M-04": {
+   "빈": "선택 기간 표본 없음·기간 변경 CTA",
+   "로딩": "차트·대체 표 스켈레톤",
+   "오류": "마지막 정상 통계·기간·갱신 시각 유지·재시도",
+   "성공": "지표·기준선·표본·출처와 해당 회차 이동 제공"
+  },
+  "M-05": {
+   "빈": "확인 항목 미체크 시 다음 비활성·안내 문구",
+   "로딩": "확인 기록 저장 중 시작 잠금",
+   "오류": "미성년/거절은 종료 안내·저장 실패는 재시도·통과 전 본문 차단",
+   "성공": "확인 기록 저장 후 게스트 홈 또는 선택 로그인"
+  },
+  "M-06": {
+   "빈": "탭별 입력 안내",
+   "로딩": "인증·가입·재설정 요청 중 제출 잠금",
+   "오류": "잘못된 입력·인증 실패·세션 만료·오프라인은 재입력/게스트 복귀",
+   "성공": "가입/재설정 메일 안내 또는 로그인 후 원래 화면·동기화 선택"
+  },
+  "M-07": {
+   "빈": "첫 생성·수동/QR 등록 안내·검색 무결과는 필터 초기화",
+   "로딩": "로컬 목록 또는 로그인 서버 목록 스켈레톤",
+   "오류": "서버 실패는 로컬 기록·마지막 동기화 시각 유지·재시도",
+   "성공": "상태별 목록 표시·대조 완료 행만 갱신"
+  },
+  "M-08": {
+   "빈": "대조 이력 없음은 확인대기·구매등록 안내",
+   "로딩": "기록·공식 대조 중 중복 제출 잠금",
+   "오류": "404/타인 기록은 목록 복귀·503/추첨 전은 확인대기·미구매는 등록 안내",
+   "성공": "구매기록만 checked·등위/미당첨·대조 시각 표시"
+  },
+  "M-09": {
+   "빈": "입력 안내·생성/QR 원본 있으면 회차·번호 채움",
+   "로딩": "등록 중 잠금·같은 멱등 키 재사용",
+   "오류": "범위/중복/회차/문자열 오류를 필드 옆 표시·입력 보존",
+   "성공": "구매기록 생성·원본 연결·상세 이동"
+  },
+  "M-10": {
+   "빈": "카메라 권한 안내·스캔 가이드",
+   "로딩": "카메라 준비·인식·등록 중 단계별 표시",
+   "오류": "권한 거절/미지원은 수동 전환·다른 QR/중복/잘못된 회차는 재스캔·등록 전 확인",
+   "성공": "인식값 검토 후 사용자 확정한 구매기록만 등록"
+  },
+  "M-11": {
+   "빈": "미수집 회차는 미갱신 안내·회차 목록 이동",
+   "로딩": "회차 결과 스켈레톤",
+   "오류": "404 회차 목록 복귀·503 미갱신·캐시 없으면 결과 미제공",
+   "성공": "검증 결과·일치 기준·공식 출처·검증 시각 표시"
+  },
+  "M-12": {
+   "빈": "저장값 없으면 기기 기본값 안내",
+   "로딩": "설정 읽기/저장·권한 요청 중 잠금",
+   "오류": "권한 거절은 기기 설정 안내·저장 실패 시 이전 설정 유지",
+   "성공": "저장됨·실제 권한 상태 표시·동의한 알림만 활성"
+  },
+  "M-13": {
+   "빈": "알림 없음·설정 이동·필터 무결과 안내",
+   "로딩": "알림 목록 스켈레톤",
+   "오류": "읽기 실패는 재시도·삭제된 티켓은 내 번호 안내",
+   "성공": "읽음 표시 후 권한 있는 대상 상세 이동"
+  },
+  "M-14": {
+   "빈": "로컬 미전송 없음·내 번호로 계속",
+   "로딩": "병합 미리보기/동기화 중 단계 표시",
+   "오류": "세션 만료는 재로그인·충돌은 선택 유지·부분 실패는 실패 항목만 재시도",
+   "성공": "병합 건수·중복 제외·실패 건수 요약 후 내 번호"
+  },
+  "M-15": {
+   "빈": "이전 설정 없으면 기본 생성 안내",
+   "로딩": "로컬 프리셋 읽기 표시",
+   "오류": "프리셋 손상이면 기본값으로 시작 안내",
+   "성공": "선택한 복권 생성기 진입"
+  },
+  "M-16": {
+   "빈": "미수집 또는 필터 무결과·필터 초기화",
+   "로딩": "회차 목록 스켈레톤",
+   "오류": "조회 실패는 캐시·검증 시각과 재시도",
+   "성공": "선택 회차 상세 이동"
+  },
+  "D-01": {
+   "빈": "사용자 기록 없음은 생성/구매등록 CTA",
+   "로딩": "KPI·차트·회차 표 스켈레톤",
+   "오류": "미갱신 배너·마지막 정상본·재시도",
+   "성공": "기간별 KPI·대조대기·회차 드릴다운 표시"
+  },
+  "D-02": {
+   "빈": "좌측 기본 조건·우측 생성 전 안내",
+   "로딩": "우측 생성 진행·중복 제출 잠금·취소 가능",
+   "오류": "입력 오류·엔진 충돌 오류 조건 강조·완화 제안·기존 결과 유지",
+   "성공": "우측 생성 결과·선택 저장 상태 갱신"
+  },
+  "D-03": {
+   "빈": "자동 자리 기본값·우측 세트 없음 안내",
+   "로딩": "기기 생성·저장 중 잠금",
+   "오류": "엔진 충돌 오류(고정 조건/베이스 수)·개수 축소·문자열 오류 수정",
+   "성공": "문자열 0 보존·조별 세트 표·저장 완료"
+  },
+  "D-04": {
+   "빈": "선택 기간 표본 없음·기간 확장 안내",
+   "로딩": "대형 차트·표 스켈레톤",
+   "오류": "마지막 정상본·데이터 기준 유지·재시도",
+   "성공": "차트/대체 표·기간·표본·기준선·출처 표시"
+  },
+  "D-05": {
+   "빈": "생성/등록 CTA·검색 무결과 필터 초기화·빈 CSV 방지",
+   "로딩": "표 조회·대조·내보내기 중 범위/진행 표시",
+   "오류": "조회/대조 실패 행 표시·CSV 실패 재시도·원본 표 유지",
+   "성공": "선택/필터 전체 범위 확인 후 CSV 완료·번호 문자열 보존"
+  },
+  "D-06": {
+   "빈": "대조 이력 없음은 확인대기·구매등록 안내",
+   "로딩": "상세/공식 대조 중 잠금",
+   "오류": "404/타인 기록 목록 복귀·미구매 등록 안내·503 확인대기 유지",
+   "성공": "구매번호에만 대조 결과·등위/미당첨·시각 표시"
+  },
+  "D-07": {
+   "빈": "원본 번호 채움 또는 수동 입력 안내",
+   "로딩": "등록 중 잠금·멱등 키 유지",
+   "오류": "잘못된 회차/숫자/중복·연금 6자리 오류 수정",
+   "성공": "구매기록 생성 후 상세 이동"
+  },
+  "D-08": {
+   "빈": "미수집 회차는 미갱신 안내·회차 목록 이동",
+   "로딩": "회차 결과 스켈레톤",
+   "오류": "404 목록 복귀·503 미갱신 배너·캐시 없으면 결과 미제공",
+   "성공": "공식 출처·검증 시각·일반/보너스 결과 구분"
+  },
+  "D-09": {
+   "빈": "미설정 항목은 기기 기본값",
+   "로딩": "설정 읽기/저장·권한 요청 중 잠금",
+   "오류": "알림 거절은 OS 설정 안내·저장 실패는 이전 값 유지",
+   "성공": "저장됨·실제 권한 상태 갱신"
+  },
+  "D-10": {
+   "빈": "탭별 입력 안내",
+   "로딩": "인증/가입/재설정 중 잠금",
+   "오류": "인증 실패·세션 만료·오프라인 안내·로컬 기록 보존",
+   "성공": "인증 완료 후 원래 화면 또는 병합 선택"
+  },
+  "D-11": {
+   "빈": "확인 항목 미체크 시 다음 비활성·안내 문구",
+   "로딩": "성인 확인 저장 중 잠금",
+   "오류": "미성년/거절은 종료·저장 실패 재시도·본문 차단",
+   "성공": "성인 확인 후 게스트 대시보드/선택 로그인"
+  },
+  "D-12": {
+   "빈": "전송 기록 없음·내 번호로 계속",
+   "로딩": "차이 계산·동기화 단계 표시",
+   "오류": "충돌 선택 유지·실패 항목 재시도·세션 만료 재로그인",
+   "성공": "적용/중복 제외/실패 요약·내 번호 이동"
+  },
+  "D-13": {
+   "빈": "알림 없음·설정 안내·검색 무결과 필터 초기화",
+   "로딩": "알림 표 스켈레톤",
+   "오류": "조회 실패 재시도·없는 대상은 목록 복귀",
+   "성공": "읽음 반영·대상 상세 이동"
+  },
+  "D-14": {
+   "빈": "수집 전 또는 필터 무결과·기간 변경 안내",
+   "로딩": "회차 표 스켈레톤",
+   "오류": "캐시·검증 시각 표시·조회 재시도",
+   "성공": "회차 상세 이동·검색 상태 복원"
+  },
+  "W-01": {
+   "빈": "신청 폼 입력 안내·필수 동의/19세 확인 전 신청 비활성",
+   "로딩": "설치 링크 확인·신청 중 버튼 진행 표시·중복 제출 잠금",
+   "오류": "미배포/링크 실패는 준비 중 안내·이메일 400은 필드 옆 수정·429 잠시 후 재시도·입력 보존",
+   "성공": "실제 설치 안내 링크 열기·배포 전에는 준비 중 표시·사전알림 신청 완료 안내"
+  },
+  "W-02": {
+   "빈": "로그인 입력 안내",
+   "로딩": "인증·관리자 역할 확인 중 제출 잠금",
+   "오류": "401 재로그인·403 관리자 권한 없음·목록 접근 차단",
+   "성공": "역할 검사 통과 후 검토 목록 이동"
+  },
+  "W-03": {
+   "빈": "검토 대상 없음·필터 무결과 초기화",
+   "로딩": "수집 목록 스켈레톤",
+   "오류": "401 로그인·403 접근 차단·조회 실패 재시도",
+   "성공": "검토 목록·발송중단 상태·갱신 시각 표시"
+  },
+  "W-04": {
+   "빈": "재검증 전에는 승인 비활성·재검증 요청 안내",
+   "로딩": "상세/재검증/처리 중 중복 제출 잠금",
+   "오류": "404 목록 복귀·401/403 쓰기 차단·검증 실패는 발송중단 유지·동시 변경은 다시 불러오기",
+   "성공": "사유·처리자·시각 이력 저장·승인은 재검증 통과 때만·발송 재개 상태 재조회"
+  }
+ },
+ "flows": {
+  "F-01": {
+   "id": "F-01",
+   "name": "모바일 첫 실행·성인 확인·게스트 시작(미성년/거절은 M-05에서 종료)",
+   "steps": [
+    "M-05",
+    "M-01",
+    "M-15",
+    "M-02"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-02": {
+   "id": "F-02",
+   "name": "모바일 로또 생성→명시 저장→실제 구매등록→공식 당첨확인(미구매 대조 제외)",
+   "steps": [
+    "M-02",
+    "M-07",
+    "M-08",
+    "M-09",
+    "M-08",
+    "M-11"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-03": {
+   "id": "F-03",
+   "name": "연금 자리/조 설정→5조 세트 생성·저장→낱장/세트 구매등록→대조",
+   "steps": [
+    "M-15",
+    "M-03",
+    "M-07",
+    "M-08",
+    "M-09",
+    "M-08"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-04": {
+   "id": "F-04",
+   "name": "QR 맥락 권한 요청→스캔→내용 확인→구매등록→대조",
+   "steps": [
+    "M-07",
+    "M-10",
+    "M-08",
+    "M-11"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-05": {
+   "id": "F-05",
+   "name": "QR 권한 거절/미지원→수동 등록으로 복구",
+   "steps": [
+    "M-07",
+    "M-10",
+    "M-09",
+    "M-08"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-06": {
+   "id": "F-06",
+   "name": "모바일 통계 기간/복권 전환→회차 드릴다운",
+   "steps": [
+    "M-01",
+    "M-04",
+    "M-16",
+    "M-11"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-07": {
+   "id": "F-07",
+   "name": "선택 로그인→로컬 미리보기·충돌 선택→클라우드 병합",
+   "steps": [
+    "M-12",
+    "M-06",
+    "M-14",
+    "M-07"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-08": {
+   "id": "F-08",
+   "name": "알림 사용 시점 권한 요청→수신함→구매기록 결과",
+   "steps": [
+    "M-01",
+    "M-12",
+    "M-13",
+    "M-08"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-09": {
+   "id": "F-09",
+   "name": "Windows 첫 실행→성인 확인→대시보드→좌우 생성→저장→구매등록→당첨확인",
+   "steps": [
+    "D-11",
+    "D-01",
+    "D-02",
+    "D-05",
+    "D-06",
+    "D-07",
+    "D-06",
+    "D-08"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-10": {
+   "id": "F-10",
+   "name": "Windows 연금 세트 생성→저장→내 번호 표→범위 확인 후 CSV",
+   "steps": [
+    "D-01",
+    "D-03",
+    "D-05"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-11": {
+   "id": "F-11",
+   "name": "Windows 대형 통계→회차 표→공식 상세",
+   "steps": [
+    "D-01",
+    "D-04",
+    "D-14",
+    "D-08"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-12": {
+   "id": "F-12",
+   "name": "Windows 선택 로그인→충돌 검토→병합→내 번호",
+   "steps": [
+    "D-09",
+    "D-10",
+    "D-12",
+    "D-05"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-13": {
+   "id": "F-13",
+   "name": "Windows 알림 설정→구매결과 알림→상세 확인",
+   "steps": [
+    "D-01",
+    "D-09",
+    "D-13",
+    "D-06"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-14": {
+   "id": "F-14",
+   "name": "관리자 인증·역할 검사→수집 실패 검토→재검증·승인/반려→목록 재조회",
+   "steps": [
+    "W-02",
+    "W-03",
+    "W-04",
+    "W-03"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-15": {
+   "id": "F-15",
+   "name": "오프라인 생성·로컬 저장→연결 복구 후 선택 로그인·병합",
+   "steps": [
+    "M-15",
+    "M-02",
+    "M-07",
+    "M-06",
+    "M-14",
+    "M-07"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  },
+  "F-16": {
+   "id": "F-16",
+   "name": "불가능 조건 엔진 충돌 오류→조건 완화→재생성→저장",
+   "steps": [
+    "M-02",
+    "M-02",
+    "M-07"
+   ],
+   "source": "docs/03_SCREENS_UX.md"
+  }
+ },
+ "apis": {
+  "A-01": {
+   "id": "A-01",
+   "method": "GET",
+   "path": "/v1/draws/lotto/latest",
+   "row": {
+    "ID": "A-01",
+    "메서드": "GET",
+    "경로": "/v1/draws/lotto/latest",
+    "입력": "—",
+    "출력": "draw_no, draw_date, nums[6], bonus, prizes, source_url, source_verified_at",
+    "권한": "공개(anon SELECT)",
+    "오류": "0행 → 미갱신 표시",
+    "사용 테이블": "draws_lotto",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-02": {
+   "id": "A-02",
+   "method": "GET",
+   "path": "/v1/draws/pension/latest",
+   "row": {
+    "ID": "A-02",
+    "메서드": "GET",
+    "경로": "/v1/draws/pension/latest",
+    "입력": "—",
+    "출력": "draw_no, draw_date, group_no, digits:\"string(6)\", bonus_digits:\"string(6)\", prizes, source_url, source_verified_at",
+    "권한": "공개(anon SELECT)",
+    "오류": "0행 → 미갱신 표시",
+    "사용 테이블": "draws_pension",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-03": {
+   "id": "A-03",
+   "method": "GET",
+   "path": "/v1/draws/{game}/{round}",
+   "row": {
+    "ID": "A-03",
+    "메서드": "GET",
+    "경로": "/v1/draws/{game}/{round}",
+    "입력": "game`(lotto|pension), `round`(정수 ≥1, 클라이언트 검증)",
+    "출력": "A-01 또는 A-02 형식 1건",
+    "권한": "공개(anon SELECT)",
+    "오류": "0행 → 없음/미수집 표시",
+    "사용 테이블": "draws_lotto` / `draws_pension",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-04": {
+   "id": "A-04",
+   "method": "—",
+   "path": "~~`/v1/generate/lotto`~~",
+   "row": {
+    "ID": "A-04",
+    "메서드": "—",
+    "경로": "~~`/v1/generate/lotto`~~",
+    "입력": "—",
+    "출력": "—",
+    "권한": "—",
+    "오류": "—",
+    "사용 테이블": "—",
+    "구현": "미구현(D4) — 생성은 기기 `lottery-core"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-05": {
+   "id": "A-05",
+   "method": "—",
+   "path": "~~`/v1/generate/pension`~~",
+   "row": {
+    "ID": "A-05",
+    "메서드": "—",
+    "경로": "~~`/v1/generate/pension`~~",
+    "입력": "—",
+    "출력": "—",
+    "권한": "—",
+    "오류": "—",
+    "사용 테이블": "—",
+    "구현": "미구현(D4) — 생성은 기기 `lottery-core"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-06": {
+   "id": "A-06",
+   "method": "GET",
+   "path": "/v1/statistics/{game}",
+   "row": {
+    "ID": "A-06",
+    "메서드": "GET",
+    "경로": "/v1/statistics/{game}",
+    "입력": "game`, `window`, `metric` (허용 값 목록 팀장 결정 필요)",
+    "출력": "payload` + `range_from, range_to, updated_at, source, sample_size` (원본 2.3 필수 표기)",
+    "권한": "공개(anon SELECT)",
+    "오류": "0행 → 미갱신 표시",
+    "사용 테이블": "statistics_cache",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-07": {
+   "id": "A-07",
+   "method": "POST",
+   "path": "/v1/tickets",
+   "row": {
+    "ID": "A-07",
+    "메서드": "POST",
+    "경로": "/v1/tickets",
+    "입력": "game, round, ticket_data, purchase_status`(favorite|purchased), `purchase_date?`, `amount_won?`, `source_number_id?`, `idempotency_key`(필수)",
+    "출력": "생성된 `saved_tickets` 행(201) · 중복 `idempotency_key`면 기존 행(200, R18)",
+    "권한": "로그인(본인 행만, RLS)",
+    "오류": "400, 401, 429",
+    "사용 테이블": "saved_tickets",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-08": {
+   "id": "A-08",
+   "method": "GET",
+   "path": "/v1/tickets",
+   "row": {
+    "ID": "A-08",
+    "메서드": "GET",
+    "경로": "/v1/tickets",
+    "입력": "query `game?`, `round?`, `status?`, 커서 페이지",
+    "출력": "saved_tickets[]` + 최신 `draw_checks`(이력은 같은 테이블 누적, R8)",
+    "권한": "로그인(본인 행만, RLS)",
+    "오류": "401",
+    "사용 테이블": "saved_tickets`, `draw_checks",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-09": {
+   "id": "A-09",
+   "method": "POST",
+   "path": "/v1/tickets/check",
+   "row": {
+    "ID": "A-09",
+    "메서드": "POST",
+    "경로": "/v1/tickets/check",
+    "입력": "ticket_ids[]` 또는 `round",
+    "출력": "[{ticket_id, draw_no, matched_rank, checked_at}]",
+    "권한": "로그인 + 본인 티켓, `purchased`만 판정(원본 10장 5)",
+    "오류": "400, 401, 404, 429, 503",
+    "사용 테이블": "saved_tickets`, `draws_*`, `draw_checks`(서버만 INSERT)",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-10": {
+   "id": "A-10",
+   "method": "GET",
+   "path": "/v1/subscriptions/me",
+   "row": {
+    "ID": "A-10",
+    "메서드": "GET",
+    "경로": "/v1/subscriptions/me",
+    "입력": "—",
+    "출력": "store, product_id, state",
+    "권한": "로그인(본인 행만 읽기)",
+    "오류": "401",
+    "사용 테이블": "subscription_accounts",
+    "구현": "RLS (P2, 결제 미결 Q3)"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-11": {
+   "id": "A-11",
+   "method": "GET",
+   "path": "/v1/admin/ingestions",
+   "row": {
+    "ID": "A-11",
+    "메서드": "GET",
+    "경로": "/v1/admin/ingestions",
+    "입력": "query `status?`(needs_review 등), `game?`, 커서",
+    "출력": "ingestion_runs[]`(원본 응답 해시·검증 오류·재검증 결과 포함)",
+    "권한": "관리자 + MFA",
+    "오류": "401, 403",
+    "사용 테이블": "ingestion_runs",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-12": {
+   "id": "A-12",
+   "method": "POST",
+   "path": "/v1/admin/ingestions/{id}/approve",
+   "row": {
+    "ID": "A-12",
+    "메서드": "POST",
+    "경로": "/v1/admin/ingestions/{id}/approve",
+    "입력": "path `id`, `note?",
+    "출력": "승인된 run + UPSERT된 회차 → 통계 캐시 재계산·알림 재개",
+    "권한": "관리자 + MFA, A-16 재검증 통과 건만(R9)",
+    "오류": "401, 403, 404, 409(이미 처리·재검증 미통과)",
+    "사용 테이블": "ingestion_runs`, `draws_*`, `statistics_cache",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-13": {
+   "id": "A-13",
+   "method": "POST",
+   "path": "/v1/admin/ingestions/{id}/reject",
+   "row": {
+    "ID": "A-13",
+    "메서드": "POST",
+    "경로": "/v1/admin/ingestions/{id}/reject",
+    "입력": "path `id`, `reason`(필수)",
+    "출력": "반려된 run(회차 미반영, 알림 중단 유지)",
+    "권한": "관리자 + MFA",
+    "오류": "400, 401, 403, 404, 409",
+    "사용 테이블": "ingestion_runs",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-14": {
+   "id": "A-14",
+   "method": "PATCH",
+   "path": "/v1/tickets/{id}",
+   "row": {
+    "ID": "A-14",
+    "메서드": "PATCH",
+    "경로": "/v1/tickets/{id}",
+    "입력": "path `id`, `purchase_status:\"purchased\"`, `purchase_date`, `amount_won",
+    "출력": "갱신된 `saved_tickets` 행",
+    "권한": "로그인(본인 행만, RLS). 허용 전환 favorite→purchased(R2), 역전환 금지(R19)",
+    "오류": "400, 401, 404, 422",
+    "사용 테이블": "saved_tickets",
+    "구현": "RLS"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-15": {
+   "id": "A-15",
+   "method": "POST",
+   "path": "/v1/waitlist",
+   "row": {
+    "ID": "A-15",
+    "메서드": "POST",
+    "경로": "/v1/waitlist",
+    "입력": "email`, `consent_marketing:true`, `age_confirmed:true`(만 19세 이상), `turnstile_token`(R21)",
+    "출력": "202`(본문 없음, 중복 이메일도 동일)",
+    "권한": "공개(anon)",
+    "오류": "400, 429",
+    "사용 테이블": "waitlist_signups`(INSERT만)",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  },
+  "A-16": {
+   "id": "A-16",
+   "method": "POST",
+   "path": "/v1/admin/ingestions/{id}/reverify",
+   "row": {
+    "ID": "A-16",
+    "메서드": "POST",
+    "경로": "/v1/admin/ingestions/{id}/reverify",
+    "입력": "path `id",
+    "출력": "run + 재검증 결과(`reverified_at`, `reverify_errors`)",
+    "권한": "관리자 + MFA",
+    "오류": "401, 403, 404, 409(이미 처리), 503(출처 접속 실패)",
+    "사용 테이블": "ingestion_runs",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
+  }
+ },
+ "tables": {
+  "draws_lotto": {
+   "name": "draws_lotto",
+   "row": {
+    "테이블": "draws_lotto",
+    "컬럼 · 타입 · 제약": "draw_no int PK CHECK(>0)` · `draw_date date NOT NULL UNIQUE` · `nums smallint[] NOT NULL` CHECK(길이 6, 각 1~45, 중복 없음, 오름차순) · `bonus smallint NOT NULL` CHECK(1~45, `nums`에 없음) · `prizes jsonb NOT NULL`(등위별 `[{rank, amount_won, winners}]`, R7) · `source_url text NOT NULL` · `ingestion_run_id uuid NOT NULL FK→ingestion_runs` · `source_verified_at timestamptz NOT NULL",
+    "인덱스": "PK, `draw_date"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "draws_pension": {
+   "name": "draws_pension",
+   "row": {
+    "테이블": "draws_pension",
+    "컬럼 · 타입 · 제약": "draw_no int PK CHECK(>0)` · `draw_date date NOT NULL UNIQUE` · `group_no smallint NOT NULL CHECK(1~5)` · `digits char(6) NOT NULL CHECK(digits ~ '^[0-9]{6}$')` · `bonus_digits char(6) NOT NULL CHECK(~ '^[0-9]{6}$')` · `prizes jsonb NOT NULL`(등위별 당첨금·인원, 로또와 같은 형식) · `source_url text NOT NULL` · `ingestion_run_id uuid NOT NULL FK` · `source_verified_at timestamptz NOT NULL",
+    "인덱스": "PK, `draw_date"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "ingestion_runs": {
+   "name": "ingestion_runs",
+   "row": {
+    "테이블": "ingestion_runs",
+    "anon": "없음",
+    "authenticated": "없음",
+    "쓰기 주체": "service_role만(워커·A-11~A-13·A-16 EF)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "generator_profiles": {
+   "name": "generator_profiles",
+   "row": {
+    "테이블": "generator_profiles",
+    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `name text NOT NULL` · `config jsonb NOT NULL`(조건 프리셋, 원본 4.3·4.4) · `updated_at timestamptz",
+    "인덱스": "user_id"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "generated_batches": {
+   "name": "generated_batches",
+   "row": {
+    "테이블": "generated_batches",
+    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int`(대상 회차) · `strategy text NOT NULL`(원본 5장 전략 키) · `engine_version text NOT NULL",
+    "인덱스": "(`user_id`, `created_at desc`)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "generated_numbers": {
+   "name": "generated_numbers",
+   "row": {
+    "테이블": "generated_numbers",
+    "anon": "없음",
+    "authenticated": "전체 작업 `EXISTS(batch.user_id = auth.uid())",
+    "쓰기 주체": "본인"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "saved_tickets": {
+   "name": "saved_tickets",
+   "row": {
+    "테이블": "saved_tickets",
+    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int` · `ticket_data jsonb NOT NULL`(04#5 입력 검증 + CHECK: 연금 `digits` 문자열 6자리) · `purchase_status text NOT NULL CHECK(in 'favorite','purchased')` · `purchase_date date` · `amount_won int CHECK(>= 0)` · `source_number_id uuid FK→generated_numbers ON DELETE SET NULL`(생성 이력에서 저장한 경우) · `idempotency_key uuid NOT NULL` · UNIQUE(`user_id, idempotency_key`) (R2) — BEFORE UPDATE 트리거: `purchased`→`favorite` 전환 거부(→ 04 A-14 422 `INVALID_TRANSITION`, R19)",
+    "인덱스": "(`user_id`, `created_at desc`), (`game`, `round`, `purchase_status`)(판정 배치용), UNIQUE(`user_id, idempotency_key`)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "draw_checks": {
+   "name": "draw_checks",
+   "row": {
+    "테이블": "draw_checks",
+    "anon": "없음",
+    "authenticated": "SELECT `EXISTS(ticket.user_id = auth.uid())",
+    "쓰기 주체": "service_role만(A-09 판정)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "waitlist_signups": {
+   "name": "waitlist_signups",
+   "row": {
+    "테이블": "waitlist_signups",
+    "anon": "INSERT만 `WITH CHECK (consent_marketing AND age_confirmed)`, SELECT/UPDATE/DELETE 없음",
+    "authenticated": "없음",
+    "쓰기 주체": "anon INSERT(A-15) · 열람·삭제는 service_role만"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "statistics_cache": {
+   "name": "statistics_cache",
+   "row": {
+    "테이블": "statistics_cache",
+    "anon": "SELECT 전체(A-06 직접 읽기, R6)",
+    "authenticated": "SELECT 전체",
+    "쓰기 주체": "service_role만(재계산)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "push_devices": {
+   "name": "push_devices",
+   "row": {
+    "테이블": "push_devices",
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/UPDATE/DELETE 본인",
+    "쓰기 주체": "본인 · 발송은 service_role"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "subscription_accounts": {
+   "name": "subscription_accounts",
+   "row": {
+    "테이블": "subscription_accounts",
+    "anon": "없음",
+    "authenticated": "SELECT 본인",
+    "쓰기 주체": "service_role만(스토어 영수증 검증, P2)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "draws_lotto` · `draws_pension": {
+   "name": "draws_lotto` · `draws_pension",
+   "row": {
+    "테이블": "draws_lotto` · `draws_pension",
+    "anon": "SELECT 전체(A-01~A-03 직접 읽기, R6)",
+    "authenticated": "SELECT 전체",
+    "쓰기 주체": "service_role만(워커·A-12)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "generator_profiles` · `generated_batches` · `saved_tickets": {
+   "name": "generator_profiles` · `generated_batches` · `saved_tickets",
+   "row": {
+    "테이블": "generator_profiles` · `generated_batches` · `saved_tickets",
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK (auth.uid() = user_id)",
+    "쓰기 주체": "본인"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  }
+ },
+ "issues": [
+  [
+   "🟡",
+   "M-01",
+   "홈 권장: 이전 기간 대비(증감), 내보내기(CSV·PDF), 세그먼트·담당자 필터"
+  ],
+  [
+   "🟡",
+   "M-02",
+   "로또 생성 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "M-03",
+   "연금 생성 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "M-04",
+   "통계 권장: 내보내기(CSV·PDF), 할 일·알림(지표가 행동으로 이어지게)"
+  ],
+  [
+   "🟡",
+   "M-05",
+   "온보딩·19세 확인 권장: 중간 저장·이어하기"
+  ],
+  [
+   "🟡",
+   "M-09",
+   "수동 구매등록·확인 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "M-10",
+   "QR 구매등록(P1) 권장: 중간 저장·이어하기"
+  ],
+  [
+   "🟡",
+   "M-11",
+   "공식 회차 상세 권장: 관련 항목 탭, 활동·변경 이력"
+  ],
+  [
+   "🟡",
+   "M-13",
+   "알림함(P1) 권장: 새로 만들기, 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "M-15",
+   "추천 복권 선택 권장: 관련 항목 탭, 활동·변경 이력"
+  ],
+  [
+   "🟡",
+   "M-16",
+   "회차 목록 권장: 새로 만들기, 일괄 작업(선택·삭제·내보내기), 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "D-02",
+   "Windows 로또 생성 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "D-03",
+   "Windows 연금 생성 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "D-04",
+   "Windows 통계 권장: 내보내기(CSV·PDF), 할 일·알림(지표가 행동으로 이어지게)"
+  ],
+  [
+   "🟡",
+   "D-07",
+   "Windows 구매등록 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "🟡",
+   "D-08",
+   "Windows 회차 상세 권장: 관련 항목 탭, 활동·변경 이력"
+  ],
+  [
+   "🟡",
+   "D-11",
+   "Windows 온보딩·19세 확인 권장: 중간 저장·이어하기"
+  ],
+  [
+   "🟡",
+   "D-13",
+   "Windows 알림함(P1) 권장: 새로 만들기, 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "D-14",
+   "Windows 회차 목록 권장: 새로 만들기, 일괄 작업(선택·삭제·내보내기), 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "W-01",
+   "웹 랜딩(P1 가정) 권장: 근거(사례·수치·후기 — 실제만), 가격"
+  ],
+  [
+   "🟡",
+   "W-03",
+   "관리자 수집 검토 목록(P1) 권장: 일괄 작업(선택·삭제·내보내기), 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "W-04",
+   "관리자 수집 검토 상세(P1) 권장: 관련 항목 탭"
+  ],
+  [
+   "ℹ️",
+   "M-05",
+   "온보딩·19세 확인 — 들어오는 경로 없음(메뉴에서만 진입이면 무시)"
+  ],
+  [
+   "ℹ️",
+   "D-11",
+   "Windows 온보딩·19세 확인 — 들어오는 경로 없음(메뉴에서만 진입이면 무시)"
+  ]
+ ]
+}

@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant U as 사용자 화면
+    participant A as app-core
+    participant E as "엔진(기기)"
+    participant L as 로컬 저장
+    U->>A: 번호 생성 요청
+    A->>E: 번호 생성 호출
+    E-->>A: 생성된 번호
+    A-->>U: 결과 표시
+    A->>L: 결과 로컬 저장
+    Note over U,L: 네트워크 불필요, 게스트 가능

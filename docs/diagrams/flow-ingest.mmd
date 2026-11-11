@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    participant W as 워커
+    participant V as 검증
+    participant D as DB
+    participant C as 통계 캐시
+    participant N as 알림
+    participant M as 관리자
+    W->>W: 공식 결과 수집
+    W->>D: ingestion_runs 기록 (source_url, fetched_at, raw_payload, payload_sha256)
+    W->>V: 회차 데이터 전달
+    V->>V: 회차·날짜·번호 범위·중복·연금 0 보존 검사
+    alt 검증 통과
+        V->>D: draws_* UPSERT (source_url, source_verified_at), run 상태 verified
+        D->>C: 통계 캐시 재계산
+        C->>N: 알림 발송
+    else 검증 실패
+        V->>D: run 상태 needs_review (validation_errors)
+        D->>N: 해당 게임 알림 발송 중단
+        Note over N,M: 승인 전까지 발송 중단 유지
+        M->>V: A-16 재검증 (출처 재수집, raw_payload 대조)
+        alt 재검증 통과
+            V->>D: reverified_at 기록
+            M->>V: A-12 승인 (재검증 통과 건만)
+            V->>D: draws_* UPSERT
+            D->>C: 통계 캐시 재계산
+            C->>N: 알림 재개
+        else 대조 불일치
+            V->>D: reverify_errors 기록
+            V-->>M: A-12 차단 (409 NOT_REVERIFIED)
+        else 출처 접속 실패
+            V-->>M: 503 (재검증 미완료, 승인 불가)
+        end
+    end

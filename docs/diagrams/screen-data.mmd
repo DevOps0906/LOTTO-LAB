@@ -1,0 +1,180 @@
+flowchart LR
+  subgraph SC["화면"]
+    n_M_01["M-01 홈"]
+    n_M_02["M-02 로또 생성"]
+    n_M_03["M-03 연금 생성"]
+    n_M_04["M-04 통계"]
+    n_M_05["M-05 온보딩·19세 확인"]
+    n_M_06["M-06 로그인·가입·재설정"]
+    n_M_07["M-07 내 번호"]
+    n_M_08["M-08 내 번호 상세·당첨확인"]
+    n_M_09["M-09 수동 구매등록·확인"]
+    n_M_10["M-10 QR 구매등록(P1)"]
+    n_M_11["M-11 공식 회차 상세"]
+    n_M_12["M-12 설정·알림 설정"]
+    n_M_13["M-13 알림함(P1)"]
+    n_M_14["M-14 로컬·클라우드 병합(P1)"]
+    n_M_15["M-15 추천 복권 선택"]
+    n_M_16["M-16 회차 목록"]
+    n_D_01["D-01 Windows 대시보드"]
+    n_D_02["D-02 Windows 로또 생성"]
+    n_D_03["D-03 Windows 연금 생성"]
+    n_D_04["D-04 Windows 통계"]
+    n_D_05["D-05 Windows 내 번호"]
+    n_D_06["D-06 Windows 내 번호 상세"]
+    n_D_07["D-07 Windows 구매등록"]
+    n_D_08["D-08 Windows 회차 상세"]
+    n_D_09["D-09 Windows 설정"]
+    n_D_10["D-10 Windows 로그인"]
+    n_D_11["D-11 Windows 온보딩·19세 확인"]
+    n_D_12["D-12 Windows 동기화(P1)"]
+    n_D_13["D-13 Windows 알림함(P1)"]
+    n_D_14["D-14 Windows 회차 목록"]
+    n_W_01["W-01 웹 랜딩(P1 가정)"]
+    n_W_02["W-02 관리자 로그인(P1)"]
+    n_W_03["W-03 관리자 수집 검토 목록(P1)"]
+    n_W_04["W-04 관리자 수집 검토 상세(P1)"]
+  end
+  subgraph AP["API"]
+    n_api_A_01["A-01 GET /v1/draws/lotto/latest"]
+    n_api_A_02["A-02 GET /v1/draws/pension/latest"]
+    n_api_A_03["A-03 GET /v1/draws/{game}/{round}"]
+    n_api_A_06["A-06 GET /v1/statistics/{game}"]
+    n_api_A_07["A-07 POST /v1/tickets"]
+    n_api_A_08["A-08 GET /v1/tickets"]
+    n_api_A_09["A-09 POST /v1/tickets/check"]
+    n_api_A_11["A-11 GET /v1/admin/ingestions"]
+    n_api_A_12["A-12 POST /v1/admin/ingestions/{id}/approve"]
+    n_api_A_13["A-13 POST /v1/admin/ingestions/{id}/reject"]
+    n_api_A_14["A-14 PATCH /v1/tickets/{id}"]
+    n_api_A_15["A-15 POST /v1/waitlist"]
+    n_api_A_16["A-16 POST /v1/admin/ingestions/{id}/reverify"]
+  end
+  subgraph DB["데이터"]
+    n_t_draw_checks[("draw_checks")]
+    n_t_draws_lotto[("draws_lotto")]
+    n_t_draws_pension[("draws_pension")]
+    n_t_generated_batches[("generated_batches")]
+    n_t_generated_numbers[("generated_numbers")]
+    n_t_generator_profiles[("generator_profiles")]
+    n_t_ingestion_runs[("ingestion_runs")]
+    n_t_push_devices[("push_devices")]
+    n_t_saved_tickets[("saved_tickets")]
+    n_t_statistics_cache[("statistics_cache")]
+    n_t_waitlist_signups[("waitlist_signups")]
+  end
+  n_M_01 --> n_api_A_01
+  n_M_01 --> n_api_A_02
+  n_M_01 --> n_api_A_08
+  n_M_01 -.-> n_t_draws_lotto
+  n_M_01 -.-> n_t_draws_pension
+  n_M_01 -.-> n_t_saved_tickets
+  n_M_01 -.-> n_t_draw_checks
+  n_M_02 --> n_api_A_06
+  n_M_02 --> n_api_A_07
+  n_M_02 -.-> n_t_generator_profiles
+  n_M_02 -.-> n_t_generated_batches
+  n_M_02 -.-> n_t_generated_numbers
+  n_M_02 -.-> n_t_saved_tickets
+  n_M_03 --> n_api_A_06
+  n_M_03 --> n_api_A_07
+  n_M_03 -.-> n_t_generator_profiles
+  n_M_03 -.-> n_t_generated_batches
+  n_M_03 -.-> n_t_generated_numbers
+  n_M_03 -.-> n_t_saved_tickets
+  n_M_04 --> n_api_A_06
+  n_M_04 --> n_api_A_03
+  n_M_04 -.-> n_t_statistics_cache
+  n_M_04 -.-> n_t_draws_lotto
+  n_M_04 -.-> n_t_draws_pension
+  n_M_07 --> n_api_A_08
+  n_M_07 --> n_api_A_09
+  n_M_07 -.-> n_t_generated_batches
+  n_M_07 -.-> n_t_generated_numbers
+  n_M_07 -.-> n_t_saved_tickets
+  n_M_07 -.-> n_t_draw_checks
+  n_M_08 --> n_api_A_07
+  n_M_08 --> n_api_A_14
+  n_M_08 --> n_api_A_09
+  n_M_08 --> n_api_A_03
+  n_M_08 -.-> n_t_saved_tickets
+  n_M_08 -.-> n_t_draw_checks
+  n_M_08 -.-> n_t_draws_lotto
+  n_M_08 -.-> n_t_draws_pension
+  n_M_09 --> n_api_A_07
+  n_M_09 --> n_api_A_14
+  n_M_09 -.-> n_t_saved_tickets
+  n_M_10 --> n_api_A_07
+  n_M_10 -.-> n_t_saved_tickets
+  n_M_11 --> n_api_A_03
+  n_M_11 -.-> n_t_draws_lotto
+  n_M_11 -.-> n_t_draws_pension
+  n_M_12 -.-> n_t_push_devices
+  n_M_14 -.-> n_t_saved_tickets
+  n_M_14 -.-> n_t_generated_batches
+  n_M_14 -.-> n_t_generated_numbers
+  n_M_15 -.-> n_t_generator_profiles
+  n_M_16 -.-> n_t_draws_lotto
+  n_M_16 -.-> n_t_draws_pension
+  n_D_01 --> n_api_A_01
+  n_D_01 --> n_api_A_02
+  n_D_01 --> n_api_A_08
+  n_D_01 -.-> n_t_saved_tickets
+  n_D_01 -.-> n_t_draw_checks
+  n_D_01 -.-> n_t_draws_lotto
+  n_D_01 -.-> n_t_draws_pension
+  n_D_02 --> n_api_A_06
+  n_D_02 --> n_api_A_07
+  n_D_02 -.-> n_t_generator_profiles
+  n_D_02 -.-> n_t_generated_batches
+  n_D_02 -.-> n_t_generated_numbers
+  n_D_02 -.-> n_t_saved_tickets
+  n_D_03 --> n_api_A_06
+  n_D_03 --> n_api_A_07
+  n_D_03 -.-> n_t_generator_profiles
+  n_D_03 -.-> n_t_generated_batches
+  n_D_03 -.-> n_t_generated_numbers
+  n_D_03 -.-> n_t_saved_tickets
+  n_D_04 --> n_api_A_06
+  n_D_04 --> n_api_A_03
+  n_D_04 -.-> n_t_statistics_cache
+  n_D_04 -.-> n_t_draws_lotto
+  n_D_04 -.-> n_t_draws_pension
+  n_D_05 --> n_api_A_08
+  n_D_05 --> n_api_A_09
+  n_D_05 -.-> n_t_generated_batches
+  n_D_05 -.-> n_t_generated_numbers
+  n_D_05 -.-> n_t_saved_tickets
+  n_D_05 -.-> n_t_draw_checks
+  n_D_06 --> n_api_A_07
+  n_D_06 --> n_api_A_14
+  n_D_06 --> n_api_A_09
+  n_D_06 --> n_api_A_03
+  n_D_06 -.-> n_t_saved_tickets
+  n_D_06 -.-> n_t_draw_checks
+  n_D_06 -.-> n_t_draws_lotto
+  n_D_06 -.-> n_t_draws_pension
+  n_D_07 --> n_api_A_07
+  n_D_07 --> n_api_A_14
+  n_D_07 -.-> n_t_saved_tickets
+  n_D_08 --> n_api_A_03
+  n_D_08 -.-> n_t_draws_lotto
+  n_D_08 -.-> n_t_draws_pension
+  n_D_09 -.-> n_t_push_devices
+  n_D_12 -.-> n_t_saved_tickets
+  n_D_12 -.-> n_t_generated_batches
+  n_D_12 -.-> n_t_generated_numbers
+  n_D_14 -.-> n_t_draws_lotto
+  n_D_14 -.-> n_t_draws_pension
+  n_W_01 --> n_api_A_15
+  n_W_01 -.-> n_t_waitlist_signups
+  n_W_03 --> n_api_A_11
+  n_W_03 -.-> n_t_ingestion_runs
+  n_W_04 --> n_api_A_11
+  n_W_04 --> n_api_A_16
+  n_W_04 --> n_api_A_12
+  n_W_04 --> n_api_A_13
+  n_W_04 -.-> n_t_ingestion_runs
+  n_W_04 -.-> n_t_draws_lotto
+  n_W_04 -.-> n_t_draws_pension
+  n_W_04 -.-> n_t_statistics_cache

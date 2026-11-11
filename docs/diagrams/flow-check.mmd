@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant A as 앱
+    participant L as "lottery-core (판정 함수)"
+    participant D as DB
+    participant F as "Edge Function (A-09)"
+    participant N as 알림
+    Note over A,D: P0 — 비로그인·기기 판정 (공개 회차 데이터)
+    A->>D: 회차 당첨 번호 조회 (anon SELECT, RLS)
+    D-->>A: 회차 당첨 번호
+    A->>L: 등록 번호와 회차 비교 (기기)
+    L-->>A: 판정 결과
+    Note over A,N: P1 — 로그인 사용자 서버 판정 (같은 판정 함수)
+    A->>F: 판정 요청 (로그인 JWT)
+    F->>D: 회차 당첨 번호 조회 (서버 키)
+    D-->>F: 회차 당첨 번호
+    F->>L: 등록 번호와 회차 비교 (서버)
+    L-->>F: 판정 결과
+    F->>D: 판정 이력 저장 (draw_checks, ticket_id + draw_no 누적)
+    F->>N: 푸시 알림
+    F-->>A: 판정 결과
