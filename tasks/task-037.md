@@ -8,12 +8,14 @@
 | 보안 영향 | 새 의존성(라이선스·공급망) |
 | 담당 | builder → tester(속성 테스트) |
 | 근거 | `docs/adr/0005-fortune-numbers.md` · `docs/adr/0002-engine-on-device.md` · `docs/01_PRD.md#6`·`#7` Q7 |
-| 쓰기 허용 | `packages/fortune-engine/**` |
+| 쓰기 허용 | `packages/fortune-engine/**`, `eslint.config.mjs`(ALLOWED에 fortune-engine 층 추가), `packages/app-core/package.json`(의존 추가), 루트 `pnpm-lock.yaml` |
 
 ## 할 것
 - 테마(별자리 12궁·띠 12지·생년월일·기념일·꿈 키워드 사전)와 사주(양/음력·시각 선택 → 천간지지·오행) 입력 → 결정적 시드(입력+날짜) → `lotto-engine`에 난수 원천 주입, 고정 번호 조합, 출처 `method` 반환
 - 순수 함수(네트워크·저장소·시각 접근 없음, 날짜는 인자로 받음)
 - 출력은 로또(6개)와 연금(조 1~5 + 6자리 문자열, `pension-engine`) 모두. 하루 1세트: 같은 입력·같은 날짜 → 같은 결과(사용자 결정, ADR-0005)
+
+- 팀장 결정: ADR-0005 '착수 결정' ①~⑧ 그대로. 완료 조건에 결정성·골든 벡터(하위 엔진 버전 포함)·시드 비노출·정규화(전각·공백)·꿈 사전 금지 문구 검사·자체 작성 근거 주석 추가. 만세력은 task-046
 
 ## 하지 않을 것
 - AI 해몽(P2) · 서버 호출 · 입력값 저장 · '당첨'·'운이 오르는' 류 문구(`01#6`)

@@ -63,7 +63,7 @@ lotto-lab/                      # pnpm workspaces + Turborepo
 │   └── functions/              # Edge Function /v1/*
 └── docs/
 ```
-- 의존 방향: `apps` → `ui` → `app-core` → (`lotto-engine`·`pension-engine`·`statistics`·`validation`) → `lottery-core`(엔진·통계만) → `types`. 같은 층끼리·역방향 import 금지(루트 `eslint.config.mjs`가 강제).
+- 의존 방향: `apps` → `ui` → `app-core` → `fortune-engine`(P1, ADR-0005 — 하위 엔진 둘만 호출) → (`lotto-engine`·`pension-engine`·`statistics`·`validation`) → `lottery-core`(엔진·통계만) → `types`. 같은 층끼리·역방향 import 금지(루트 `eslint.config.mjs`가 강제).
 
 ## 5. 플랫폼별 네이티브 기능
 | 기능 | 모바일 (Capacitor) | Windows (Tauri) | 웹 | 우선순위 |
