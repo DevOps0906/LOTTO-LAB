@@ -24,6 +24,7 @@
 | A-15 | POST | `/v1/waitlist` | `email`, `consent_marketing:true`, `age_confirmed:true`(만 19세 이상), `turnstile_token`(R21) | `202`(본문 없음, 중복 이메일도 동일) | 공개(anon) | 400, 429 | `waitlist_signups`(INSERT만) | EF |
 | A-16 | POST | `/v1/admin/ingestions/{id}/reverify` | path `id` | run + 재검증 결과(`reverified_at`, `reverify_errors`) | 관리자 + MFA | 401, 403, 404, 409(이미 처리), 503(출처 접속 실패) | `ingestion_runs` | EF |
 | A-17 | GET · PUT · DELETE | `/v1/fortune-profile` | PUT: `birth_date`, `calendar`(solar\|lunar), `is_leap_month?`, `birth_time?`(모르면 NULL), `consented_at`(동의 필수) | 본인 `fortune_profiles` 1행(GET 0행 → 프로필 입력 안내) | 로그인(본인 행만, RLS). 사주 번호 계산은 기기 `fortune-engine`(ADR-0005), 서버 계산 없음 | 400, 401 | `fortune_profiles` | RLS (P1) |
+| A-18 | GET · POST | `/v1/waitlist/unsubscribe` | 메일 링크의 `e`(email_norm), `t`(HMAC-SHA256(email_norm, UNSUBSCRIBE_SECRET)) — GET은 확인 화면, POST가 삭제 | 삭제 완료 안내(행이 없어도 같은 응답) | 공개(서명 토큰) | 400(서명 불일치), 429 | `waitlist_signups`(DELETE) | EF |
 
 - 연금 번호(`digits`, `bonus_digits`, `ticket_data`)는 요청·응답 모두 **JSON 문자열**. 숫자 변환 금지 → [`05_DATA_MODEL.md#4`](05_DATA_MODEL.md).
 - `prizes`(등위별 당첨금·인원)·`source_url` 형식 → [`05_DATA_MODEL.md#2`](05_DATA_MODEL.md).

@@ -1,53 +1,17 @@
 {
  "version": "1",
- "generated": "2026-11-12T05:51:57+00:00",
+ "generated": "2026-11-12T05:57:18+00:00",
  "docs": "docs",
  "tokens": "packages/design-tokens/tokens.css",
  "sources": {
-  "docs/03_SCREENS_UX.md": "7ab95cef535f",
-  "docs/04_API.md": "521d9e51a562",
+  "docs/03_SCREENS_UX.md": "a6401356760e",
+  "docs/04_API.md": "b0272205bebf",
   "docs/05_DATA_MODEL.md": "6ce34231d739"
  },
  "changed": [
-  "M-01",
-  "M-02",
-  "M-03",
-  "M-04",
-  "M-05",
-  "M-06",
-  "M-07",
-  "M-08",
-  "M-09",
-  "M-10",
-  "M-11",
-  "M-12",
-  "M-13",
-  "M-14",
-  "M-15",
-  "M-16",
-  "D-01",
-  "D-02",
-  "D-03",
-  "D-04",
-  "D-05",
-  "D-06",
-  "D-07",
-  "D-08",
-  "D-09",
-  "D-10",
-  "D-11",
-  "D-12",
-  "D-13",
-  "D-14",
-  "W-01",
-  "W-02",
-  "W-03",
-  "W-04",
   "M-17",
   "M-18",
-  "M-19",
   "D-15",
-  "D-16",
   "D-17"
  ],
  "removed": [],
@@ -1819,6 +1783,14 @@
    "purpose": "별자리·띠·날짜·꿈 테마로 오늘의 번호 생성",
    "blocks": [
     {
+     "type": "tab",
+     "label": "로또·연금",
+     "items": [
+      "로또",
+      "연금"
+     ]
+    },
+    {
      "type": "header",
      "label": "",
      "items": []
@@ -1961,7 +1933,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "e210d2eaf40a",
+   "hash": "f075f312af0c",
    "wireframe": "design/wireframes/M-17.html"
   },
   "M-18": {
@@ -1971,6 +1943,14 @@
    "route": "/m/fortune/profile",
    "purpose": "동의 후 사주 계산용 프로필 저장·삭제",
    "blocks": [
+    {
+     "type": "tab",
+     "label": "로또·연금",
+     "items": [
+      "로또",
+      "연금"
+     ]
+    },
     {
      "type": "header",
      "label": "",
@@ -2075,7 +2055,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "ee5e1bf2fd2a",
+   "hash": "20ab8d34ddec",
    "wireframe": "design/wireframes/M-18.html"
   },
   "M-19": {
@@ -3853,6 +3833,14 @@
    "purpose": "좌측 테마 입력·우측 오늘의 번호",
    "blocks": [
     {
+     "type": "tab",
+     "label": "로또·연금",
+     "items": [
+      "로또",
+      "연금"
+     ]
+    },
+    {
      "type": "header",
      "label": "",
      "items": []
@@ -3992,7 +3980,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "722e3b1ef298",
+   "hash": "ea94277ad298",
    "wireframe": "design/wireframes/D-15.html"
   },
   "D-16": {
@@ -4133,6 +4121,14 @@
    "route": "/desktop/fortune/saju",
    "purpose": "좌측 프로필 요약·우측 오늘의 번호",
    "blocks": [
+    {
+     "type": "tab",
+     "label": "로또·연금",
+     "items": [
+      "로또",
+      "연금"
+     ]
+    },
     {
      "type": "header",
      "label": "",
@@ -4276,7 +4272,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "71e36a469ee7",
+   "hash": "53d14de9a796",
    "wireframe": "design/wireframes/D-17.html"
   },
   "W-01": {
@@ -5426,6 +5422,23 @@
     "구현": "RLS (P1)"
    },
    "source": "docs/04_API.md"
+  },
+  "A-18": {
+   "id": "A-18",
+   "method": "GET · POST",
+   "path": "/v1/waitlist/unsubscribe",
+   "row": {
+    "ID": "A-18",
+    "메서드": "GET · POST",
+    "경로": "/v1/waitlist/unsubscribe",
+    "입력": "메일 링크의 `e`(email_norm), `t`(HMAC-SHA256(email_norm, UNSUBSCRIBE_SECRET)) — GET은 확인 화면, POST가 삭제",
+    "출력": "삭제 완료 안내(행이 없어도 같은 응답)",
+    "권한": "공개(서명 토큰)",
+    "오류": "400(서명 불일치), 429",
+    "사용 테이블": "waitlist_signups`(DELETE)",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
   }
  },
  "tables": {
@@ -5639,7 +5652,7 @@
   [
    "ℹ️",
    "M-17",
-   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+   "모르는 블록(회색 상자로 표시): tab, 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
   ],
   [
    "🟡",
@@ -5649,7 +5662,7 @@
   [
    "ℹ️",
    "M-18",
-   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+   "모르는 블록(회색 상자로 표시): tab, 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
   ],
   [
    "🟡",
@@ -5714,7 +5727,7 @@
   [
    "ℹ️",
    "D-15",
-   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+   "모르는 블록(회색 상자로 표시): tab, 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
   ],
   [
    "🟡",
@@ -5734,7 +5747,7 @@
   [
    "ℹ️",
    "D-17",
-   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+   "모르는 블록(회색 상자로 표시): tab, 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
   ],
   [
    "🟡",
