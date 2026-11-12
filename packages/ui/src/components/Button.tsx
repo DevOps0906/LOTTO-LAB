@@ -1,8 +1,8 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentPropsWithRef } from "react";
 
 export type ButtonVariant = "primary" | "secondary" | "pension" | "danger";
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = ComponentPropsWithRef<"button"> & {
   /** primary=로또·기본 강조, pension=연금복권 맥락, secondary=테두리 버튼, danger=삭제 등 */
   variant?: ButtonVariant;
   /** 부모 폭 전체 */
