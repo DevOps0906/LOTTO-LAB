@@ -21,5 +21,5 @@
 - 번호 생성 로직(task-013·014), 서버 A-09(P1)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/lottery-core test` 통과(등위별 예제 + 속성 테스트: 같은 시드 → 같은 결과)
-- [ ] `pnpm --filter ./packages/lottery-core test -- --coverage` 리포트 생성(기준치는 팀장 결정 필요)
+- [x] `pnpm --filter ./packages/lottery-core test` 통과(등위별 예제 + 속성 테스트: 같은 시드 → 같은 결과)
+- [x] `pnpm --filter ./packages/lottery-core test -- --coverage` 리포트 생성(기준치는 팀장 결정 필요)

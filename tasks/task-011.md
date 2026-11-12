@@ -20,5 +20,5 @@
 - 엔진 로직, 서버 코드
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/validation test` 통과: `"000719"` 왕복 보존, `719`(number) 거부, 중복 번호 거부
-- [ ] `pnpm typecheck` 통과
+- [x] `pnpm --filter ./packages/validation test` 통과: `"000719"` 왕복 보존, `719`(number) 거부, 중복 번호 거부
+- [x] `pnpm typecheck` 통과
