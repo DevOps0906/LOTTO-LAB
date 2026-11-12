@@ -72,6 +72,56 @@ pnpm workspaces(`apps/*`·`packages/*`) + Turborepo. 내부 패키지는 `@lotto
 - 라이선스(`pnpm licenses list`, 2026-11-12): GPL·AGPL 없음. 새 도구(turbo·eslint·typescript-eslint·@eslint/js·globals)는 MIT, TypeScript는 Apache-2.0. 예외 3건(sharp LGPL 바이너리·lightningcss MPL-2.0·caniuse-lite CC-BY-4.0)은 `apps/web/README.md#라이선스` 판단 유지.
 - 메모: `lottery-core`를 Edge Function(Deno)에서 소비하는 방식은 task-012에서 정한다.
 
+## 앱 실행하기 (Tauri · Capacitor)
+
+### 0. 공통 준비 (처음 한 번) — 명령은 Git Bash 기준(PowerShell은 `cp` 대신 `copy`)
+| 준비물 | 확인 명령 | 용도 |
+|---|---|---|
+| Node 20.9+ · pnpm 10.34.8 | `node -v` · `pnpm -v` | 전체 |
+| Docker Desktop(실행 중) | `docker info` | 로컬 Supabase |
+| JDK 21 · Android SDK(platform 36, `ANDROID_HOME` 설정) | `java -version` · `echo %ANDROID_HOME%` | 모바일(Capacitor) |
+| Rust stable(MSVC) · Visual Studio Build Tools(C++) · WebView2 런타임 | `rustc -V` | Windows(Tauri) |
+
+```bash
+pnpm install --frozen-lockfile          # 저장소 루트에서
+npx supabase@3.1.0 start                # 로컬 Supabase(DB·API) 실행 — API http://127.0.0.1:54521
+npx supabase@3.1.0 status               # 출력의 Publishable key(sb_publishable_...)를 복사
+```
+각 앱 폴더에서 `.env.example`을 `.env.local`로 복사하고 `VITE_SUPABASE_PUBLISHABLE_KEY`에 위 키를 넣는다(`.env.local`은 커밋되지 않음). 서버 키(`sb_secret_...`)는 절대 넣지 않는다. 키 없이 실행하면 앱은 뜨고 "서버 연결 설정이 없습니다" 안내만 보인다. 로컬 DB에는 합성(가짜) 회차 시드가 들어 있다.
+
+### 1. Windows 앱 (Tauri 2) — `apps/desktop`
+```bash
+cd apps/desktop
+cp .env.example .env.local              # 키 입력
+pnpm tauri dev                          # 개발 실행: Vite(127.0.0.1:5174) + 앱 창이 뜸, 코드 저장 시 자동 반영
+pnpm tauri build --debug --no-bundle    # 디버그 실행 파일: src-tauri/target/debug/lotto-lab-desktop.exe
+```
+- 첫 `tauri dev`는 Rust 크레이트를 내려받아 빌드하므로 몇 분 걸린다.
+- 디버그 exe는 운영 CSP를 써서 로컬 Supabase에 연결하지 않는다(화면 확인용). 데이터까지 보려면 `pnpm tauri dev`를 쓴다.
+- 배포용 설치본(MSI·NSIS)은 `pnpm build:release` — 운영 env 필요, 절차는 [apps/desktop/README.md](apps/desktop/README.md#릴리스-빌드).
+
+### 2. 모바일 앱 (Capacitor 8, Android) — `apps/mobile`
+```bash
+cd apps/mobile
+cp .env.example .env.local              # 키 입력
+pnpm dev                                # 브라우저 미리보기: http://127.0.0.1:5173 (개발자 도구에서 휴대폰 크기로 확인)
+pnpm build && pnpm exec cap sync android        # 웹 빌드를 Android 프로젝트로 복사
+pnpm exec cap run android               # 연결된 기기·에뮬레이터에 설치·실행(기기 선택 목록이 뜸)
+pnpm exec cap open android              # 또는 Android Studio로 열어 ▶ 실행
+cd android && gradlew.bat assembleDebug # APK만 만들기: android/app/build/outputs/apk/debug/app-debug.apk
+```
+- 기기·에뮬레이터에서는 로컬 Supabase에 연결되지 않는다: 앱이 보안상 평문 http를 막아 두었고(cleartext false), 기기 안의 `127.0.0.1`은 PC가 아니라 기기 자신이다. 그래서 기기 실행은 **화면·동작 확인용**이고, 로컬 데이터 연동 확인은 `pnpm dev`(브라우저)에서 한다. 실제 데이터 연동은 운영(https) Supabase가 준비된 뒤 확인한다.
+- `CAP_SERVER_URL`로 라이브 리로드를 쓴 뒤에는 반드시 값 없이 `cap sync android`를 다시 실행한다(남아 있으면 릴리스 점검이 실패).
+- 배포용 빌드는 `pnpm build:release` — 운영 env 필요, 절차는 [apps/mobile/README.md](apps/mobile/README.md#릴리스-빌드).
+
+### 3. 웹 랜딩 (Next.js) — `apps/web`
+```bash
+pnpm --filter @lotto-lab/web dev        # http://localhost:3000
+```
+
+### 끄기
+`Ctrl+C`로 개발 서버를 멈추고, `npx supabase@3.1.0 stop`으로 로컬 Supabase를 끈다.
+
 ## 디자인 시안
 
 ### 모바일 (원본 시안 — `LOTTO_LAB_Planning_Design.pdf`)
