@@ -16,6 +16,7 @@ flowchart LR
     n_M_14["M-14 로컬·클라우드 병합(P1)"]
     n_M_15["M-15 추천 복권 선택"]
     n_M_16["M-16 회차 목록"]
+    n_M_20["M-20 광고 동의(P1, Android)"]
     n_M_17["M-17 테마 번호(P1)"]
     n_M_18["M-18 사주 프로필(P1)"]
     n_M_19["M-19 사주 번호(P1)"]
@@ -57,7 +58,7 @@ flowchart LR
     n_api_A_15["A-15 POST /v1/waitlist"]
     n_api_A_16["A-16 POST /v1/admin/ingestions/{id}/reverify"]
     n_api_A_17["A-17 GET · PUT · DELETE /v1/fortune-profile"]
-    n_api_A_19["A-19 POST /v1/waitlist/confirm"]
+    n_api_A_19["A-19 POST /v1/waitlist-confirm`(별도 EF, verify_jwt=false)"]
   end
   subgraph DB["데이터"]
     n_t_draw_checks[("draw_checks")]

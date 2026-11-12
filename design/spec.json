@@ -1,15 +1,40 @@
 {
  "version": "1",
- "generated": "2026-11-12T06:13:27+00:00",
+ "generated": "2026-11-12T09:14:54+00:00",
  "docs": "docs",
  "tokens": "packages/design-tokens/tokens.css",
  "sources": {
-  "docs/03_SCREENS_UX.md": "0dcc61228e06",
-  "docs/04_API.md": "7f12dc35c68c",
-  "docs/05_DATA_MODEL.md": "bd6ede98e8fc"
+  "docs/03_SCREENS_UX.md": "19f9ca677fb7",
+  "docs/04_API.md": "660ffcb1fdda",
+  "docs/05_DATA_MODEL.md": "0d9fa791674f"
  },
  "changed": [
-  "W-05"
+  "M-01",
+  "M-02",
+  "M-03",
+  "M-04",
+  "M-05",
+  "M-07",
+  "M-08",
+  "M-09",
+  "M-10",
+  "M-12",
+  "M-14",
+  "M-15",
+  "M-16",
+  "M-17",
+  "M-19",
+  "D-01",
+  "D-02",
+  "D-03",
+  "D-05",
+  "D-06",
+  "D-07",
+  "D-12",
+  "D-15",
+  "D-17",
+  "W-05",
+  "M-20"
  ],
  "removed": [],
  "screens": {
@@ -122,6 +147,15 @@
       "알림",
       "미갱신 안내"
      ]
+    },
+    {
+     "type": "ad",
+     "label": "하단 고정 배너(P1 Android·Plus 이상 없음·DESIGN.md 4.8)",
+     "items": [
+      "하단 고정 배너(P1 Android",
+      "Plus 이상 없음",
+      "DESIGN.md 4.8)"
+     ]
     }
    ],
    "data": [
@@ -159,7 +193,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "9e66119bb895",
+   "hash": "681e26debcc3",
    "wireframe": "design/wireframes/M-01.html"
   },
   "M-02": {
@@ -286,7 +320,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "e0b0b2f5a973",
+   "hash": "d05e805e23fc",
    "wireframe": "design/wireframes/M-02.html"
   },
   "M-03": {
@@ -413,7 +447,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "444eeb8a761f",
+   "hash": "3741d843a3f9",
    "wireframe": "design/wireframes/M-03.html"
   },
   "M-04": {
@@ -520,6 +554,16 @@
      "items": [
       "선택 회차 상세"
      ]
+    },
+    {
+     "type": "ad",
+     "label": "하단 고정 배너·보상형 선택(예: 고급 통계 1회 열람)(P1 Android·Plus 이상 없음·DESIGN.md 4.8)",
+     "items": [
+      "하단 고정 배너",
+      "보상형 선택(예: 고급 통계 1회 열람)(P1 Android",
+      "Plus 이상 없음",
+      "DESIGN.md 4.8)"
+     ]
     }
    ],
    "data": [
@@ -547,7 +591,7 @@
     "할 일·알림(지표가 행동으로 이어지게)"
    ],
    "states_missing": [],
-   "hash": "af216e87332e",
+   "hash": "c043cf037b44",
    "wireframe": "design/wireframes/M-04.html"
   },
   "M-05": {
@@ -638,7 +682,8 @@
    "role": "첫 실행 누구나",
    "next": [
     "M-01",
-    "M-06"
+    "M-06",
+    "M-20"
    ],
    "states_combined": "",
    "source": "docs/03_SCREENS_UX.md",
@@ -648,7 +693,7 @@
     "중간 저장·이어하기"
    ],
    "states_missing": [],
-   "hash": "09b546fb7810",
+   "hash": "a633e3b78725",
    "wireframe": "design/wireframes/M-05.html"
   },
   "M-06": {
@@ -854,7 +899,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "b96138e83729",
+   "hash": "4d81f7ffb022",
    "wireframe": "design/wireframes/M-07.html"
   },
   "M-08": {
@@ -981,7 +1026,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "71bc3127540e",
+   "hash": "e67c33ce9db7",
    "wireframe": "design/wireframes/M-08.html"
   },
   "M-09": {
@@ -1061,7 +1106,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "5393b43beac7",
+   "hash": "066cf87ecb92",
    "wireframe": "design/wireframes/M-09.html"
   },
   "M-10": {
@@ -1179,7 +1224,7 @@
     "중간 저장·이어하기"
    ],
    "states_missing": [],
-   "hash": "3feadadb77d3",
+   "hash": "64c4829e5725",
    "wireframe": "design/wireframes/M-10.html"
   },
   "M-11": {
@@ -1362,6 +1407,18 @@
       "회원 푸시는 P1",
       "구매번호만 결과 알림"
      ]
+    },
+    {
+     "type": "link",
+     "label": "광고 동의 변경(M-20",
+     "items": [
+      "광고 동의 변경(M-20"
+     ]
+    },
+    {
+     "type": "p1)",
+     "label": "",
+     "items": []
     }
    ],
    "data": [
@@ -1381,7 +1438,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "486c173bb8a8",
+   "hash": "faeca7dfa4aa",
    "wireframe": "design/wireframes/M-12.html"
   },
   "M-13": {
@@ -1584,7 +1641,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "2bf6d59bbf88",
+   "hash": "b568c22ddc50",
    "wireframe": "design/wireframes/M-14.html"
   },
   "M-15": {
@@ -1687,7 +1744,7 @@
     "활동·변경 이력"
    ],
    "states_missing": [],
-   "hash": "6a188fc041cc",
+   "hash": "856eb122b6fd",
    "wireframe": "design/wireframes/M-15.html"
   },
   "M-16": {
@@ -1747,6 +1804,15 @@
      "items": [
       "회차 상세"
      ]
+    },
+    {
+     "type": "ad",
+     "label": "하단 고정 배너(P1 Android·Plus 이상 없음·DESIGN.md 4.8)",
+     "items": [
+      "하단 고정 배너(P1 Android",
+      "Plus 이상 없음",
+      "DESIGN.md 4.8)"
+     ]
     }
    ],
    "data": [
@@ -1769,8 +1835,89 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "f1025af242c7",
+   "hash": "62b0d8713c29",
    "wireframe": "design/wireframes/M-16.html"
+  },
+  "M-20": {
+   "id": "M-20",
+   "name": "광고 동의(P1, Android)",
+   "type_raw": "폼",
+   "route": "/m/consent/ads",
+   "purpose": "첫 실행 시 맞춤 광고 동의 여부 선택",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "광고는 홈·통계·회차 목록 하단 배너만·도박/복권 광고 차단·Plus 이상 광고 없음",
+     "items": [
+      "광고는 홈",
+      "통계",
+      "회차 목록 하단 배너만",
+      "도박",
+      "복권 광고 차단",
+      "Plus 이상 광고 없음"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "UMP 동의 양식(Google 제공)·맞춤/비맞춤 선택*",
+     "items": [
+      "UMP 동의 양식(Google 제공)",
+      "맞춤",
+      "비맞춤 선택*"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "확인",
+     "items": [
+      "확인"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소(비맞춤으로 계속)",
+     "items": [
+      "취소(비맞춤으로 계속)"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "거부해도 앱 기능 제한 없음·설정에서 변경 가능",
+     "items": [
+      "거부해도 앱 기능 제한 없음",
+      "설정에서 변경 가능"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "개인정보 처리방침(광고 식별자)",
+     "items": [
+      "개인정보 처리방침(광고 식별자)"
+     ]
+    }
+   ],
+   "data": [],
+   "api": [],
+   "role": "성인 확인 게스트/회원(M-05 통과 후)",
+   "next": [
+    "M-01",
+    "M-12"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "d1e5c133cfaf",
+   "wireframe": "design/wireframes/M-20.html"
   },
   "M-17": {
    "id": "M-17",
@@ -1930,7 +2077,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "f075f312af0c",
+   "hash": "e0e33d8efd0f",
    "wireframe": "design/wireframes/M-17.html"
   },
   "M-18": {
@@ -2202,7 +2349,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "781a433055cb",
+   "hash": "95b466a2c494",
    "wireframe": "design/wireframes/M-19.html"
   },
   "D-01": {
@@ -2380,7 +2527,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "86f8dd782445",
+   "hash": "837c238a2da0",
    "wireframe": "design/wireframes/D-01.html"
   },
   "D-02": {
@@ -2506,7 +2653,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "8cd25160390d",
+   "hash": "fa05fd20a10b",
    "wireframe": "design/wireframes/D-02.html"
   },
   "D-03": {
@@ -2632,7 +2779,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "dd5da1c9c90a",
+   "hash": "54a30c21c485",
    "wireframe": "design/wireframes/D-03.html"
   },
   "D-04": {
@@ -2921,7 +3068,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "96443c233e27",
+   "hash": "f29c8031c5c9",
    "wireframe": "design/wireframes/D-05.html"
   },
   "D-06": {
@@ -3050,7 +3197,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "8c054a3d3747",
+   "hash": "7534cd23a033",
    "wireframe": "design/wireframes/D-06.html"
   },
   "D-07": {
@@ -3133,7 +3280,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "0ab081bb20c3",
+   "hash": "67a4b74bd8a1",
    "wireframe": "design/wireframes/D-07.html"
   },
   "D-08": {
@@ -3621,7 +3768,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "4329bb044872",
+   "hash": "9081e68778a1",
    "wireframe": "design/wireframes/D-12.html"
   },
   "D-13": {
@@ -3977,7 +4124,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "ea94277ad298",
+   "hash": "19d04316f789",
    "wireframe": "design/wireframes/D-15.html"
   },
   "D-16": {
@@ -4269,7 +4416,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "53d14de9a796",
+   "hash": "5d77bfaca8fa",
    "wireframe": "design/wireframes/D-17.html"
   },
   "W-01": {
@@ -4768,7 +4915,7 @@
     "활동·변경 이력"
    ],
    "states_missing": [],
-   "hash": "bfa507d79a8c",
+   "hash": "406a0ded5e61",
    "wireframe": "design/wireframes/W-05.html"
   }
  },
@@ -4886,6 +5033,12 @@
    "로딩": "프로필 읽기·기기 계산 중 잠금",
    "오류": "세션 없음은 진입 차단·가입 유도·프로필 읽기 실패 재시도·고정 번호 충돌은 엔진 충돌 오류 안내",
    "성공": "번호 6개·고정 포함·출처 saju·고지 표시·선택 저장 완료(generated 상태)"
+  },
+  "M-20": {
+   "빈": "동의 양식 로드 전 안내·선택 전 확인 비활성",
+   "로딩": "UMP 양식 로드 중 표시",
+   "오류": "양식 로드 실패·오프라인은 광고 없이 M-01로 계속·다음 실행 때 재요청",
+   "성공": "선택한 동의 상태 저장 후 M-01"
   },
   "D-01": {
    "빈": "사용자 기록 없음은 생성/구매등록 CTA",
@@ -5318,7 +5471,7 @@
     "메서드": "POST",
     "경로": "/v1/tickets",
     "입력": "game, round, ticket_data, purchase_status`(favorite|purchased), `purchase_date?`, `amount_won?`, `source_number_id?`, `idempotency_key`(필수)",
-    "출력": "생성된 `saved_tickets` 행(201) · 중복 `idempotency_key`면 기존 행(200, R18)",
+    "출력": "생성된 `saved_tickets` 행(201) · 같은 `idempotency_key`+같은 내용이면 기존 행(200, R18), 같은 키+다른 내용이면 409 `IDEMPOTENCY_CONFLICT",
     "권한": "로그인(본인 행만, RLS)",
     "오류": "400, 401, 429",
     "사용 테이블": "saved_tickets",
@@ -5352,7 +5505,7 @@
     "메서드": "POST",
     "경로": "/v1/tickets/check",
     "입력": "ticket_ids[]` 또는 `round",
-    "출력": "[{ticket_id, draw_no, matched_rank, checked_at}]",
+    "출력": "[{ticket_id, draw_no, matched_rank, bonus_hit, checked_at}]`(낙첨 = rank NULL·bonus_hit false, 연금은 둘 다 가능)",
     "권한": "로그인 + 본인 티켓, `purchased`만 판정(원본 10장 5)",
     "오류": "400, 401, 404, 429, 503",
     "사용 테이블": "saved_tickets`, `draws_*`, `draw_checks`(서버만 INSERT)",
@@ -5436,7 +5589,7 @@
     "ID": "A-14",
     "메서드": "PATCH",
     "경로": "/v1/tickets/{id}",
-    "입력": "path `id`, `purchase_status:\"purchased\"`, `purchase_date`, `amount_won",
+    "입력": "path `id`, `purchase_status:\"purchased\"`, `purchase_date`(필수, `YYYY-MM-DD`), `amount_won?`(선택, 구매 금액 정수 원)",
     "출력": "갱신된 `saved_tickets` 행",
     "권한": "로그인(본인 행만, RLS). 허용 전환 favorite→purchased(R2), 역전환 금지(R19)",
     "오류": "400, 401, 404, 422",
@@ -5516,15 +5669,15 @@
   "A-19": {
    "id": "A-19",
    "method": "POST",
-   "path": "/v1/waitlist/confirm",
+   "path": "/v1/waitlist-confirm`(별도 EF, verify_jwt=false)",
    "row": {
     "ID": "A-19",
     "메서드": "POST",
-    "경로": "/v1/waitlist/confirm",
-    "입력": "token`(확인 메일 링크의 1회용 토큰, 웹 확인 화면 W-05가 버튼 클릭 시 전송 — 메일 보안 스캐너의 GET 자동 확인 방지)",
-    "출력": "200`(확정, 이미 확정도 동일)",
+    "경로": "/v1/waitlist-confirm`(별도 EF, verify_jwt=false)",
+    "입력": "token`(확인 메일 링크 `/waitlist/confirm#token=…` — 쿼리스트링 아님(접근 로그·Referer 유출 방지), 웹 W-05가 버튼 클릭 시 전송 — 스캐너 자동 확인 방지)",
+    "출력": "200`(확정, 같은 토큰 재제출로 이미 확정도 200)",
     "권한": "공개(토큰)",
-    "오류": "400 `INVALID_INPUT`(없음·만료·사용됨 구분 없이 동일), 429, 503",
+    "오류": "400 `INVALID_INPUT`(없음·만료 구분 없이 동일), 429(IP 키 `confirm:` 접두로 A-15와 분리), 503",
     "사용 테이블": "waitlist_signups`(UPDATE confirmed_at)",
     "구현": "EF"
    },
@@ -5564,8 +5717,9 @@
    "name": "generator_profiles",
    "row": {
     "테이블": "generator_profiles",
-    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `name text NOT NULL` · `config jsonb NOT NULL`(조건 프리셋, 원본 4.3·4.4) · `updated_at timestamptz",
-    "인덱스": "user_id"
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK ((select auth.uid()) = user_id)",
+    "쓰기 주체": "본인"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5573,8 +5727,9 @@
    "name": "generated_batches",
    "row": {
     "테이블": "generated_batches",
-    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int`(대상 회차) · `strategy text NOT NULL`(원본 5장 전략 키) · `method text NOT NULL DEFAULT 'random' CHECK(in 'random','condition','zodiac','birthday','dream','saju')`(생성 출처, ADR-0005) · `engine_version text NOT NULL",
-    "인덱스": "(`user_id`, `created_at desc`)"
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/DELETE 본인(추가 전용 — UPDATE 없음, 생성 이력 위조 방지)",
+    "쓰기 주체": "본인"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5583,7 +5738,7 @@
    "row": {
     "테이블": "generated_numbers",
     "anon": "없음",
-    "authenticated": "전체 작업 `EXISTS(batch.user_id = auth.uid())",
+    "authenticated": "SELECT/INSERT/DELETE `EXISTS(batch.user_id = (select auth.uid()))`(추가 전용)",
     "쓰기 주체": "본인"
    },
    "source": "docs/05_DATA_MODEL.md"
@@ -5592,8 +5747,9 @@
    "name": "saved_tickets",
    "row": {
     "테이블": "saved_tickets",
-    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int` · `ticket_data jsonb NOT NULL`(04#5 입력 검증 + CHECK: 연금 `digits` 문자열 6자리) · `purchase_status text NOT NULL CHECK(in 'favorite','purchased')` · `purchase_date date` · `amount_won int CHECK(>= 0)` · `source_number_id uuid FK→generated_numbers ON DELETE SET NULL`(생성 이력에서 저장한 경우) · `idempotency_key uuid NOT NULL` · UNIQUE(`user_id, idempotency_key`) (R2) — BEFORE UPDATE 트리거: `purchased`→`favorite` 전환 거부(→ 04 A-14 422 `INVALID_TRANSITION`, R19)",
-    "인덱스": "(`user_id`, `created_at desc`), (`game`, `round`, `purchase_status`)(판정 배치용), UNIQUE(`user_id, idempotency_key`)"
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/DELETE 본인 + UPDATE 본인·열 단위(`purchase_status`·`purchase_date`·`amount_won`)",
+    "쓰기 주체": "본인"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5627,13 +5783,12 @@
    },
    "source": "docs/05_DATA_MODEL.md"
   },
-  "push_devices": {
-   "name": "push_devices",
+  "push_devices`(task-008 범위 밖 — 알림 작업에서 계정 전환 시 토큰 이전 설계와 함께 생성)": {
+   "name": "push_devices`(task-008 범위 밖 — 알림 작업에서 계정 전환 시 토큰 이전 설계와 함께 생성)",
    "row": {
-    "테이블": "push_devices",
-    "anon": "없음",
-    "authenticated": "SELECT/INSERT/UPDATE/DELETE 본인",
-    "쓰기 주체": "본인 · 발송은 service_role"
+    "테이블": "push_devices`(task-008 범위 밖 — 알림 작업에서 계정 전환 시 토큰 이전 설계와 함께 생성)",
+    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `platform text NOT NULL CHECK(in 'android','ios','windows')` · `token text NOT NULL UNIQUE` · `notify_opt_in boolean NOT NULL DEFAULT false`(원본 10장 5 동의) · `last_seen_at timestamptz",
+    "인덱스": "user_id`, `token`(UNIQUE)"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5677,13 +5832,13 @@
    },
    "source": "docs/05_DATA_MODEL.md"
   },
-  "generator_profiles` · `generated_batches` · `saved_tickets": {
-   "name": "generator_profiles` · `generated_batches` · `saved_tickets",
+  "push_devices": {
+   "name": "push_devices",
    "row": {
-    "테이블": "generator_profiles` · `generated_batches` · `saved_tickets",
+    "테이블": "push_devices",
     "anon": "없음",
-    "authenticated": "SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK (auth.uid() = user_id)",
-    "쓰기 주체": "본인"
+    "authenticated": "SELECT/INSERT/UPDATE/DELETE 본인",
+    "쓰기 주체": "본인 · 발송은 service_role"
    },
    "source": "docs/05_DATA_MODEL.md"
   }
@@ -5693,6 +5848,11 @@
    "🟡",
    "M-01",
    "홈 권장: 이전 기간 대비(증감), 내보내기(CSV·PDF), 세그먼트·담당자 필터"
+  ],
+  [
+   "ℹ️",
+   "M-01",
+   "모르는 블록(회색 상자로 표시): ad"
   ],
   [
    "🟡",
@@ -5708,6 +5868,11 @@
    "🟡",
    "M-04",
    "통계 권장: 내보내기(CSV·PDF), 할 일·알림(지표가 행동으로 이어지게)"
+  ],
+  [
+   "ℹ️",
+   "M-04",
+   "모르는 블록(회색 상자로 표시): ad"
   ],
   [
    "🟡",
@@ -5730,6 +5895,11 @@
    "공식 회차 상세 권장: 관련 항목 탭, 활동·변경 이력"
   ],
   [
+   "ℹ️",
+   "M-12",
+   "모르는 블록(회색 상자로 표시): p1)"
+  ],
+  [
    "🟡",
    "M-13",
    "알림함(P1) 권장: 새로 만들기, 저장된 보기·열 설정"
@@ -5743,6 +5913,16 @@
    "🟡",
    "M-16",
    "회차 목록 권장: 새로 만들기, 일괄 작업(선택·삭제·내보내기), 저장된 보기·열 설정"
+  ],
+  [
+   "ℹ️",
+   "M-16",
+   "모르는 블록(회색 상자로 표시): ad"
+  ],
+  [
+   "🟡",
+   "M-20",
+   "광고 동의(P1, Android) 권장: 임시 저장(긴 폼)"
   ],
   [
    "🟡",

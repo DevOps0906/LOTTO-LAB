@@ -45,25 +45,28 @@ flowchart LR
     n_M_14["M-14 로컬·클라우드 병합(P1)<br/>/m/sync"]
     n_D_12["D-12 Windows 동기화(P1)<br/>/desktop/sync"]
   end
-  subgraph g7["성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)"]
+  subgraph g7["성인 확인 게스트/회원(M-05 통과 후)"]
+    n_M_20["M-20 광고 동의(P1, Android)<br/>/m/consent/ads"]
+  end
+  subgraph g8["성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)"]
     n_M_18["M-18 사주 프로필(P1)<br/>/m/fortune/profile"]
     n_M_19["M-19 사주 번호(P1)<br/>/m/fortune/saju"]
     n_D_16["D-16 Windows 사주 프로필(P1)<br/>/desktop/fortune/profile"]
     n_D_17["D-17 Windows 사주 번호(P1)<br/>/desktop/fortune/saju"]
   end
-  subgraph g8["공개"]
+  subgraph g9["공개"]
     n_W_01["W-01 웹 랜딩(P1 가정)<br/>/"]
   end
-  subgraph g9["운영 계정 인증 전"]
+  subgraph g10["운영 계정 인증 전"]
     n_W_02["W-02 관리자 로그인(P1)<br/>/admin/login"]
   end
-  subgraph g10["서버에서 관리자 역할 확인"]
+  subgraph g11["서버에서 관리자 역할 확인"]
     n_W_03["W-03 관리자 수집 검토 목록(P1)<br/>/admin/collections"]
   end
-  subgraph g11["서버에서 관리자 역할 확인·쓰기 재검사"]
+  subgraph g12["서버에서 관리자 역할 확인·쓰기 재검사"]
     n_W_04["W-04 관리자 수집 검토 상세(P1)<br/>/admin/collections/:id"]
   end
-  subgraph g12["공개(토큰)"]
+  subgraph g13["공개(토큰)"]
     n_W_05["W-05 사전알림 이메일 확인<br/>/waitlist/confirm"]
   end
   n_M_01 --> n_M_02
@@ -89,6 +92,7 @@ flowchart LR
   n_M_04 --> n_M_03
   n_M_05 --> n_M_01
   n_M_05 --> n_M_06
+  n_M_05 --> n_M_20
   n_M_06 --> n_M_01
   n_M_06 --> n_M_07
   n_M_06 --> n_M_12
@@ -127,6 +131,8 @@ flowchart LR
   n_M_15 --> n_M_19
   n_M_16 --> n_M_11
   n_M_16 --> n_M_04
+  n_M_20 --> n_M_01
+  n_M_20 --> n_M_12
   n_M_17 --> n_M_02
   n_M_17 --> n_M_07
   n_M_17 --> n_M_15
