@@ -20,7 +20,7 @@
 | A-11 | GET | `/v1/admin/ingestions` | query `status?`(needs_review 등), `game?`, 커서 | `ingestion_runs[]`(원본 응답 해시·검증 오류·재검증 결과 포함) | 관리자 + MFA | 401, 403 | `ingestion_runs` | EF |
 | A-12 | POST | `/v1/admin/ingestions/{id}/approve` | path `id`, `note?` | 승인된 run + UPSERT된 회차 → 통계 캐시 재계산·알림 재개 | 관리자 + MFA, **A-16 재검증 통과 건만**(R9) | 401, 403, 404, 409(이미 처리·재검증 미통과) | `ingestion_runs`, `draws_*`, `statistics_cache` | EF |
 | A-13 | POST | `/v1/admin/ingestions/{id}/reject` | path `id`, `reason`(필수) | 반려된 run(회차 미반영, 알림 중단 유지) | 관리자 + MFA | 400, 401, 403, 404, 409 | `ingestion_runs` | EF |
-| A-14 | PATCH | `/v1/tickets/{id}` | path `id`, `purchase_status:"purchased"`, `purchase_date`, `amount_won` | 갱신된 `saved_tickets` 행 | 로그인(본인 행만, RLS). 허용 전환 favorite→purchased(R2), 역전환 금지(R19) | 400, 401, 404, 422 | `saved_tickets` | RLS |
+| A-14 | PATCH | `/v1/tickets/{id}` | path `id`, `purchase_status:"purchased"`, `purchase_date`(필수, `YYYY-MM-DD`), `amount_won?`(선택, 구매 금액 정수 원) | 갱신된 `saved_tickets` 행 | 로그인(본인 행만, RLS). 허용 전환 favorite→purchased(R2), 역전환 금지(R19) | 400, 401, 404, 422 | `saved_tickets` | RLS |
 | A-15 | POST | `/v1/waitlist` | `email`, `consent_marketing:true`, `age_confirmed:true`(만 19세 이상), `turnstile_token`(R21) | `202`(본문 없음, 중복 이메일도 동일) | 공개(anon) | 400, 429 | `waitlist_signups`(INSERT만) | EF |
 | A-16 | POST | `/v1/admin/ingestions/{id}/reverify` | path `id` | run + 재검증 결과(`reverified_at`, `reverify_errors`) | 관리자 + MFA | 401, 403, 404, 409(이미 처리), 503(출처 접속 실패) | `ingestion_runs` | EF |
 | A-17 | GET · PUT · DELETE | `/v1/fortune-profile` | PUT: `birth_date`, `calendar`(solar\|lunar), `is_leap_month?`, `birth_time?`(모르면 NULL), `consented_at`(동의 필수) | 본인 `fortune_profiles` 1행(GET 0행 → 프로필 입력 안내) | 로그인(본인 행만, RLS). 사주 번호 계산은 기기 `fortune-engine`(ADR-0005), 서버 계산 없음 | 400, 401 | `fortune_profiles` | RLS (P1) |
@@ -46,6 +46,7 @@
 | 403 | `FORBIDDEN` | 관리자 아님 | A-11~A-13, A-16 |
 | 403 | `MFA_REQUIRED` | 관리자이나 `aal2` 아님(TOTP 미통과) | A-11~A-13, A-16 |
 | 404 | `NOT_FOUND` | 티켓·run 없음(타인 티켓도 404로 응답) | A-09, A-12~A-14, A-16 |
+| 400 | `INVALID_SOURCE_NUMBER` | `source_number_id`가 본인 생성 번호가 아님(없는 번호와 구분 없음, DB 트리거 23503) | A-07 |
 | 409 | `IDEMPOTENCY_CONFLICT` | 같은 멱등 키로 다른 내용 요청 | A-07 |
 | 409 | `ALREADY_PROCESSED` | 이미 승인·반려된 run | A-12, A-13, A-16 |
 | 409 | `NOT_REVERIFIED` | 재검증 미실행 또는 미통과 run 승인 시도 | A-12 |

@@ -77,7 +77,7 @@ lotto-lab/                      # pnpm workspaces + Turborepo
 | 구독 결제 | 스토어 인앱결제 | 미정 (Q3) | — | P2 |
 | 자동 업데이트 | 스토어 업데이트 | Tauri updater 플러그인 | 배포 즉시 | P1 (P0은 수동 설치본) |
 
-- 권한(카메라·알림)은 기능 사용 시점에만 요청. 로컬 저장 구현체(키-값 vs SQLite)는 팀장 결정 필요.
+- 권한(카메라·알림)은 기능 사용 시점에만 요청. 로컬 저장 구현체는 키-값(사용자 결정 2026-11-12) — 모바일 `@capacitor/preferences`, Windows `tauri-plugin-store`. 앱 ID `kr.lottolab.app`(변경 불가).
 
 ## 6. 빌드·배포·자동 업데이트
 | 대상 | 빌드 환경 | 산출물 | 배포 경로 | 업데이트 |

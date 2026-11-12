@@ -11,7 +11,7 @@
 - 게스트 데이터는 기기 로컬에만 저장(D6), 로그인 후 동기화(P1) 시 아래 사용자 테이블로 올린다.
 - 권한(task-007 결정): 새 테이블은 `REVOKE ALL ON … FROM anon, authenticated, public` 후 필요한 것만 GRANT(공개 테이블은 `GRANT SELECT`만 — TRUNCATE·REFERENCES·TRIGGER 기본 권한 제거).
 - 배열 번호 CHECK: `array_ndims(nums)=1 AND array_lower(nums,1)=1 AND cardinality(nums)=6 AND array_position(nums, NULL) IS NULL` + 범위·오름차순 비교 사슬(NULL·하한 우회 차단).
-- `prizes jsonb`: DB는 `jsonb_typeof(prizes)='array'`만 강제, 요소 `{rank, amount_won(정수 원), winners, payout:'lump'|'annuity', months?}`는 Zod·워커가 검증(연금 1·2등은 `annuity` + 월 지급액·`months`).
+- `prizes jsonb`: DB는 `jsonb_typeof(prizes)='array'`만 강제, 요소 `{rank: 1~7 | null, bonus: boolean, amount_won(정수 원 — lump는 1인 당첨금, annuity는 **월 지급액**), winners(정수 ≥0), payout:'lump'|'annuity', months?(annuity면 필수)}`(연금 보너스 = `rank:null, bonus:true` — draw_checks와 같은 표현)는 Zod·워커가 검증. 읽기(A-01·A-02)는 요소별로 검증해 잘못된 요소만 빼고 화면은 유지(전체 실패 금지).
 - FK 삭제: `ingestion_runs.reviewed_by` → `ON DELETE SET NULL`(감사 행 보존), `draws_*.ingestion_run_id` → `ON DELETE RESTRICT`(수집 이력은 회차 정정의 정본, 삭제 금지).
 - 남용 상한(task-008): 글자 열 길이·jsonb 4096바이트·배치당 50줄은 DB CHECK. 사용자별 총 행 수 상한은 DB에 두지 않고 API 레이트리밋·앱 정책으로 정한다(수치 팀장 결정 — 04#4).
 - 시드(`supabase/seed.sql`)는 합성 데이터만, `source_url='https://synthetic.invalid/…'` 표식. pgTAP은 시드에 기대지 않고 트랜잭션 안에서 자체 데이터를 넣는다. 원격에 `db reset --linked` 금지.
