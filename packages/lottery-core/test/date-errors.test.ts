@@ -43,6 +43,13 @@ describe("EngineError", () => {
     expect(e.hint).toBe("lotto.fixed_excluded_overlap");
     expect(e.message).toBe("IMPOSSIBLE_COMBINATION: lotto.fixed_excluded_overlap");
     expect(new EngineError("INVALID_INPUT", "h", "사용자 문구").message).toBe("사용자 문구");
+    expect(e.detail).toBeUndefined();
+  });
+
+  it("detail: 해결 안내 수치를 담는다", () => {
+    const e = new EngineError("IMPOSSIBLE_COMBINATION", "lotto.too_few_combinations", undefined, { max: 8, requested: 9 });
+    expect(e.message).toBe("IMPOSSIBLE_COMBINATION: lotto.too_few_combinations");
+    expect(e.detail).toStrictEqual({ max: 8, requested: 9 });
   });
 
   it("코드 목록", () => {

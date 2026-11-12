@@ -7,12 +7,15 @@ export type EngineErrorCode = (typeof ENGINE_ERROR_CODES)[number];
 export class EngineError extends Error {
   readonly code: EngineErrorCode;
   readonly hint: string;
+  /** 해결 안내에 쓰는 수치(예: { max: 8, requested: 9 }). 문구는 UI 소유. */
+  readonly detail?: Record<string, number>;
 
-  constructor(code: EngineErrorCode, hint: string, message?: string) {
+  constructor(code: EngineErrorCode, hint: string, message?: string, detail?: Record<string, number>) {
     super(message ?? `${code}: ${hint}`);
     this.name = "EngineError";
     this.code = code;
     this.hint = hint;
+    if (detail !== undefined) this.detail = detail;
   }
 }
 

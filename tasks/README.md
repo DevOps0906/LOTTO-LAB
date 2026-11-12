@@ -17,8 +17,8 @@
 | task-010 | Windows 셸 (Tauri 2) | W1 | 005, 006 | 높음 | builder | 대기 |
 | task-011 | types + validation (Zod) | W2 | 005 | 높음 | builder | 완료 |
 | task-012 | lottery-core 판정·오류 타입·속성 테스트 도구 | W2 | 011 | 높음 | builder+tester | 완료 |
-| task-013 | lotto-engine 생성 | W2 | 012 | 보통 | builder+tester | 대기 |
-| task-014 | pension-engine 생성 | W2 | 012 | 보통 | builder+tester | 대기 |
+| task-013 | lotto-engine 생성 | W2 | 012 | 보통 | builder+tester | 완료 |
+| task-014 | pension-engine 생성 | W2 | 012 | 보통 | builder+tester | 완료 |
 | task-015 | statistics 기본 통계 | W2 | 011 | 보통 | builder+tester | 대기 |
 | task-016 | app-core 어댑터·로컬 저장·공개 읽기 (R22) | W2 | 007, 011, 013, 014 | 높음 | builder | 대기 |
 | task-017 | 모바일 M-05·M-01·M-15 | W3 | 009, 016 | 보통 | builder | 대기 |
