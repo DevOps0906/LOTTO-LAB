@@ -1631,3 +1631,199 @@
 .dark .ll-badge[data-status="purchased"] {
   border-color: var(--color-input);
 }
+
+/* ── Windows D-04·D-14·D-08·D-05·D-06·D-07(task-026~028): M 화면 재사용, data-layout="wide"는 배치만 바꾼다 ── */
+/* 넓은 표(D-14 회차·D-05 내 번호): 768~ 한 벌만 그린다(카드 대체 없음 — Windows 최소 창 1024). 넘치면 표 영역 안에서만 가로 스크롤 */
+.ll-wtable {
+  min-width: 0;
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+.ll-wtable:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+.ll-wtable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body);
+}
+.ll-wtable caption {
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4) calc(var(--spacing) * 2);
+  text-align: left;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-wtable th,
+.ll-wtable td {
+  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 3);
+  text-align: left;
+  vertical-align: middle;
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+  white-space: nowrap;
+}
+.ll-wtable thead th {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.ll-wtable tbody th {
+  font-weight: 700;
+}
+.ll-wtable [data-numeric="true"] {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ll-wtable tbody tr:hover {
+  background: var(--color-bg);
+}
+.ll-wtable tbody tr[data-selected="true"] {
+  background: var(--color-primary-soft);
+}
+.ll-wtable__check {
+  width: calc(var(--spacing) * 11);
+}
+.ll-wtable__check input {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+  accent-color: var(--color-primary);
+}
+.ll-wtable .ll-updated {
+  margin: 0;
+}
+
+/* D-04 통계: 조건은 위 한 줄(칩 단위 줄바꿈), 패널 전폭, 차트(좌)·대체 표(우) */
+.ll-stats[data-layout="wide"] .ll-stats__layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ll-stats__detail {
+  margin-left: auto;
+}
+.ll-stats__table {
+  min-width: 0;
+  max-height: calc(var(--spacing) * 100);
+  overflow: auto;
+}
+.ll-stats__table:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+@media (width >= 48em) {
+  .ll-stats[data-layout="wide"] .ll-stats__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: calc(var(--spacing) * 4) calc(var(--spacing) * 6);
+  }
+  .ll-stats[data-layout="wide"] .ll-stats__controls > .ll-field {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .ll-stats[data-layout="wide"] .ll-stats__controls > .ll-button {
+    margin-left: auto;
+  }
+  .ll-stats__split {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+/* D-08 회차 상세: 당첨 번호(좌)·등위별 당첨금(우) */
+.ll-draws__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  align-items: start;
+  min-width: 0;
+}
+.ll-draws[data-layout="wide"] .ll-draws__detail > .ll-button {
+  justify-self: start;
+}
+@media (width >= 48em) {
+  .ll-draws__cols {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+  .ll-draws[data-layout="wide"] .ll-draws__search {
+    max-width: calc(var(--spacing) * 120);
+  }
+}
+
+/* D-05 내 번호 표: 필터 3열, 내보내기 막대(범위 | 미리보기·안내 | 버튼) */
+.ll-tickets__export {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+  padding-top: calc(var(--spacing) * 4);
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-tickets__export-body {
+  display: grid;
+  gap: var(--spacing);
+  min-width: 0;
+}
+.ll-tickets__export-body p {
+  margin: 0;
+}
+@media (width >= 48em) {
+  .ll-tickets[data-layout="wide"] .ll-tickets__filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ll-tickets__export {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: calc(var(--spacing) * 6);
+  }
+}
+
+/* D-06 내 번호 상세: 좌[번호·당첨 확인] | 우[이력] */
+.ll-tickets__cols,
+.ll-tickets__col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  align-items: start;
+  min-width: 0;
+}
+@media (width >= 48em) {
+  .ll-tickets__cols {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+.ll-tickets__history {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+  margin: 0 0 calc(var(--spacing) * 3);
+  padding: 0;
+  list-style: none;
+}
+.ll-tickets__history li {
+  display: grid;
+  gap: calc(var(--spacing) / 2);
+  padding-left: calc(var(--spacing) * 4);
+  border-left: calc(var(--spacing) * 0.75) solid var(--color-border);
+  font-size: var(--text-caption);
+}
+.ll-tickets__history li[data-event="check"] {
+  border-left-color: var(--gen-accent);
+}
+
+/* D-07 구매 등록: 중복 등록 경고(색 + "중복 등록 확인" 문구) */
+.ll-tickets__duplicate {
+  margin: 0;
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+  border-radius: var(--radius-control);
+  border: calc(var(--spacing) / 4) solid var(--color-warning);
+  background: var(--color-bg);
+  font-size: var(--text-caption);
+}
+.ll-tickets__duplicate strong {
+  margin-right: var(--spacing);
+}
+
+/* D-01 요약 CSV */
+.ll-records__export {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin-top: calc(var(--spacing) * 3);
+}

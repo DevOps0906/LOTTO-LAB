@@ -1,8 +1,8 @@
 // D-01 Windows 대시보드: M-01 블록 재사용 + 지난 회차 결과(공식 결과·회차별 내 구매 기록 수).
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
-import { Dashboard, RECENT_DRAWS, type DashboardLinks } from "../src";
+import { describe, expect, it, vi } from "vitest";
+import { Dashboard, NoticeProvider, RECENT_DRAWS, type CsvExporter, type DashboardLinks } from "../src";
 import { LOTTO, mockCore, ok } from "./screen-core";
 
 const links = {
@@ -130,5 +130,43 @@ describe("D-01 Windows 대시보드", () => {
     m.listDraws.mockResolvedValue(ok([]));
     render(<Dashboard core={m.core} links={links} />);
     expect(await within(recentCard()).findByText(/아직 수집되지 않았습니다/)).toBeInTheDocument();
+  });
+});
+
+describe("D-01 요약 CSV(task-027)", () => {
+  it("내 기록이 있으면 요약 CSV 내보내기 — 화면 숫자 그대로(저장·즐겨찾기·구매 등록·추첨 대기)", async () => {
+    const m = mockCore();
+    m.list.mockResolvedValue([
+      { game: "lotto", purchase_status: "favorite", round: null },
+      { game: "lotto", purchase_status: "purchased", round: 1133 },
+      { game: "pension", purchase_status: "purchased", round: 290 },
+    ]);
+    const summary = vi.fn<CsvExporter["summary"]>(async () => "saved");
+    const csv: CsvExporter = { tickets: vi.fn(), summary };
+    render(
+      <NoticeProvider>
+        <Dashboard core={m.core} links={links} csv={csv} />
+      </NoticeProvider>,
+    );
+    await userEvent.click(await screen.findByRole("button", { name: "요약 CSV 내보내기" }));
+    expect(summary).toHaveBeenCalledWith([
+      { label: "저장한 번호", value: 3 },
+      { label: "즐겨찾기", value: 1 },
+      { label: "구매 등록", value: 2 },
+      { label: "추첨 대기", value: 1 },
+    ]);
+    expect(await screen.findByText("요약을 CSV로 저장했어요")).toBeInTheDocument();
+  });
+
+  it("기록이 없거나 내보내기가 없으면 버튼을 숨긴다(빈 CSV 방지)", async () => {
+    const m = mockCore();
+    const csv: CsvExporter = { tickets: vi.fn(), summary: vi.fn() };
+    render(
+      <NoticeProvider>
+        <Dashboard core={m.core} links={links} csv={csv} />
+      </NoticeProvider>,
+    );
+    expect(await screen.findByText("아직 저장한 번호가 없습니다")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "요약 CSV 내보내기" })).toBeNull();
   });
 });

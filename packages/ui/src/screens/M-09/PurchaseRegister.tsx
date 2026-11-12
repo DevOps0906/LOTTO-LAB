@@ -4,6 +4,8 @@
 // - 연금 여섯 자리는 문자열 그대로 다룬다(숫자로 바꾸지 않는다 — "000719" 보존).
 // - 즐겨찾기에서 오면(fromTicketId) 번호는 고정하고 같은 기록을 구매로 전환한다(tickets.purchase — 한 번의 쓰기). 원본 추천 기록은 그대로 남는다.
 // - 오류는 필드 옆에 보이고 입력은 유지한다. 결제·QR 등록 기능은 없다(QR은 P1이라 보이지 않는다).
+// - layout="wide"(Windows D-07): 번호(좌)·구매 정보(우) 2열(768~ 폼 배치 그대로), 같은 회차·같은 번호의 구매 기록이 이미 있으면 중복 등록 경고
+//   (막지는 않는다 — 같은 번호를 두 장 살 수 있다). 멱등 키는 그대로라 두 번 눌러도 1건.
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
@@ -12,7 +14,16 @@ import { useNotice } from "../../components/Notice";
 import { StateView } from "../../components/StateView";
 import { GAME_NAME, formatWon, useAsync, type Game } from "../common/data";
 import { Segment } from "../common/generator";
-import { StatusBadge, TicketNumbers, errorCode, kstToday, type TicketNumbersData, type TicketRecord, type TicketsCore } from "../common/ticket";
+import {
+  StatusBadge,
+  TicketNumbers,
+  errorCode,
+  kstToday,
+  roundText,
+  type TicketNumbersData,
+  type TicketRecord,
+  type TicketsCore,
+} from "../common/ticket";
 
 export type PurchaseRegisterLinks = { tickets: string; detail: (ticketId: string) => string };
 
@@ -27,6 +38,8 @@ export type PurchaseRegisterProps = {
   initialGame?: Game;
   /** KST 오늘 "YYYY-MM-DD". 없으면 core.adapters.clock 기준 */
   today?: string;
+  /** "wide" = Windows D-07 중복 등록 경고(2열 배치는 768~ 공통). 기본 "stack" */
+  layout?: "stack" | "wide";
 };
 
 const LOTTO_MIN = 1;
@@ -49,7 +62,16 @@ const FOCUS_ORDER: [keyof FieldErrors, string][] = [
 
 type FieldErrors = Partial<Record<"nums" | "group" | "digits" | "round" | "date" | "amount" | "confirm" | "form", string>>;
 
-export function PurchaseRegister({ core, links, navigate, fromTicketId, initialGame = "lotto", today: todayProp }: PurchaseRegisterProps) {
+export function PurchaseRegister({
+  core,
+  links,
+  navigate,
+  fromTicketId,
+  initialGame = "lotto",
+  today: todayProp,
+  layout = "stack",
+}: PurchaseRegisterProps) {
+  const wide = layout === "wide";
   const [today] = useState(() => todayProp ?? kstToday(core.adapters.clock.now()));
   const [source] = useAsync<TicketRecord | null>(async () => (fromTicketId ? core.tickets.get(fromTicketId) : null));
 
@@ -105,14 +127,14 @@ export function PurchaseRegister({ core, links, navigate, fromTicketId, initialG
     return (
       <div className="ll-tickets" data-game={ticket.game}>
         {header}
-        <RegisterForm core={core} links={links} navigate={navigate} today={today} source={ticket} initialGame={ticket.game} />
+        <RegisterForm core={core} links={links} navigate={navigate} today={today} source={ticket} initialGame={ticket.game} wide={wide} />
       </div>
     );
   }
   return (
     <div className="ll-tickets">
       {header}
-      <RegisterForm core={core} links={links} navigate={navigate} today={today} source={null} initialGame={initialGame} />
+      <RegisterForm core={core} links={links} navigate={navigate} today={today} source={null} initialGame={initialGame} wide={wide} />
     </div>
   );
 }
@@ -124,6 +146,7 @@ function RegisterForm({
   today,
   source,
   initialGame,
+  wide,
 }: {
   core: PurchaseRegisterProps["core"];
   links: PurchaseRegisterLinks;
@@ -131,6 +154,7 @@ function RegisterForm({
   today: string;
   source: TicketRecord | null;
   initialGame: Game;
+  wide: boolean;
 }) {
   const notice = useNotice();
   // 화면 진입 시 한 번 발급(다시 제출해도 같은 키).
@@ -149,6 +173,10 @@ function RegisterForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [focusTick, setFocusTick] = useState(0);
+  // 중복 등록 경고용 기존 구매 기록(wide만). 읽지 못하면 경고 없이 등록할 수 있다.
+  const [existing] = useAsync<TicketRecord[]>(async () => (wide ? core.tickets.list() : []));
+  const duplicate =
+    wide && existing.status === "done" ? findDuplicate(existing.value, source ?? draftNumbers(game, nums, group, digits), roundLater ? null : round, source?.id) : null;
 
   // 제출 오류가 생기면 첫 오류 필드로 포커스(오류 문구는 aria-describedby로 함께 읽힌다).
   useEffect(() => {
@@ -259,8 +287,7 @@ function RegisterForm({
         ? "최근 회차 정보가 오래됐거나 없어 회차를 채우지 않았어요. 복권에 적힌 회차를 확인해 입력하세요."
         : "다음 추첨 회차로 채웠어요. 복권에 적힌 회차와 같은지 확인하세요.";
 
-  return (
-    <form className="ll-tickets__form" onSubmit={(e) => void submit(e)} noValidate aria-label="구매 등록">
+  const numberCard = (
       <Card title="번호">
         {source ? (
           <div className="ll-tickets__source">
@@ -362,6 +389,8 @@ function RegisterForm({
           </>
         )}
       </Card>
+  );
+  const purchaseCard = (
       <Card title="구매 정보">
         <Field legend="회차" htmlFor="register-round" error={errors.round} errorId="register-round-error">
           <p id="register-round-hint" className="ll-muted ll-field__hint">
@@ -442,7 +471,22 @@ function RegisterForm({
           </Field>
         )}
       </Card>
+  );
+
+  return (
+    <form className="ll-tickets__form" onSubmit={(e) => void submit(e)} noValidate aria-label="구매 등록">
+      {numberCard}
+      {purchaseCard}
       <Card>
+        {duplicate && (
+          <p className="ll-tickets__duplicate" role="status">
+            <strong>중복 등록 확인</strong> 같은 회차({roundText(duplicate.round)})·같은 번호의 구매 기록이 이미 있어요. 실제로 한 장 더 샀을 때만
+            등록하세요.{" "}
+            <a className="ll-link" href={links.detail(duplicate.id)}>
+              기존 기록 보기
+            </a>
+          </p>
+        )}
         <label className="ll-check">
           <input
             type="checkbox"
@@ -534,4 +578,34 @@ function submitMessage(error: unknown): string {
     default:
       return "등록하지 못했어요. 기기 저장 공간을 확인한 뒤 다시 시도하세요.";
   }
+}
+
+/** 입력 중인 번호(형식이 맞을 때만, 아니면 null). 검증·오류 표시는 validate가 맡는다. */
+function draftNumbers(game: Game, nums: string[], group: string, digits: string): TicketNumbersData | null {
+  if (game === "lotto") {
+    const values = nums.map((v) => (/^[0-9]{1,2}$/.test(v) ? Number(v) : NaN));
+    const ok = values.every((n) => n >= LOTTO_MIN && n <= LOTTO_MAX) && new Set(values).size === 6;
+    return ok ? { game: "lotto", ticket_data: { nums: [...values].sort((a, b) => a - b) } } : null;
+  }
+  const g = Number(group);
+  return PENSION_GROUPS.includes(g) && /^[0-9]{6}$/.test(digits) ? { game: "pension", ticket_data: { group_no: g, digits } } : null;
+}
+
+/** 같은 복권·같은 회차·같은 번호의 구매 기록(자기 자신 제외). 회차를 모르면 비교하지 않는다. */
+export function findDuplicate(
+  tickets: readonly TicketRecord[],
+  data: TicketNumbersData | null,
+  roundInput: string | null,
+  selfId?: string,
+): TicketRecord | null {
+  if (!data || roundInput === null || !/^[0-9]{1,7}$/.test(roundInput.trim())) return null;
+  const round = Number(roundInput.trim());
+  const key = data.game === "lotto" ? [...data.ticket_data.nums].sort((a, b) => a - b).join(" ") : `${data.ticket_data.group_no}:${data.ticket_data.digits}`;
+  return (
+    tickets.find((t) => {
+      if (t.id === selfId || t.purchase_status !== "purchased" || t.game !== data.game || t.round !== round) return false;
+      const k = t.game === "lotto" ? [...t.ticket_data.nums].sort((a, b) => a - b).join(" ") : `${t.ticket_data.group_no}:${t.ticket_data.digits}`;
+      return k === key;
+    }) ?? null
+  );
 }

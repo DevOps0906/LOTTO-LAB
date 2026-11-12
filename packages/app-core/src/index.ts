@@ -14,6 +14,20 @@ export type * from "./adapters.ts";
 export * from "./errors.ts";
 export { AgeGate } from "./age-gate.ts";
 export { CheckService, type CheckOutcome } from "./check-service.ts";
+export {
+  CSV_BOM,
+  CSV_MAX_BYTES,
+  SUMMARY_CSV_HEADER,
+  TICKET_CSV_HEADER,
+  csvField,
+  csvFileName,
+  summaryCsv,
+  ticketsCsv,
+  toCsv,
+  type CsvCell,
+  type SummaryCsvItem,
+  type TicketCsvRow,
+} from "./export/csv.ts";
 export { LastConfigStore } from "./last-config.ts";
 export {
   EXPORT_FORMAT_VERSION,

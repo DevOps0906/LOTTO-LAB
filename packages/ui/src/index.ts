@@ -30,6 +30,7 @@ export { Onboarding, type OnboardingProps } from "./screens/M-05/Onboarding";
 export { Home, type HomeLinks, type HomeProps } from "./screens/M-01/Home";
 export { Dashboard, RECENT_DRAWS, type DashboardLinks, type DashboardProps } from "./screens/D-01/Dashboard";
 export type { ScreenCore } from "./screens/common/data";
+export type { CsvExporter, CsvSaveResult } from "./screens/common/csv";
 export { GenerateSelect, type GenerateSelectLinks, type GenerateSelectProps } from "./screens/M-15/GenerateSelect";
 export { LottoGenerator, type LottoGeneratorLinks, type LottoGeneratorProps } from "./screens/M-02/LottoGenerator";
 export { PensionGenerator, type PensionGeneratorLinks, type PensionGeneratorProps } from "./screens/M-03/PensionGenerator";

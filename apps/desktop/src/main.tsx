@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App.tsx";
 import { readAppConfig } from "./config.ts";
 import { bootstrap } from "./core.ts";
+import { createCsvExporter } from "./platform/csv.ts";
 import { createAdapters } from "./platform/index.ts";
 import { createThemeController } from "./theme.ts";
 
@@ -21,6 +22,6 @@ function restart() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App core={core} onThemeChange={(t) => theme.set(t)} onCleared={restart} />
+    <App core={core} onThemeChange={(t) => theme.set(t)} onCleared={restart} csv={createCsvExporter()} />
   </StrictMode>,
 );

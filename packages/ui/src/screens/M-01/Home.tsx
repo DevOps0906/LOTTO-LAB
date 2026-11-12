@@ -10,6 +10,7 @@ import { Icon } from "../../components/icons";
 import { Stat } from "../../components/Stat";
 import { StateView } from "../../components/StateView";
 import { Updated } from "../../components/Updated";
+import type { SummaryCsvItem } from "../common/csv";
 import { ReadBanner } from "../common/ReadBanner";
 import {
   GAME_NAME,
@@ -55,13 +56,15 @@ export type HomeProps = {
   title?: string;
   /** 좌측 열 아래에 덧붙일 블록(Windows D-01: 지난 회차 결과) */
   leftExtra?: ReactNode;
+  /** 내 기록 요약 아래 덧붙일 블록(Windows D-01: 요약 CSV 내보내기). 기록이 있을 때만, 요약 항목을 받는다 */
+  recordsExtra?: (summary: SummaryCsvItem[]) => ReactNode;
 };
 
 type Draws = { lotto: ReadResult<LottoDraw>; pension: ReadResult<PensionDraw> };
 type Stats = { lotto: ReadResult<StatRow>; pension: ReadResult<StatRow> };
 type Records = { tickets: Ticket[]; last: Generated | undefined };
 
-export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
+export function Home({ core, links, title = "홈", leftExtra, recordsExtra }: HomeProps) {
   const [draws, reloadDraws] = useAsync<Draws>(async (force) => {
     const [lotto, pension] = await Promise.all([
       core.reader.latestDraw("lotto", { force }),
@@ -173,7 +176,7 @@ export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
             번호 생성하기
           </a>
           <QuickGenerate core={core} onGenerated={() => reloadRecords()} />
-          <RecordsCard state={records} latest={latestNo} links={links} onRetry={() => reloadRecords()} />
+          <RecordsCard state={records} latest={latestNo} links={links} onRetry={() => reloadRecords()} extra={recordsExtra} />
         </div>
       </div>
     </div>
@@ -513,11 +516,13 @@ function RecordsCard({
   latest,
   links,
   onRetry,
+  extra,
 }: {
   state: Async<Records>;
   latest: Partial<Record<Game, number>>;
   links: HomeLinks;
   onRetry: () => void;
+  extra?: HomeProps["recordsExtra"];
 }) {
   return (
     <Card title="내 기록" headingLevel={2} busy={state.status === "loading"} action={links.tickets && <a className="ll-link" href={links.tickets}>내 번호 보기</a>}>
@@ -525,12 +530,22 @@ function RecordsCard({
       {state.status === "failed" && (
         <StateView kind="error" title="내 기록을 읽지 못했습니다" description="기기 저장소를 읽지 못했습니다." action={<Button onClick={onRetry}>다시 시도</Button>} />
       )}
-      {state.status === "done" && <RecordsBody records={state.value} latest={latest} links={links} />}
+      {state.status === "done" && <RecordsBody records={state.value} latest={latest} links={links} extra={extra} />}
     </Card>
   );
 }
 
-function RecordsBody({ records, latest, links }: { records: Records; latest: Partial<Record<Game, number>>; links: HomeLinks }) {
+function RecordsBody({
+  records,
+  latest,
+  links,
+  extra,
+}: {
+  records: Records;
+  latest: Partial<Record<Game, number>>;
+  links: HomeLinks;
+  extra?: HomeProps["recordsExtra"];
+}) {
   const { tickets, last } = records;
   const reuse = last ? (last.game === "lotto" ? links.lottoLast : links.pensionLast) : null;
   const generateLink = (
@@ -559,7 +574,10 @@ function RecordsBody({ records, latest, links }: { records: Records; latest: Par
           }
         />
       ) : (
-        <RecordStats tickets={tickets} latest={latest} />
+        <>
+          <RecordStats tickets={tickets} latest={latest} />
+          {extra?.(recordSummary(tickets, latest))}
+        </>
       )}
       {reuse ? (
         <a className="ll-button" data-variant="secondary" data-block="true" href={reuse}>
@@ -570,6 +588,16 @@ function RecordsBody({ records, latest, links }: { records: Records; latest: Par
       )}
     </>
   );
+}
+
+/** 내 기록 요약 항목(요약 CSV — 화면의 숫자와 같은 값). */
+function recordSummary(tickets: Ticket[], latest: Partial<Record<Game, number>>): SummaryCsvItem[] {
+  return [
+    { label: "저장한 번호", value: tickets.length },
+    { label: "즐겨찾기", value: tickets.filter((t) => t.purchase_status === "favorite").length },
+    { label: "구매 등록", value: tickets.filter((t) => t.purchase_status === "purchased").length },
+    { label: "추첨 대기", value: pendingCount(tickets, latest) },
+  ];
 }
 
 function RecordStats({ tickets, latest }: { tickets: Ticket[]; latest: Partial<Record<Game, number>> }) {

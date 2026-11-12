@@ -1,9 +1,10 @@
-// D 화면 연결(D-01·D-02·D-03·D-09): 실제 app-core(엔진·LocalStore)에 메모리 저장소를 주입하고 네트워크는 끊는다.
+// D 화면 연결(D-01~D-09·D-14): 실제 app-core(엔진·LocalStore)에 메모리 저장소를 주입하고 네트워크는 끊는다.
 import { createAppCore, type Adapters, type KeyValueStore } from "@lotto-lab/app-core";
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "../src/App.tsx";
 import type { CoreState } from "../src/core.ts";
+import { createCsvExporter } from "../src/platform/csv.ts";
 import { createClipboardShare } from "../src/platform/share.ts";
 
 function memoryStore(map: Map<string, string>): KeyValueStore {
@@ -63,10 +64,11 @@ describe("D-01 대시보드", () => {
     expect(within(cols[1] as HTMLElement).getByRole("heading", { name: "이번 주 통계 요약" })).toBeInTheDocument();
     expect(within(cols[1] as HTMLElement).getByRole("link", { name: /번호 생성하기/ })).toHaveAttribute("href", "#/lotto");
     expect(await within(cols[1] as HTMLElement).findByText("아직 저장한 번호가 없습니다")).toBeInTheDocument();
-    // 준비 중 화면(통계·내 번호·회차·구매 등록)으로 가는 화면 안 바로가기는 없다(사이드바는 그대로).
+    // 화면이 생긴 통계·내 번호·회차·구매 등록 바로가기를 다시 보인다(알림은 P1이라 없음).
     const main = container.querySelector("main")!;
     const hrefs = Array.from(main.querySelectorAll("a")).map((a) => a.getAttribute("href") ?? "");
-    expect(hrefs.filter((h) => /^#\/(stats|tickets|draws|alerts)/.test(h))).toEqual([]);
+    expect(hrefs).toEqual(expect.arrayContaining(["#/stats", "#/tickets", "#/draws", "#/tickets/register"]));
+    expect(hrefs.filter((h) => h.startsWith("#/alerts"))).toEqual([]);
     // 오프라인: 공식 결과는 오류 + 다시 시도(앱은 계속 동작)
     expect(await screen.findByText("지난 회차 결과를 불러오지 못했습니다")).toBeInTheDocument();
   });
@@ -80,7 +82,7 @@ describe("D-02·D-03 생성(조건 좌·결과 우)", () => {
     await screen.findByRole("heading", { level: 1, name: "로또 번호 생성" });
     expect(container.querySelector(".ll-gen")).toHaveAttribute("data-layout", "split");
     expect(screen.queryByRole("navigation", { name: "현재 위치" })).toBeNull();
-    expect(screen.queryByRole("link", { name: /지난 회차 통계 보기/ })).toBeNull();
+    expect(screen.getByRole("link", { name: /지난 회차 통계 보기/ })).toHaveAttribute("href", "#/stats");
     fireEvent.click(screen.getByRole("button", { name: "추천 번호 생성" }));
     await screen.findByRole("list", { name: "추천 번호 목록" });
     expect(screen.queryByRole("button", { name: "공유" })).toBeNull();
@@ -121,19 +123,107 @@ describe("D-09 설정", () => {
 });
 
 describe("아직 없는 화면", () => {
-  it("통계·내 번호·회차·알림은 준비 중 안내", async () => {
+  it("알림(P1)만 준비 중 안내", async () => {
     const { state } = confirmedCore();
     render(<App core={state} />);
     await screen.findByRole("heading", { level: 1, name: "대시보드" });
-    for (const [hash, title] of [
-      ["#/stats", "통계"],
-      ["#/tickets", "내 번호"],
-      ["#/draws", "회차 결과"],
-      ["#/alerts", "알림"],
-    ] as const) {
-      go(hash);
-      expect(await screen.findByRole("heading", { level: 1, name: title })).toBeInTheDocument();
-      expect(screen.getByText("준비 중인 화면입니다")).toBeInTheDocument();
-    }
+    go("#/alerts");
+    expect(await screen.findByRole("heading", { level: 1, name: "알림" })).toBeInTheDocument();
+    expect(screen.getByText("준비 중인 화면입니다")).toBeInTheDocument();
+  });
+});
+
+function currentNav(): string | null {
+  return screen.getByRole("navigation", { name: "주 메뉴" }).querySelector('[aria-current="page"]')?.getAttribute("href") ?? null;
+}
+
+describe("D-04·D-14·D-08 통계·회차(넓은 배치)", () => {
+  it("통계·회차 목록·회차 상세가 wide 배치로 열리고, 하위 화면은 소속 사이드바 항목을 현재로 표시", async () => {
+    const { state } = confirmedCore();
+    const { container } = render(<App core={state} />);
+    await screen.findByRole("heading", { level: 1, name: "대시보드" });
+    go("#/stats");
+    expect(await screen.findByRole("heading", { level: 1, name: "통계" })).toBeInTheDocument();
+    expect(container.querySelector(".ll-stats")).toHaveAttribute("data-layout", "wide");
+    expect(screen.getByText("미래 예측 아님")).toBeInTheDocument();
+    go("#/draws?game=pension");
+    expect(await screen.findByRole("heading", { level: 1, name: "회차 목록" })).toBeInTheDocument();
+    expect(container.querySelector(".ll-draws")).toHaveAttribute("data-layout", "wide");
+    expect(screen.getByRole("radio", { name: "연금복권 720+" })).toBeChecked();
+    expect(currentNav()).toBe("#/draws");
+    go("#/draws/lotto/1132");
+    expect(await screen.findByRole("heading", { level: 1, name: "로또 6/45 제 1,132회" })).toBeInTheDocument();
+    expect(currentNav()).toBe("#/draws");
+    // 오프라인·캐시 없음: 결과 미제공 + 다시 시도
+    expect(await screen.findByText("회차 결과를 불러오지 못했습니다")).toBeInTheDocument();
+  });
+
+  it("회차 목록에서 복권을 바꾸면 주소에 남아 상세에서 돌아올 때 복원된다", async () => {
+    const { state } = confirmedCore();
+    window.location.hash = "#/draws";
+    render(<App core={state} />);
+    await screen.findByRole("heading", { level: 1, name: "회차 목록" });
+    fireEvent.click(screen.getByRole("radio", { name: "연금복권 720+" }));
+    expect(window.location.hash).toBe("#/draws?game=pension");
+  });
+});
+
+describe("D-05·D-06·D-07 내 번호(넓은 표·상세·구매 등록) + CSV", () => {
+  it("구매 등록(D-07) → 상세(D-06) → 내 번호 표(D-05) → CSV(연금 000719 텍스트 보존, BOM)", async () => {
+    const { state, map } = confirmedCore();
+    const save = vi.fn<(name: string, contents: string) => Promise<boolean>>(async () => true);
+    window.location.hash = "#/tickets/register";
+    const { container } = render(<App core={state} csv={createCsvExporter(save, () => new Date("2026-11-12T03:00:00.000Z"))} />);
+    expect(await screen.findByRole("heading", { level: 1, name: "구매 등록" })).toBeInTheDocument();
+    expect(currentNav()).toBe("#/tickets");
+    fireEvent.click(screen.getByRole("radio", { name: "연금복권 720+" }));
+    fireEvent.click(screen.getByRole("radio", { name: "1조" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "여섯 자리" }), { target: { value: "000719" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "회차" }), { target: { value: "291" } });
+    fireEvent.click(screen.getByRole("checkbox", { name: "실제로 구매한 번호가 맞습니다(필수)" }));
+    const submit = screen.getByRole("button", { name: "구매 등록 확정" });
+    fireEvent.click(submit);
+    fireEvent.click(submit);
+    // 상세(D-06)로 이동
+    expect(await screen.findByRole("heading", { level: 1, name: "연금복권 720+ 제 291회" })).toBeInTheDocument();
+    expect(container.querySelector(".ll-tickets")).toHaveAttribute("data-layout", "wide");
+    expect(await screen.findByRole("heading", { name: "이력" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "공유" })).toBeNull();
+    expect([...map.keys()].filter((k) => k.startsWith("ll:v1:ticket:"))).toHaveLength(1);
+    // 내 번호 표(D-05) → CSV
+    go("#/tickets?tab=purchased");
+    const region = await screen.findByRole("region", { name: "구매 기록 표 영역(가로 스크롤)" });
+    expect(within(region).getByText("000719")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "CSV 내보내기 (1건)" }));
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    const [name, contents] = save.mock.calls[0]!;
+    expect(name).toBe("lotto-lab-tickets-20261112.csv");
+    expect(contents.startsWith("\uFEFF회차,복권,조,번호,")).toBe(true);
+    expect(contents).toContain('291,연금복권 720+,1조,"\t000719",');
+  });
+
+  it("D-01 요약 CSV도 같은 저장 명령을 쓴다", async () => {
+    const { state, map } = confirmedCore();
+    const ticket = {
+      v: 1,
+      id: "00000000-0000-4000-8000-000000000001",
+      created_at: "2026-11-12T03:00:00.000Z",
+      updated_at: "2026-11-12T03:00:00.000Z",
+      game: "lotto",
+      ticket_data: { nums: [3, 9, 14, 25, 33, 42] },
+      round: 1133,
+      purchase_status: "purchased",
+      purchase_date: "2026-11-12",
+      amount_won: 1000,
+      source_number_id: null,
+      idempotency_key: "00000000-0000-4000-8000-000000000001",
+    };
+    map.set(`ll:v1:ticket:${ticket.id}`, JSON.stringify(ticket));
+    const save = vi.fn<(name: string, contents: string) => Promise<boolean>>(async () => false);
+    render(<App core={state} csv={createCsvExporter(save, () => new Date("2026-11-12T03:00:00.000Z"))} />);
+    fireEvent.click(await screen.findByRole("button", { name: "요약 CSV 내보내기" }));
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    expect(save.mock.calls[0]![0]).toBe("lotto-lab-summary-20261112.csv");
+    expect(save.mock.calls[0]![1]).toContain("구매 등록,1,2026-11-12T03:00:00.000Z");
   });
 });

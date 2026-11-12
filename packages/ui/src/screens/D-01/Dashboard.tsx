@@ -1,12 +1,15 @@
 // D-01 Windows 대시보드(ADR-0004·design/reference/d-home.html): M-01 홈 블록을 그대로 쓰고 배치만 넓힌다.
 // 히어로 한 줄 전체 → 좌[최신 회차 + 상품 카드 2개 + 지난 회차 결과] | 우[이번 주 통계 요약 + 번호 생성 CTA + 내 기록].
 // 지난 회차 결과는 공식 결과와 내 구매 기록(구매 등록한 번호만) 수를 회차별로 보인다. 추천 번호는 구매 기록이 아니다.
+import { useState } from "react";
 import { Ball } from "../../components/Ball";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
+import { useNotice } from "../../components/Notice";
 import { StateView } from "../../components/StateView";
 import { Updated } from "../../components/Updated";
 import { Home, type HomeLinks } from "../M-01/Home";
+import type { CsvExporter, SummaryCsvItem } from "../common/csv";
 import { formatDrawDate, readView, sourceHost, useAsync, type LottoDraw, type ReadResult, type ReadView, type ScreenCore, type Ticket } from "../common/data";
 
 /** draws = 회차 목록(없으면 링크 숨김 — 셸에 회차 화면이 아직 없을 때) */
@@ -15,13 +18,53 @@ export type DashboardLinks = HomeLinks & { draws?: string };
 export type DashboardProps = {
   core: ScreenCore;
   links: DashboardLinks;
+  /** 요약 CSV 내보내기(셸이 파일 저장). 없으면 버튼을 숨긴다 */
+  csv?: CsvExporter;
 };
 
 /** 지난 회차 결과에 보이는 회차 수(d-home 시안 3줄). */
 export const RECENT_DRAWS = 3;
 
-export function Dashboard({ core, links }: DashboardProps) {
-  return <Home core={core} links={links} title="대시보드" leftExtra={<RecentDraws core={core} drawsHref={links.draws} />} />;
+export function Dashboard({ core, links, csv }: DashboardProps) {
+  return (
+    <Home
+      core={core}
+      links={links}
+      title="대시보드"
+      leftExtra={<RecentDraws core={core} drawsHref={links.draws} />}
+      recordsExtra={csv ? (items) => <SummaryExport items={items} csv={csv} /> : undefined}
+    />
+  );
+}
+
+/** 내 기록 요약(화면의 숫자 그대로)을 CSV로 저장. 실패하면 화면에 남기고 다시 시도. */
+function SummaryExport({ items, csv }: { items: SummaryCsvItem[]; csv: CsvExporter }) {
+  const notice = useNotice();
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  async function run() {
+    setBusy(true);
+    setFailed(false);
+    try {
+      if ((await csv.summary(items)) === "saved") notice.toast("요약을 CSV로 저장했어요");
+    } catch {
+      setFailed(true);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="ll-records__export">
+      <Button variant="secondary" onClick={() => void run()} disabled={busy}>
+        {busy ? "내보내는 중" : failed ? "다시 시도" : "요약 CSV 내보내기"}
+      </Button>
+      {failed && (
+        <p className="ll-gen__error" role="alert">
+          CSV를 저장하지 못했어요. 저장 위치를 확인한 뒤 다시 시도하세요.
+        </p>
+      )}
+    </div>
+  );
 }
 
 type Recent = { draws: ReadResult<LottoDraw[]>; tickets: Ticket[] | null };

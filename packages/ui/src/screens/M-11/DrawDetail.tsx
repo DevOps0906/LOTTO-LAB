@@ -24,6 +24,11 @@ export type DrawDetailProps = {
   /** 주소의 회차 번호. 정수 ≥1이 아니면 null(잘못된 주소). */
   round: number | null;
   links: DrawDetailLinks;
+  /**
+   * "wide" = Windows D-08: 이동 경로는 회차 목록 › 상세(홈 생략 — 사이드바가 내비), 당첨 번호(좌)·등위별 당첨금(우) 2열.
+   * 기본 "stack"은 1열.
+   */
+  layout?: "stack" | "wide";
 };
 
 type Loaded = { draw: ReadResult<AnyDraw>; latest: ReadResult<AnyDraw> };
@@ -36,15 +41,18 @@ async function load(core: Pick<ScreenCore, "reader">, game: Game, round: number,
   return { draw, latest };
 }
 
-export function DrawDetail({ core, game, round, links }: DrawDetailProps) {
+export function DrawDetail({ core, game, round, links, layout = "stack" }: DrawDetailProps) {
+  const wide = layout === "wide";
   const title = round === null ? `${GAME_NAME[game]} 회차 상세` : `${GAME_NAME[game]} 제 ${round.toLocaleString("ko-KR")}회`;
   return (
-    <div className="ll-draws" data-game={game}>
+    <div className="ll-draws" data-game={game} data-layout={wide ? "wide" : undefined}>
       <nav className="ll-breadcrumb" aria-label="현재 위치">
         <ol>
-          <li>
-            <a href={links.home}>홈</a>
-          </li>
+          {!wide && (
+            <li>
+              <a href={links.home}>홈</a>
+            </li>
+          )}
           <li>
             <a href={links.list(game)}>회차 목록</a>
           </li>
@@ -64,13 +72,25 @@ export function DrawDetail({ core, game, round, links }: DrawDetailProps) {
           }
         />
       ) : (
-        <DetailBody key={`${game}:${round}`} core={core} game={game} round={round} links={links} />
+        <DetailBody key={`${game}:${round}`} core={core} game={game} round={round} links={links} wide={wide} />
       )}
     </div>
   );
 }
 
-function DetailBody({ core, game, round, links }: { core: DrawDetailProps["core"]; game: Game; round: number; links: DrawDetailLinks }) {
+function DetailBody({
+  core,
+  game,
+  round,
+  links,
+  wide,
+}: {
+  core: DrawDetailProps["core"];
+  game: Game;
+  round: number;
+  links: DrawDetailLinks;
+  wide: boolean;
+}) {
   const [state, reload] = useAsync<Loaded>((force) => load(core, game, round, force));
   const loaded = state.status === "done" ? state.value : undefined;
   const view = readView(loaded?.draw);
@@ -142,9 +162,8 @@ function DetailBody({ core, game, round, links }: { core: DrawDetailProps["core"
   }
 
   const draw = view.data;
-  return (
-    <div className="ll-draws__detail">
-      <ReadBanner results={[loaded?.draw]} action={retry} />
+  const cards = (
+    <>
       <Card
         title="당첨 번호"
         action={
@@ -167,7 +186,13 @@ function DetailBody({ core, game, round, links }: { core: DrawDetailProps["core"
         <PrizeTable game={game} prizes={draw.prizes} />
         <p className="ll-muted">당첨금은 공개된 결과를 옮긴 금액(원)입니다. 정확한 금액은 공식 결과에서 확인하세요.</p>
       </Card>
-      <a className="ll-button" data-variant="secondary" data-block="true" href={links.tickets}>
+    </>
+  );
+  return (
+    <div className="ll-draws__detail">
+      <ReadBanner results={[loaded?.draw]} action={retry} />
+      {wide ? <div className="ll-draws__cols">{cards}</div> : cards}
+      <a className="ll-button" data-variant="secondary" data-block={wide ? undefined : "true"} href={links.tickets}>
         내 번호에서 확인하기
       </a>
       {nav}

@@ -28,14 +28,19 @@ import { DrawNumbers, DrawUpdated, type AnyDraw } from "../common/draw";
 import { Segment } from "../common/generator";
 import { statChart, type BarDatum, type StatChart } from "./chart-data";
 
-/** draws = 회차 목록 주소(현재 복권을 넘긴다) */
-export type StatisticsLinks = { home: string; draws: (game: Game) => string };
+/** draws = 회차 목록 주소(현재 복권을 넘긴다), detail = 회차 상세(있으면 요약의 최근 회차에 "회차 상세" 링크) */
+export type StatisticsLinks = { home: string; draws: (game: Game) => string; detail?: (game: Game, round: number) => string };
 
 export type StatisticsProps = {
   core: Pick<ScreenCore, "reader">;
   links: StatisticsLinks;
   /** 처음 보일 복권(기본 로또) */
   initialGame?: Game;
+  /**
+   * "wide" = Windows D-04: 이동 경로 없음(사이드바가 내비), 조건은 위 한 줄, 차트(좌)·대체 표(우)를 함께 보인다.
+   * 기본 "stack"은 ~1199 1열·1200~ [조건 | 차트], 표는 "표로 보기"로 바꿔 본다.
+   */
+  layout?: "stack" | "wide";
 };
 
 /** 표본이 이보다 적으면 "표본 적음"(task-015 결정 ⑦). */
@@ -97,7 +102,8 @@ function useKeyedRead<T>(key: string, load: (force: boolean) => Promise<T>): [As
   return [state, reload];
 }
 
-export function Statistics({ core, links, initialGame = "lotto" }: StatisticsProps) {
+export function Statistics({ core, links, initialGame = "lotto", layout = "stack" }: StatisticsProps) {
+  const wide = layout === "wide";
   const [game, setGame] = useState<Game>(initialGame);
   const [statWindow, setStatWindow] = useState<StatWindow>(DEFAULT_WINDOW);
   const [metric, setMetric] = useState<StatMetric>(METRICS[initialGame][0]!.metric);
@@ -116,22 +122,32 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
   };
 
   return (
-    <div className="ll-stats" data-game={game}>
-      <nav className="ll-breadcrumb" aria-label="현재 위치">
-        <ol>
-          <li>
-            <a href={links.home}>홈</a>
-          </li>
-          <li aria-current="page">통계</li>
-        </ol>
-      </nav>
+    <div className="ll-stats" data-game={game} data-layout={wide ? "wide" : undefined}>
+      {!wide && (
+        <nav className="ll-breadcrumb" aria-label="현재 위치">
+          <ol>
+            <li>
+              <a href={links.home}>홈</a>
+            </li>
+            <li aria-current="page">통계</li>
+          </ol>
+        </nav>
+      )}
       <Header title="통계" subtitle="지난 회차 결과를 기간별로 집계해 무작위 기준선과 함께 보여 줍니다." />
       <p className="ll-stats__notice">
         <strong>미래 예측 아님</strong> · 과거 회차를 센 결과입니다. 어떤 번호도 다음 회차에 더 잘 나오지 않으며, 기준선은 번호가 무작위로
         고르게 나올 때 기대되는 횟수입니다.
       </p>
 
-      <SummaryCard game={game} statWindow={statWindow} info={info} latest={latest} stat={stat} onRetry={() => reloadLatest(true)} />
+      <SummaryCard
+        game={game}
+        statWindow={statWindow}
+        info={info}
+        latest={latest}
+        stat={stat}
+        detail={links.detail}
+        onRetry={() => reloadLatest(true)}
+      />
 
       <div className="ll-stats__layout">
         <Card title="보기 조건" className="ll-stats__controls">
@@ -164,7 +180,15 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
           </a>
         </Card>
 
-        <StatPanel state={stat} game={game} window={statWindow} info={info} onRetry={() => reloadStat(true)} onWindow={setStatWindow} />
+        <StatPanel
+          state={stat}
+          game={game}
+          window={statWindow}
+          info={info}
+          wide={wide}
+          onRetry={() => reloadStat(true)}
+          onWindow={setStatWindow}
+        />
       </div>
     </div>
   );
@@ -185,6 +209,7 @@ function SummaryCard({
   info,
   latest,
   stat,
+  detail,
   onRetry,
 }: {
   game: Game;
@@ -192,6 +217,7 @@ function SummaryCard({
   info: MetricInfo;
   latest: Async<ReadResult<AnyDraw>>;
   stat: Async<ReadResult<StatRow>>;
+  detail?: StatisticsLinks["detail"];
   onRetry: () => void;
 }) {
   const lv = readView(latest.status === "done" ? latest.value : undefined);
@@ -208,6 +234,11 @@ function SummaryCard({
             <>
               <span className="ll-num">제 {lv.data.draw_no.toLocaleString("ko-KR")}회</span>
               <span className="ll-draw__date">{formatDrawDate(lv.data.draw_date)}</span>
+              {detail && (
+                <a className="ll-link ll-stats__detail" href={detail(game, lv.data.draw_no)}>
+                  회차 상세
+                </a>
+              )}
             </>
           )}
         </div>
@@ -262,6 +293,7 @@ function StatPanel({
   game,
   window,
   info,
+  wide,
   onRetry,
   onWindow,
 }: {
@@ -269,6 +301,7 @@ function StatPanel({
   game: Game;
   window: StatWindow;
   info: MetricInfo;
+  wide: boolean;
   onRetry: () => void;
   onWindow: (w: StatWindow) => void;
 }) {
@@ -306,13 +339,27 @@ function StatPanel({
         />
       )}
       {view.kind === "success" && view.data.sample_size > 0 && (
-        <StatBody key={info.metric} row={view.data} game={game} window={window} info={info} title={title} />
+        <StatBody key={info.metric} row={view.data} game={game} window={window} info={info} title={title} wide={wide} />
       )}
     </Card>
   );
 }
 
-function StatBody({ row, game, window, info, title }: { row: StatRow; game: Game; window: StatWindow; info: MetricInfo; title: string }) {
+function StatBody({
+  row,
+  game,
+  window,
+  info,
+  title,
+  wide,
+}: {
+  row: StatRow;
+  game: Game;
+  window: StatWindow;
+  info: MetricInfo;
+  title: string;
+  wide: boolean;
+}) {
   const chart = statChart(info.metric, row);
   const period = periodText(row, window);
   return (
@@ -356,7 +403,7 @@ function StatBody({ row, game, window, info, title }: { row: StatRow; game: Game
       )}
 
       {chart ? (
-        <ChartWithTable chart={chart} info={info} title={title} period={period} game={game} />
+        <ChartWithTable chart={chart} info={info} title={title} period={period} game={game} wide={wide} />
       ) : (
         // 기준선·형식을 확인할 수 없는 수치는 노출하지 않는다(AGENTS 4장 — 통계는 기준선과 함께).
         <p className="ll-muted" role="status">
@@ -377,27 +424,54 @@ function baselineText(chart: StatChart, info: MetricInfo): string {
   return "막대마다 표시 (무작위 기대 횟수)";
 }
 
-function ChartWithTable({ chart, info, title, period, game }: { chart: StatChart; info: MetricInfo; title: string; period: string; game: Game }) {
+function ChartWithTable({
+  chart,
+  info,
+  title,
+  period,
+  game,
+  wide,
+}: {
+  chart: StatChart;
+  info: MetricInfo;
+  title: string;
+  period: string;
+  game: Game;
+  wide: boolean;
+}) {
   const [table, setTable] = useState(false);
   const regionId = useId();
+  const graphic =
+    chart.kind === "bars" ? (
+      <BarChart bars={chart.bars} single={chart.single} info={info} title={title} period={period} game={game} />
+    ) : (
+      <HeatMap rows={chart.rows} baseline={chart.baseline} title={title} />
+    );
+  const legend = chart.kind === "bars" ? `가로: ${info.axis} 순서 · 세로: ${info.unit} · 점선: 기준선` : "행: 자리 · 열: 숫자 0~9 · 칸 숫자: 출현 횟수";
+  if (wide) {
+    // Windows D-04: 차트(좌)와 대체 표(우)를 함께 — 표는 카드 안에서만 세로 스크롤.
+    return (
+      <div className="ll-stats__chart ll-stats__split">
+        <div className="ll-stats__chart">
+          <p className="ll-muted">{legend}</p>
+          {graphic}
+        </div>
+        <div className="ll-stats__table" tabIndex={0} role="region" aria-label={`${title} 대체 표 영역(세로 스크롤)`}>
+          <ChartTable chart={chart} info={info} title={title} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="ll-stats__chart">
       <div className="ll-stats__chart-head">
-        <p className="ll-muted">
-          {chart.kind === "bars" ? `가로: ${info.axis} 순서 · 세로: ${info.unit} · 점선: 기준선` : "행: 자리 · 열: 숫자 0~9 · 칸 숫자: 출현 횟수"}
-        </p>
+        <p className="ll-muted">{legend}</p>
         <button type="button" className="ll-link" aria-pressed={table} aria-controls={regionId} onClick={() => setTable((v) => !v)}>
           표로 보기
         </button>
       </div>
       <div id={regionId}>
-        {table ? (
-          <ChartTable chart={chart} info={info} title={title} />
-        ) : chart.kind === "bars" ? (
-          <BarChart bars={chart.bars} single={chart.single} info={info} title={title} period={period} game={game} />
-        ) : (
-          <HeatMap rows={chart.rows} baseline={chart.baseline} title={title} />
-        )}
+        {table ? <ChartTable chart={chart} info={info} title={title} /> : graphic}
       </div>
     </div>
   );

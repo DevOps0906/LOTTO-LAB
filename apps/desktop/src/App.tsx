@@ -1,4 +1,4 @@
-import { AppShell, Header, NoticeProvider, StateView, type NavItem, type ThemePreference } from "@lotto-lab/ui";
+import { AppShell, Header, NoticeProvider, StateView, type CsvExporter, type NavItem, type ThemePreference } from "@lotto-lab/ui";
 import { useState } from "react";
 import { CoreContext, type CoreState } from "./core.ts";
 import { NavIcon } from "./icons.tsx";
@@ -13,9 +13,11 @@ export type AppProps = {
   onThemeChange?: (theme: ThemePreference) => void;
   /** 설정(D-09) 모두 삭제 뒤 다시 시작 */
   onCleared?: () => void;
+  /** CSV 내보내기(D-05 내 번호·D-01 요약) — 없으면 내보내기 버튼을 숨긴다 */
+  csv?: CsvExporter;
 };
 
-export function App({ core, onThemeChange, onCleared }: AppProps) {
+export function App({ core, onThemeChange, onCleared, csv }: AppProps) {
   const [gate] = useState<AgeGateLike>(() => core.core?.ageGate ?? createSessionAgeGate());
   const hashPath = useHashPath();
   const [path = "/", query = ""] = hashPath.split("?");
@@ -54,12 +56,13 @@ export function App({ core, onThemeChange, onCleared }: AppProps) {
               {core.core ? (
                 <RouteScreen
                   key={hashPath}
-                  path={route.path}
+                  path={route.screen}
                   query={query}
                   title={route.title}
                   core={core.core}
                   onThemeChange={onThemeChange}
                   onCleared={onCleared}
+                  csv={csv}
                 />
               ) : (
                 <>

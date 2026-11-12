@@ -11,6 +11,8 @@ import { Header } from "../../components/Header";
 import { Icon } from "../../components/icons";
 import { useNotice } from "../../components/Notice";
 import { StateView } from "../../components/StateView";
+import { ExportBar, TicketTable, csvRows, rowId, type TicketListRow } from "../D-05/TicketTable";
+import type { CsvExporter } from "../common/csv";
 import { GAME_NAME, useAsync, type Game } from "../common/data";
 import { Segment } from "../common/generator";
 import {
@@ -55,6 +57,15 @@ export type MyTicketsProps = {
   /** "구매로 등록" 메뉴 선택 시 이동(셸이 해시를 바꾼다) */
   navigate: (href: string) => void;
   initialTab?: MyTicketsTab;
+  /**
+   * "wide" = Windows D-05: 줄을 넓은 표(선택·회차·복권·조·번호·구매일·금액·상태·판정·검증 시각)로 보이고,
+   * 정렬에 구매일·금액, 구매 기록 탭에 판정 필터, CSV 내보내기를 더한다. 기본 "stack"은 줄마다 카드.
+   */
+  layout?: "stack" | "wide";
+  /** CSV 내보내기(셸이 파일 저장을 맡는다). wide에서만 쓰고, 없으면 내보내기 막대를 숨긴다 */
+  csv?: CsvExporter;
+  /** false면 줄 메뉴의 "공유"를 숨긴다(Windows 공유 = 클립보드 복사라 "복사"와 중복) */
+  canShare?: boolean;
 };
 
 /** 한 번에 보이는 줄 수("더 보기"로 늘린다). */
@@ -67,10 +78,13 @@ const TABS: { id: MyTicketsTab; label: string }[] = [
 ];
 
 type GameFilter = Game | "all";
-type Sort = "created" | "round";
+/** date·amount는 wide(D-05) 구매 기록 탭에서만 — 사용자 기록 정렬이다(통계 순위 정렬 아님) */
+type Sort = "created" | "round" | "date" | "amount";
+/** 판정 필터(wide 구매 기록 탭): 당첨·낙첨·확인 대기(결과 대기·추첨 전·회차 미입력·확인 전·불러오지 못함) */
+type JudgeFilter = "all" | "win" | "lose" | "wait";
 type Loaded = { tickets: TicketRecord[]; history: HistoryRecord[] };
 
-export function MyTickets({ core, links, navigate, initialTab = "favorite" }: MyTicketsProps) {
+export function MyTickets({ core, links, navigate, initialTab = "favorite", layout = "stack", csv, canShare = true }: MyTicketsProps) {
   const [tab, setTab] = useState<MyTicketsTab>(initialTab);
   const [state, reload] = useAsync<Loaded>(async () => {
     const [tickets, history] = await Promise.all([core.tickets.list(), core.generator.history()]);
@@ -83,7 +97,7 @@ export function MyTickets({ core, links, navigate, initialTab = "favorite" }: My
   }, [state]);
 
   return (
-    <div className="ll-tickets">
+    <div className="ll-tickets" data-layout={layout === "wide" ? "wide" : undefined}>
       <Header
         title="내 번호"
         subtitle="즐겨찾기·구매 기록·생성 이력을 나눠 보관합니다. 추천 번호는 구매 기록이 아니며, 당첨 확인은 구매 기록만 합니다."
@@ -129,6 +143,9 @@ export function MyTickets({ core, links, navigate, initialTab = "favorite" }: My
             history={state.value.history}
             tickets={tickets ?? []}
             updateTickets={(fn) => setTickets((list) => fn(list ?? []))}
+            wide={layout === "wide"}
+            csv={csv}
+            canShare={canShare}
           />
         )}
       </div>
@@ -182,9 +199,7 @@ function matches(data: TicketNumbersData, round: number | null, query: string): 
   return tokens.every((t) => data.ticket_data.digits.includes(t));
 }
 
-type Row =
-  | { kind: "ticket"; ticket: TicketRecord }
-  | { kind: "history"; history: HistoryRecord; savedTicket: TicketRecord | undefined };
+type Row = TicketListRow;
 
 function TabBody({
   tab,
@@ -194,6 +209,9 @@ function TabBody({
   history,
   tickets,
   updateTickets: setTickets,
+  wide,
+  csv,
+  canShare,
 }: {
   tab: MyTicketsTab;
   core: MyTicketsProps["core"];
@@ -202,9 +220,14 @@ function TabBody({
   history: HistoryRecord[];
   tickets: TicketRecord[];
   updateTickets: (fn: (list: TicketRecord[]) => TicketRecord[]) => void;
+  wide: boolean;
+  csv: CsvExporter | undefined;
+  canShare: boolean;
 }) {
   const notice = useNotice();
   const [game, setGame] = useState<GameFilter>("all");
+  const [judge, setJudge] = useState<JudgeFilter>("all");
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("created");
   const [shown, setShown] = useState(TICKET_PAGE);
@@ -222,6 +245,14 @@ function TabBody({
     return { lotto: l.data?.draw_no, pension: p.data?.draw_no };
   });
 
+  const checkMap = checks.status === "done" ? checks.value : null;
+  const latestNo = latest.status === "done" ? latest.value : {};
+  const judgeOf = (r: Row): JudgeFilter => {
+    const outcome = r.kind === "ticket" ? checkMap?.get(r.ticket.id) : undefined;
+    if (!outcome) return "wait";
+    const tone = resultView(outcome, latestNo[outcome.ticket.game]).tone;
+    return tone === "win" ? "win" : tone === "lose" ? "lose" : "wait";
+  };
   const bySource = new Map(tickets.filter((t) => t.source_number_id).map((t) => [t.source_number_id!, t]));
   const all: Row[] =
     tab === "generated"
@@ -231,7 +262,7 @@ function TabBody({
     .filter((r) => {
       const data = r.kind === "ticket" ? r.ticket : historyData(r.history);
       const round = r.kind === "ticket" ? r.ticket.round : null;
-      return (game === "all" || data.game === game) && matches(data, round, query);
+      return (game === "all" || data.game === game) && matches(data, round, query) && (judge === "all" || judgeOf(r) === judge);
     })
     .sort((a, b) => {
       const ca = a.kind === "ticket" ? a.ticket.created_at : a.history.created_at;
@@ -240,6 +271,16 @@ function TabBody({
         const ra = a.kind === "ticket" ? (a.ticket.round ?? 0) : 0;
         const rb = b.kind === "ticket" ? (b.ticket.round ?? 0) : 0;
         if (ra !== rb) return rb - ra;
+      }
+      if (sort === "date") {
+        const da = a.kind === "ticket" ? (a.ticket.purchase_date ?? "") : "";
+        const db = b.kind === "ticket" ? (b.ticket.purchase_date ?? "") : "";
+        if (da !== db) return db.localeCompare(da);
+      }
+      if (sort === "amount") {
+        const wa = a.kind === "ticket" ? (a.ticket.amount_won ?? -1) : -1;
+        const wb = b.kind === "ticket" ? (b.ticket.amount_won ?? -1) : -1;
+        if (wa !== wb) return wb - wa;
       }
       return cb.localeCompare(ca);
     });
@@ -328,8 +369,29 @@ function TabBody({
     }
   }
 
-  const checkMap = checks.status === "done" ? checks.value : null;
-  const latestNo = latest.status === "done" ? latest.value : {};
+  const tabLabel = TABS.find((t) => t.id === tab)!.label;
+  const ticketMenu = (ticket: TicketRecord) =>
+    ticketMenuItems(ticket, busy.has(ticket.id), canShare, {
+      register: () => navigate(links.registerFrom(ticket.id)),
+      copy: () => copy(ticketText(ticket)),
+      share: () => share(ticketText(ticket), ticket.purchase_status),
+      remove: () => requestRemove(ticket),
+    });
+  const historyMenu = (h: HistoryRecord, saved: TicketRecord | undefined): ActionMenuItem[] => [
+    { id: "save", label: saved ? "저장됨" : "즐겨찾기로 저장", disabled: Boolean(saved) || busy.has(h.id), onSelect: () => void saveFavorite(h) },
+    { id: "copy", label: "복사", onSelect: () => copy(ticketText(historyData(h))) },
+  ];
+  // 내보내기 "선택" 범위 = 선택한 행 중 지금 필터에 보이는 행(제거된 줄·필터 밖 줄은 빠진다).
+  const selectedRows = filtered.filter((r) => selected.has(rowId(r)));
+  const select = (ids: string[], on: boolean) =>
+    setSelected((s) => {
+      const next = new Set(s);
+      for (const id of ids) {
+        if (on) next.add(id);
+        else next.delete(id);
+      }
+      return next;
+    });
 
   return (
     <>
@@ -374,11 +436,43 @@ function TabBody({
               options={[
                 { value: "created", label: "등록일순" },
                 { value: "round", label: "회차순" },
+                ...(wide && tab === "purchased"
+                  ? [
+                      { value: "date" as const, label: "구매일순" },
+                      { value: "amount" as const, label: "금액순" },
+                    ]
+                  : []),
               ]}
               onChange={setSort}
             />
           )}
+          {wide && tab === "purchased" && (
+            <Segment
+              legend="판정"
+              name="tickets-judge"
+              value={judge}
+              options={[
+                { value: "all", label: "전체" },
+                { value: "win", label: "당첨" },
+                { value: "lose", label: "낙첨" },
+                { value: "wait", label: "확인 대기" },
+              ]}
+              onChange={(v) => {
+                setJudge(v);
+                setShown(TICKET_PAGE);
+              }}
+            />
+          )}
         </div>
+        {wide && csv && filtered.length > 0 && (
+          <ExportBar
+            tabLabel={tabLabel}
+            selectedRows={selectedRows}
+            filteredRows={filtered}
+            toCsv={(target) => csvRows(target, checkMap, latestNo)}
+            exporter={csv}
+          />
+        )}
       </Card>
       {tab === "purchased" && checks.status === "failed" && (
         <p className="ll-gen__error" role="alert">
@@ -398,12 +492,43 @@ function TabBody({
       {all.length === 0 ? (
         <EmptyTab tab={tab} links={links} />
       ) : filtered.length === 0 ? (
-        <StateView kind="empty" title="조건에 맞는 번호가 없습니다" description="검색어나 복권 선택을 바꿔 보세요." />
+        <StateView
+          kind="empty"
+          title="조건에 맞는 번호가 없습니다"
+          description="검색어나 복권 선택을 바꿔 보세요."
+          action={
+            wide ? (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setQuery("");
+                  setGame("all");
+                  setJudge("all");
+                }}
+              >
+                필터 초기화
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
-        <section aria-label={`${TABS.find((t) => t.id === tab)!.label} 목록`}>
+        <section aria-label={`${tabLabel} 목록`}>
           <p className="ll-muted">
             {filtered.length.toLocaleString("ko-KR")}개 중 {rows.length.toLocaleString("ko-KR")}개 표시
           </p>
+          {wide ? (
+            <TicketTable
+              caption={`${tabLabel} 표`}
+              rows={rows}
+              outcomes={checkMap}
+              checking={tab === "purchased" && checks.status === "loading"}
+              latestNo={latestNo}
+              selected={selected}
+              onSelect={select}
+              detail={links.detail}
+              menu={(row) => (row.kind === "ticket" ? ticketMenu(row.ticket) : historyMenu(row.history, row.savedTicket))}
+            />
+          ) : (
           <ul className="ll-tickets__items">
             {rows.map((row) =>
               row.kind === "ticket" ? (
@@ -415,24 +540,20 @@ function TabBody({
                   latestNo={latestNo[row.ticket.game]}
                   busy={busy.has(row.ticket.id)}
                   links={links}
-                  onRegister={() => navigate(links.registerFrom(row.ticket.id))}
-                  onCopy={() => copy(ticketText(row.ticket))}
-                  onShare={() => share(ticketText(row.ticket), row.ticket.purchase_status)}
-                  onRemove={() => requestRemove(row.ticket)}
+                  items={ticketMenu(row.ticket)}
                 />
               ) : (
                 <HistoryRow
                   key={row.history.id}
                   history={row.history}
                   savedTicket={row.savedTicket}
-                  busy={busy.has(row.history.id)}
                   links={links}
-                  onSave={() => void saveFavorite(row.history)}
-                  onCopy={() => copy(ticketText(historyData(row.history)))}
+                  items={historyMenu(row.history, row.savedTicket)}
                 />
               ),
             )}
           </ul>
+          )}
           {filtered.length > rows.length && (
             <div className="ll-draws__more">
               <Button variant="secondary" block onClick={() => setShown((n) => n + TICKET_PAGE)}>
@@ -494,10 +615,7 @@ function TicketRow({
   latestNo,
   busy,
   links,
-  onRegister,
-  onCopy,
-  onShare,
-  onRemove,
+  items,
 }: {
   ticket: TicketRecord;
   outcome: TicketOutcome | undefined;
@@ -505,21 +623,9 @@ function TicketRow({
   latestNo: number | undefined;
   busy: boolean;
   links: MyTicketsLinks;
-  onRegister: () => void;
-  onCopy: () => void;
-  onShare: () => void;
-  onRemove: () => void;
+  items: ActionMenuItem[];
 }) {
   const name = `${GAME_NAME[ticket.game]} ${ticketText(ticket)}`;
-  // 구매 기록 → 즐겨찾기로 되돌리는 항목은 두지 않는다(R19).
-  const items: ActionMenuItem[] = [
-    ...(ticket.purchase_status === "favorite"
-      ? [{ id: "register", label: "구매로 등록", onSelect: onRegister }]
-      : []),
-    { id: "copy", label: "복사", onSelect: onCopy },
-    { id: "share", label: "공유", onSelect: onShare },
-    { id: "remove", label: ticket.purchase_status === "purchased" ? "삭제" : "제거", tone: "danger", disabled: busy, onSelect: onRemove },
-  ];
   return (
     <li className="ll-tickets__item" data-status={ticket.purchase_status} aria-busy={busy || undefined}>
       <div className="ll-tickets__head">
@@ -556,17 +662,13 @@ function TicketRow({
 function HistoryRow({
   history,
   savedTicket,
-  busy,
   links,
-  onSave,
-  onCopy,
+  items,
 }: {
   history: HistoryRecord;
   savedTicket: TicketRecord | undefined;
-  busy: boolean;
   links: MyTicketsLinks;
-  onSave: () => void;
-  onCopy: () => void;
+  items: ActionMenuItem[];
 }) {
   const data = historyData(history);
   const name = `${GAME_NAME[history.game]} ${ticketText(data)}`;
@@ -590,16 +692,25 @@ function HistoryRow({
         ) : (
           <span className="ll-muted">추천 번호 · 구매 기록 아님</span>
         )}
-        <ActionMenu
-          label={`${name} 메뉴`}
-          items={[
-            { id: "save", label: savedTicket ? "저장됨" : "즐겨찾기로 저장", disabled: Boolean(savedTicket) || busy, onSelect: onSave },
-            { id: "copy", label: "복사", onSelect: onCopy },
-          ]}
-        />
+        <ActionMenu label={`${name} 메뉴`} items={items} />
       </div>
     </li>
   );
+}
+
+/** 저장 번호 줄 메뉴. 구매 기록 → 즐겨찾기로 되돌리는 항목은 두지 않는다(R19). */
+function ticketMenuItems(
+  ticket: TicketRecord,
+  busy: boolean,
+  canShare: boolean,
+  on: { register: () => void; copy: () => void; share: () => void; remove: () => void },
+): ActionMenuItem[] {
+  return [
+    ...(ticket.purchase_status === "favorite" ? [{ id: "register", label: "구매로 등록", onSelect: on.register }] : []),
+    { id: "copy", label: "복사", onSelect: on.copy },
+    ...(canShare ? [{ id: "share", label: "공유", onSelect: on.share }] : []),
+    { id: "remove", label: ticket.purchase_status === "purchased" ? "삭제" : "제거", tone: "danger" as const, disabled: busy, onSelect: on.remove },
+  ];
 }
 
 const dayFormatter = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" });
