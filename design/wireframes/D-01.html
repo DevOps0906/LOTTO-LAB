@@ -29,21 +29,25 @@ th{color:var(--color-text-muted,#5b6270)}.skel{display:inline-block;height:10px;
 .ok{color:var(--color-success,#1f9d55)}.no{color:var(--color-danger,#d64545);font-weight:600}.muted{color:var(--color-text-muted,#5b6270)}
 </style></head><body>
 <script>if(location.search.indexOf('dark')>=0)document.documentElement.classList.add('dark')</script>
-<div class="meta"><b>D-01</b><span>대시보드</span><span>/desktop/home</span><span>권한: 성인 확인 게스트/회원</span><span>기록·회차·대조대기를 넓게 비교</span><a href="index.html">전체 화면</a></div>
+<div class="meta"><b>D-01</b><span>대시보드</span><span>/desktop/home</span><span>권한: 성인 확인 게스트/회원</span><span>최신 결과와 내 기록에서 시작(M-01과 같은 블록, 넓은 배치)</span><a href="index.html">전체 화면</a></div>
 <div class="shell has-side"><aside class="side"><div class="lab">메뉴</div><div>대시보드</div><div>로또 생성</div><div>연금 생성</div><div>통계</div><div>내번호</div><div>회차</div><div>알림</div><div>설정</div></aside><div><header class="hd"><h1>Windows 대시보드</h1><nav></nav><span class="burger" aria-label="메뉴"></span></header><main>
 
 
-<div class="row"><span class="chip">📅 집계 기간: 이번 달 ▾</span><span class="chip">이전 기간과 비교</span></div>
-<div class="row"><span class="chip">복권 ▾</span></div>
-<div class="grid"><div class="box"><div class="lab">저장 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div><div class="box"><div class="lab">구매등록 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div><div class="box"><div class="lab">확인대기 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div><div class="box"><div class="lab">이전 기간 대비</div><div class="num">000</div><div class="delta">▲ 0%</div></div></div>
-<div class="box"><div class="lab">기간별 구매등록 건수</div><div class="bars"><i style="height:40%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:60%"></i><i style="height:90%"></i><i style="height:70%"></i></div></div>
+<div class="box"><div class="lab">text</div>데이터로 살펴보는 번호(히어로 그라데이션 한 줄 전체)</div>
+<div class="grid wide"><div class="box"><b>최신 회차</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>추첨일</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>번호</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>보너스</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>공식 출처</b><p class="muted"><span class="skel"></span></p></div></div>
+<div class="grid wide"><div class="box"><b>로또</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>연금 진입</b><p class="muted"><span class="skel"></span></p></div></div>
+<div class="grid wide"><div class="box"><b>이번 주 통계 요약(기간</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>표본</b><p class="muted"><span class="skel"></span></p></div><div class="box"><b>미래 예측 아님)</b><p class="muted"><span class="skel"></span></p></div></div>
+<div class="row"><span class="btn">번호 생성</span></div>
+<div class="row"><span class="btn">지난 설정 재생성</span></div>
+<div class="row"><span class="chip">📅 요약 기간: 이번 달 ▾</span><span class="chip">이전 기간과 비교</span></div>
+<div class="grid"><div class="box"><div class="lab">우측 열 작은 카드 저장 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div><div class="box"><div class="lab">구매등록 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div><div class="box"><div class="lab">확인대기 수</div><div class="num">000</div><div class="delta">▲ 0%</div></div></div>
 <div class="box tw"><table><thead><tr><th>최근 공식 결과</th><th>대조대기</th></tr></thead><tbody><tr><td><span class="skel"></span></td><td><span class="skel"></span></td></tr><tr><td><span class="skel"></span></td><td><span class="skel"></span></td></tr><tr><td><span class="skel"></span></td><td><span class="skel"></span></td></tr></tbody></table></div>
 <div class="lab">마지막 갱신: 방금 전 · ↻</div>
 <div class="box"><div class="lab">알림·미갱신 안내</div><div class="card"><span class="skel"></span></div><div class="card"><span class="skel"></span></div><div class="card"><span class="skel"></span></div></div>
-<div class="row"><span class="btn">빠른 생성</span></div>
 <div class="row"><span class="btn sec">요약 CSV</span></div>
 <div class="row"><a href="#">회차/구매기록 상세</a></div>
+<div class="box"><div class="lab">text</div>M-01 컴포넌트 재사용·1200~ 히어로 아래 2열 좌 최근 회차+상품 카드 2개·우 이번 주 통계 요약+CTA+기록 카드</div>
 </main></div></div>
-<section class="wf"><h3>상태</h3><div class="st"><div class="box"><b>빈</b><p class="muted">사용자 기록 없음은 생성/구매등록 CTA</p></div><div class="box"><b>로딩</b><p class="muted">KPI·차트·회차 표 스켈레톤</p></div><div class="box"><b>오류</b><p class="muted">미갱신 배너·마지막 정상본·재시도</p></div><div class="box"><b>성공</b><p class="muted">기간별 KPI·대조대기·회차 드릴다운 표시</p></div></div>
-<h3>필수 구조 검사</h3><div><div class="ok">✅ 필수 구조 충족</div></div><h3>다음 화면</h3><div><a href="D-02.html">D-02 Windows 로또 생성</a> · <a href="D-03.html">D-03 Windows 연금 생성</a> · <a href="D-04.html">D-04 Windows 통계</a> · <a href="D-05.html">D-05 Windows 내 번호</a> · <a href="D-08.html">D-08 Windows 회차 상세</a> · <a href="D-09.html">D-09 Windows 설정</a> · <a href="D-13.html">D-13 Windows 알림함(P1)</a> · <a href="D-14.html">D-14 Windows 회차 목록</a></div></section>
+<section class="wf"><h3>상태</h3><div class="st"><div class="box"><b>빈</b><p class="muted">사용자 기록 없음은 생성/구매등록 CTA</p></div><div class="box"><b>로딩</b><p class="muted">최신 회차·상품 카드·기록 카드·회차 표 스켈레톤</p></div><div class="box"><b>오류</b><p class="muted">미갱신 배너·마지막 정상본·재시도</p></div><div class="box"><b>성공</b><p class="muted">최신 회차·상품 카드·통계 요약·기록 카드·대조대기·회차 드릴다운 표시</p></div></div>
+<h3>필수 구조 검사</h3><div><div class="ok">✅ 필수 구조 충족</div><div class="muted">· 권장: 이전 기간 대비(증감)</div><div class="muted">· 권장: 세그먼트·담당자 필터</div></div><h3>다음 화면</h3><div><a href="D-02.html">D-02 Windows 로또 생성</a> · <a href="D-03.html">D-03 Windows 연금 생성</a> · <a href="D-04.html">D-04 Windows 통계</a> · <a href="D-05.html">D-05 Windows 내 번호</a> · <a href="D-08.html">D-08 Windows 회차 상세</a> · <a href="D-09.html">D-09 Windows 설정</a> · <a href="D-13.html">D-13 Windows 알림함(P1)</a> · <a href="D-14.html">D-14 Windows 회차 목록</a></div></section>
 </body></html>

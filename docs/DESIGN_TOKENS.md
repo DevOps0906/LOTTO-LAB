@@ -8,7 +8,7 @@
 | `--color-text` | `#17243b` | `#e8edf7` |
 | `--color-text-muted` | `#5a6478` | `#9aa6bd` |
 | `--color-border` | `#e5eaf5` | `#26314a` |
-| `--color-input` | `#7d88a0` | `#5d6a86` |
+| `--color-input` | `#7d88a0` | `#6b7895` |
 | `--color-focus` | `#5266f5` | `#7c8cff` |
 | `--color-navy` | `#101c35` | `#0e1730` |
 | `--color-navy-fg` | `#ffffff` | `#ffffff` |

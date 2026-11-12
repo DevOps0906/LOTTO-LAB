@@ -7,7 +7,7 @@
 | 위험도 | 보통 |
 | 보안 영향 | 없음 |
 | 담당 | builder → codex-reviewer(design) |
-| 근거 | `spec D-11` · `spec D-01` · `spec D-09` · `docs/01_PRD.md#9` 11 · `DESIGN.md`(R4·R14) |
+| 근거 | `spec D-11` · `spec D-01` · `spec D-09` · `docs/01_PRD.md#9` 11 · `DESIGN.md`(R4·R14) · `docs/adr/0004-pc-uses-mobile-visual-language.md` · `design/reference/d-home.html` |
 | 쓰기 허용 | `packages/ui/src/screens/{D-11,D-01,D-09}/**`, `apps/desktop/src/routes/**` |
 
 ## 할 것
