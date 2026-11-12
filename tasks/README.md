@@ -22,8 +22,8 @@
 | task-015 | statistics 기본 통계 | W2 | 011 | 보통 | builder+tester | 완료 |
 | task-016 | app-core 어댑터·로컬 저장·공개 읽기 (R22) | W2 | 007, 011, 013, 014 | 높음 | builder | 완료 |
 | task-017 | 모바일 M-05·M-01·M-15 | W3 | 009, 016 | 보통 | builder | 완료 |
-| task-018 | 모바일 M-02 로또 생성 | W3 | 017 | 보통 | builder | 대기 |
-| task-019 | 모바일 M-03 연금 생성 | W3 | 017 | 보통 | builder | 대기 |
+| task-018 | 모바일 M-02 로또 생성 | W3 | 017 | 보통 | builder | 완료 |
+| task-019 | 모바일 M-03 연금 생성 | W3 | 017 | 보통 | builder | 완료 |
 | task-020 | 모바일 M-04 통계 | W3 | 015, 017 | 보통 | builder | 대기 |
 | task-021 | 모바일 M-16·M-11 회차 | W3 | 017 | 보통 | builder | 대기 |
 | task-022 | 모바일 M-07·M-08 내 번호·기기 판정 | W3 | 018, 019, 021 | 보통 | builder | 대기 |

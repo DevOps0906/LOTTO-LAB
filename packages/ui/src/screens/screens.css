@@ -621,3 +621,330 @@
     animation: none;
   }
 }
+
+/* ── M-02 로또 생성 · M-03 연금 생성(DESIGN.md 4.2) — 시각 기준 design/reference/m-lotto.png·m-pension.png·d-lotto.html ──
+   ~1199 1열(조건 → 결과), 1200~ 2열[조건 | 결과]. 연금 맥락은 data-game="pension"이 강조색을 바꾼다. */
+.ll-gen {
+  --gen-accent: var(--color-primary);
+  --gen-soft: var(--color-primary-soft);
+  --gen-soft-fg: var(--color-primary-soft-fg);
+  display: grid;
+  gap: var(--spacing-gap);
+}
+.ll-gen[data-game="pension"] {
+  --gen-accent: var(--color-pension);
+  --gen-soft: var(--color-pension-soft);
+  --gen-soft-fg: var(--color-pension-soft-fg);
+}
+.ll-gen .ll-header {
+  padding: 0;
+}
+.ll-gen__layout,
+.ll-gen__col {
+  display: grid;
+  gap: var(--spacing-gap);
+  align-items: start;
+  min-width: 0;
+}
+.ll-gen__cond {
+  display: grid;
+  gap: calc(var(--spacing) * 5);
+}
+.ll-gen__cond > .ll-card__head {
+  margin: 0;
+}
+.ll-field {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.ll-field__legend {
+  padding: 0;
+  margin-bottom: calc(var(--spacing) * 2);
+  font-weight: 700;
+}
+.ll-field__hint {
+  margin: 0;
+}
+/* 세그먼트(라디오·토글 버튼): 높이 44 이상, 선택 = 강조색 채움 + 굵게(색 외 표시) */
+.ll-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+  padding: var(--spacing);
+  border-radius: var(--radius-control);
+  background: var(--gen-soft);
+}
+.ll-seg__item {
+  flex: 1 1 0;
+  position: relative;
+  min-width: calc(var(--spacing) * 14);
+}
+.ll-seg__item input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ll-seg__item span,
+.ll-seg__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing);
+  min-height: calc(var(--spacing) * 11);
+  padding: 0 calc(var(--spacing) * 2);
+  border-radius: calc(var(--radius-control) - var(--spacing));
+  color: var(--gen-soft-fg);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-align: center;
+}
+.ll-seg__button {
+  flex: 1 1 0;
+  min-width: calc(var(--spacing) * 11);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ll-seg__item input:checked + span,
+.ll-seg__button[aria-pressed="true"] {
+  background: var(--gen-accent);
+  color: var(--color-primary-fg);
+  font-weight: 800;
+}
+.ll-gen[data-game="pension"] .ll-seg__item input:checked + span,
+.ll-gen[data-game="pension"] .ll-seg__button[aria-pressed="true"] {
+  color: var(--color-pension-fg);
+}
+.ll-seg__item input:focus-visible + span,
+.ll-seg__button:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+.ll-seg__button:disabled {
+  cursor: not-allowed;
+}
+.ll-input {
+  min-height: calc(var(--spacing) * 11);
+  min-width: 0;
+  padding: 0 calc(var(--spacing) * 3);
+  border: calc(var(--spacing) / 4) solid var(--color-input);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+.ll-input:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+.ll-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+.ll-gen__custom {
+  display: grid;
+  gap: var(--spacing);
+  max-width: calc(var(--spacing) * 60);
+  font-size: var(--text-caption);
+}
+.ll-gen__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 3);
+  margin: 0;
+}
+.ll-gen__clear,
+.ll-gen__fixes,
+.ll-gen__actions,
+.ll-gen__submit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-gen__submit .ll-button[data-block="true"] {
+  flex: 1 1 auto;
+  width: auto;
+}
+.ll-gen__clear .ll-link:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.ll-gen__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.ll-gen__restore {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  background: var(--gen-soft);
+  color: var(--gen-soft-fg);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.ll-gen__problem {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+  border: calc(var(--spacing) / 4) solid var(--color-danger);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+}
+.ll-gen__problem p {
+  margin: 0;
+}
+.ll-gen__problem-title {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+.ll-gen__summary {
+  margin: 0;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+}
+.ll-gen__note {
+  margin: calc(var(--spacing) * 3) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+}
+.ll-gen__all {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing) * 11);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.ll-gen__all input,
+.ll-result__check input {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+  margin: 0;
+  accent-color: var(--gen-accent);
+}
+/* 결과 줄: [선택] 라벨 | 번호 | 상태 | ⋯ — 좁으면 번호가 다음 줄로 */
+.ll-result {
+  display: grid;
+  margin: 0 0 calc(var(--spacing) * 3);
+  padding: 0;
+  list-style: none;
+}
+.ll-result__row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "check label status menu"
+    "content content content content";
+  align-items: center;
+  column-gap: calc(var(--spacing) * 2);
+  row-gap: var(--spacing);
+  padding: calc(var(--spacing) * 2) 0;
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+}
+/* 체크박스 히트 영역 44×44(spacing×11) — 라벨 전체가 누름 영역 */
+.ll-result__check {
+  grid-area: check;
+  display: inline-grid;
+  place-items: center;
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 11);
+  margin-left: calc(var(--spacing) * -3);
+  cursor: pointer;
+}
+.ll-result__label {
+  grid-area: label;
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+.ll-result__content {
+  grid-area: content;
+  min-width: 0;
+}
+.ll-result__status {
+  grid-area: status;
+  justify-self: end;
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ll-result__status[data-saved] {
+  background: var(--gen-soft);
+  color: var(--gen-soft-fg);
+}
+.ll-result__row .ll-menu {
+  grid-area: menu;
+}
+.ll-result__row[data-saved] {
+  background: var(--gen-soft);
+}
+.ll-result__digits {
+  font-size: var(--text-h2);
+}
+/* 연금 자리 6칸(십만~일): 320에서도 한 줄 */
+.ll-digits {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 1.5);
+}
+.ll-digit {
+  display: grid;
+  gap: var(--spacing);
+  min-width: 0;
+  text-align: center;
+}
+.ll-digit__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+.ll-digit .ll-input {
+  width: 100%;
+  min-height: calc(var(--spacing) * 14);
+  padding: 0;
+  text-align: center;
+  font-size: var(--text-h1);
+}
+.ll-digit .ll-input::placeholder {
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* 768~: 결과 줄을 한 줄로 */
+@media (width >= 48em) {
+  .ll-result__row {
+    grid-template-columns: auto calc(var(--spacing) * 14) minmax(0, 1fr) auto auto;
+    grid-template-areas: "check label content status menu";
+  }
+}
+/* 1200~: 2열 [조건 | 결과] */
+@media (width >= 75em) {
+  .ll-gen__layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}

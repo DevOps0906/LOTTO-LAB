@@ -4,6 +4,7 @@ import type { Adapters, AppConfig } from "./adapters.ts";
 import { AgeGate } from "./age-gate.ts";
 import { CheckService } from "./check-service.ts";
 import { GenerateService } from "./generate-service.ts";
+import { LastConfigStore } from "./last-config.ts";
 import { PublicReader } from "./public-read.ts";
 import { LocalStore, type Migrations } from "./storage.ts";
 import { TicketService } from "./ticket-service.ts";
@@ -12,6 +13,7 @@ export type * from "./adapters.ts";
 export * from "./errors.ts";
 export { AgeGate } from "./age-gate.ts";
 export { CheckService, type CheckOutcome } from "./check-service.ts";
+export { LastConfigStore } from "./last-config.ts";
 export { GENERATED_HISTORY_LIMIT, GenerateService, type GenerateRequest, type GenerateResult } from "./generate-service.ts";
 export {
   DRAW_CACHE_TTL_MS,
@@ -39,6 +41,8 @@ export type AppCore = {
   tickets: TicketService;
   reader: PublicReader;
   checker: CheckService;
+  /** 복권별 지난 생성 조건(설정 레코드) */
+  lastConfig: LastConfigStore;
   adapters: Adapters;
 };
 
@@ -53,6 +57,7 @@ export function createAppCore(adapters: Adapters, config: AppConfig, options: { 
     tickets,
     reader,
     checker: new CheckService(tickets, reader),
+    lastConfig: new LastConfigStore(store),
     adapters,
   };
 }

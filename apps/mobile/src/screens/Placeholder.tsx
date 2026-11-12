@@ -1,4 +1,4 @@
-// 아직 연결하지 않은 화면(생성 M-02·M-03, 통계, 내 번호 등) — 다음 작업에서 packages/ui·app-core 화면으로 바꾼다.
+// 아직 연결하지 않은 화면(통계, 내 번호 등) — 다음 작업에서 packages/ui·app-core 화면으로 바꾼다.
 import { Header, StateView } from "@lotto-lab/ui";
 import { href } from "../routes.ts";
 

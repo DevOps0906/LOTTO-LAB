@@ -31,7 +31,8 @@ import {
   type Ticket,
 } from "../common/data";
 
-export type HomeLinks = { generate: string; lotto: string; pension: string; stats: string; tickets: string };
+/** lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소 */
+export type HomeLinks = { generate: string; lotto: string; pension: string; lottoLast: string; pensionLast: string; stats: string; tickets: string };
 
 export type HomeProps = {
   core: ScreenCore;
@@ -508,7 +509,7 @@ function RecordsCard({
 
 function RecordsBody({ records, latest, links }: { records: Records; latest: Partial<Record<Game, number>>; links: HomeLinks }) {
   const { tickets, last } = records;
-  const reuse = last ? (last.game === "lotto" ? links.lotto : links.pension) : null;
+  const reuse = last ? (last.game === "lotto" ? links.lottoLast : links.pensionLast) : null;
   return (
     <>
       {tickets.length === 0 ? (
@@ -527,10 +528,10 @@ function RecordsBody({ records, latest, links }: { records: Records; latest: Par
       )}
       {reuse ? (
         <a className="ll-button" data-variant="secondary" data-block="true" href={reuse}>
-          같은 복권으로 다시 만들기 ({GAME_NAME[last!.game]})
+          지난 설정으로 다시 만들기 ({GAME_NAME[last!.game]})
         </a>
       ) : (
-        <p className="ll-muted">생성 기록이 생기면 같은 복권으로 바로 다시 만들 수 있습니다.</p>
+        <p className="ll-muted">생성 기록이 생기면 지난 설정으로 바로 다시 만들 수 있습니다.</p>
       )}
     </>
   );

@@ -5,7 +5,13 @@ import { describe, expect, it } from "vitest";
 import { GenerateSelect } from "../src";
 import { FETCHED, mockCore } from "./screen-core";
 
-const links = { home: "#/", lotto: "#/generate/lotto", pension: "#/generate/pension" };
+const links = {
+  home: "#/",
+  lotto: "#/generate/lotto",
+  pension: "#/generate/pension",
+  lottoLast: "#/generate/lotto?from=last",
+  pensionLast: "#/generate/pension?from=last",
+};
 
 describe("M-15 추천 복권 선택", () => {
   it("로또·연금 생성기로 이동, 운세·테마(P1) 버튼 없음", async () => {
@@ -33,11 +39,11 @@ describe("M-15 추천 복권 선택", () => {
     expect(screen.getByText(/기본값으로 시작합니다/)).toBeInTheDocument();
   });
 
-  it("성공: 같은 복권으로 다시 만들기는 최근 생성한 복권의 생성기로", async () => {
+  it("성공: 지난 설정으로 다시 만들기는 최근 생성한 복권의 생성기를 지난 설정 복원으로 연다", async () => {
     const m = mockCore();
     m.history.mockResolvedValue([{ game: "pension", created_at: FETCHED, numbers: { digits: "000719" } }]);
     render(<GenerateSelect core={m.core} links={links} />);
-    expect(await screen.findByRole("link", { name: "같은 복권으로 다시 만들기" })).toHaveAttribute("href", "#/generate/pension");
+    expect(await screen.findByRole("link", { name: "지난 설정으로 다시 만들기" })).toHaveAttribute("href", "#/generate/pension?from=last");
   });
 });
 
@@ -49,7 +55,7 @@ describe("화면 문구(PRD 6장 금지 문구)", () => {
       return statSync(path).isDirectory() ? files(path) : [path];
     });
   }
-  it("screens 소스(M-05·M-01·M-15)에 금지 문구가 없다", () => {
+  it("screens 소스(M-05·M-01·M-15·M-02·M-03)에 금지 문구가 없다", () => {
     const hits = files(join(import.meta.dirname, "../src/screens")).flatMap((file) => {
       const text = readFileSync(file, "utf8");
       return BANNED.filter((w) => text.includes(w)).map((w) => `${file}: ${w}`);

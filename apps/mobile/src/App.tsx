@@ -9,7 +9,9 @@ import { useHashPath } from "./router.ts";
 
 export function App({ core, onExit }: { core: CoreState; onExit?: () => void }) {
   const [gate] = useState<AgeGateLike>(() => core.core?.ageGate ?? createSessionAgeGate());
-  const route = routeOf(useHashPath());
+  const hashPath = useHashPath();
+  const [path = "/", query = ""] = hashPath.split("?");
+  const route = routeOf(path);
   const items: NavItem[] = ROUTES.map((item) => ({
     href: href(item.path),
     label: item.label,
@@ -24,7 +26,7 @@ export function App({ core, onExit }: { core: CoreState; onExit?: () => void }) 
           <AppShell brandMark={<NavIcon name="brand" />} brandName="LOTTO LAB" tabItems={items} sideItems={items}>
             <div className="app-page">
               {core.core ? (
-                <RouteScreen key={route.path} path={route.path} title={route.title} core={core.core} />
+                <RouteScreen key={hashPath} path={route.path} query={query} title={route.title} core={core.core} />
               ) : (
                 <>
                   <Header title={route.title} />

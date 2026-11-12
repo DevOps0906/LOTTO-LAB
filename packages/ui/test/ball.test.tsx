@@ -105,4 +105,14 @@ describe("BallGrid", () => {
     expect(screen.getByRole("button", { name: "40번, 제외수" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.queryAllByRole("img")).toHaveLength(0);
   });
+
+  it("pressedWhen: 고정 모드는 고정수만, 제외 모드는 제외수만 aria-pressed=true(이름의 상태는 유지)", () => {
+    const { rerender } = render(<BallGrid label="번호" selected={[]} fixed={[7]} excluded={[45]} onToggle={() => {}} pressedWhen="fixed" />);
+    expect(screen.getByRole("button", { name: "7번, 고정수" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "45번, 제외수" })).toHaveAttribute("aria-pressed", "false");
+    rerender(<BallGrid label="번호" selected={[]} fixed={[7]} excluded={[45]} onToggle={() => {}} pressedWhen="excluded" />);
+    expect(screen.getByRole("button", { name: "7번, 고정수" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "45번, 제외수" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "1번" })).toHaveAttribute("aria-pressed", "false");
+  });
 });

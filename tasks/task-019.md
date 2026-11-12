@@ -19,5 +19,5 @@
 - 숫자 입력 필드(type=number) 사용 — 문자열 입력만
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-03` 통과(`1조 000719` 입력→저장→복사 문자열이 `000719`, 5조 세트 5장)
-- [ ] `pnpm --filter ./apps/mobile build` 성공
+- [x] `pnpm --filter ./packages/ui test -- M-03` 통과(`1조 000719` 입력→저장→복사 문자열이 `000719`, 5조 세트 5장)
+- [x] `pnpm --filter ./apps/mobile build` 성공

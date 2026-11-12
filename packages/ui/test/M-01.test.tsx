@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 import { Home } from "../src";
 import { FETCHED, LOTTO, LOTTO_STAT, PENSION_STAT, mockCore, ok } from "./screen-core";
 
-const links = { generate: "#/generate", lotto: "#/generate/lotto", pension: "#/generate/pension", stats: "#/stats", tickets: "#/tickets" };
+const links = { generate: "#/generate", lotto: "#/generate/lotto", pension: "#/generate/pension",
+  lottoLast: "#/generate/lotto?from=last",
+  pensionLast: "#/generate/pension?from=last",
+  stats: "#/stats", tickets: "#/tickets" };
 
 describe("M-01 홈", () => {
   it("로딩: 회차·통계를 받는 동안 스켈레톤과 로딩 알림", () => {
@@ -106,7 +109,7 @@ describe("M-01 홈", () => {
       ["구매 등록", "3"],
       ["추첨 대기", "2"],
     ]);
-    expect(within(records).getByRole("link", { name: /같은 복권으로 다시 만들기/ })).toHaveAttribute("href", "#/generate/pension");
+    expect(within(records).getByRole("link", { name: /지난 설정으로 다시 만들기/ })).toHaveAttribute("href", "#/generate/pension?from=last");
   });
 
   it("1게임 빠른 생성: 기기에서 만든 번호와 고지(추천은 저장·구매 기록 아님)", async () => {

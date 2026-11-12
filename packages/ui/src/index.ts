@@ -30,3 +30,6 @@ export { Onboarding, type OnboardingProps } from "./screens/M-05/Onboarding";
 export { Home, type HomeLinks, type HomeProps } from "./screens/M-01/Home";
 export type { ScreenCore } from "./screens/common/data";
 export { GenerateSelect, type GenerateSelectLinks, type GenerateSelectProps } from "./screens/M-15/GenerateSelect";
+export { LottoGenerator, type LottoGeneratorLinks, type LottoGeneratorProps } from "./screens/M-02/LottoGenerator";
+export { PensionGenerator, type PensionGeneratorLinks, type PensionGeneratorProps } from "./screens/M-03/PensionGenerator";
+export type { GeneratorCore } from "./screens/common/generator";

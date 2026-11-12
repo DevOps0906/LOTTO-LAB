@@ -90,4 +90,14 @@ describe("LocalSettingsSchema", () => {
     expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: null }).success).toBe(true);
     expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: "2026-11-12" }).success).toBe(false);
   });
+
+  it("지난 설정(last_config): 복권별 생성 조건, 없어도 되고 범위 밖·추가 키는 거부", () => {
+    const lotto = { fixed: [7], excluded: [1, 2], games: 5 };
+    const pension = { groups: [1], positions: ["0", "0", "0", "7", "1", "9"], games: 1 };
+    expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: AT, last_config: { lotto, pension } }).success).toBe(true);
+    expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: null, last_config: { pension } }).success).toBe(true);
+    expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: null, last_config: { lotto: { ...lotto, games: 51 } } }).success).toBe(false);
+    expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: null, last_config: { pension: { ...pension, positions: [0, 0, 0, 7, 1, 9] } } }).success).toBe(false);
+    expect(LocalSettingsSchema.safeParse({ v: 1, age_confirmed_at: null, last_config: { dream: lotto } }).success).toBe(false);
+  });
 });

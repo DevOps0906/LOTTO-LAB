@@ -4,6 +4,7 @@
 import { z } from "zod";
 import { GAMES_PER_REQUEST_MAX, GAMES_PER_REQUEST_MIN } from "@lotto-lab/types";
 import { int4, intRange, isoDate, isoDateTime, pensionGroup } from "./primitives.ts";
+import { LottoGeneratorConfigSchema, PensionGeneratorConfigSchema } from "./generator.ts";
 import { LottoNumbersSchema, LottoTicketSchema, PensionNumbersSchema, PensionTicketSchema } from "./numbers.ts";
 
 /** 현재 로컬 레코드 버전. 형식을 바꾸면 올리고 app-core 마이그레이션(레코드 단위 지연 변환)을 추가한다. */
@@ -63,10 +64,16 @@ export const LocalGeneratedSchema = z.discriminatedUnion("game", [
   z.strictObject({ ...generatedCommon, game: z.literal("pension"), numbers: PensionNumbersSchema, group_no: pensionGroup }),
 ]);
 
-/** 앱 설정. age_confirmed_at = 만 19세 확인 시각(DF-6), 미확인이면 null. */
+/**
+ * 앱 설정. age_confirmed_at = 만 19세 확인 시각(DF-6), 미확인이면 null.
+ * last_config = 복권별 마지막으로 생성에 성공한 조건("지난 설정으로 다시 만들기", task-018·019). 없으면 키 자체가 없다.
+ */
 export const LocalSettingsSchema = z.strictObject({
   v: z.literal(LOCAL_RECORD_VERSION),
   age_confirmed_at: isoDateTime.nullable(),
+  last_config: z
+    .strictObject({ lotto: LottoGeneratorConfigSchema.optional(), pension: PensionGeneratorConfigSchema.optional() })
+    .optional(),
 });
 
 export type LocalTicket = z.output<typeof LocalTicketSchema>;
