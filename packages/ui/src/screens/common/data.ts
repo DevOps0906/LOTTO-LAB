@@ -12,12 +12,20 @@ export type ReadResult<T> = {
   error?: "NETWORK" | "HTTP" | "INVALID_RESPONSE" | "EMPTY";
 };
 type ReadOptions = { force?: boolean };
+/** 회차 목록 한 페이지(app-core ListDrawsOptions): before = 이 회차 미만(다음 페이지), limit 1~50. */
+export type ListDrawsOptions = ReadOptions & { before?: number; limit?: number };
+
+/** prizes 요소(@lotto-lab/types PrizeEntry). amount_won 정수 원 — lump = 1인 당첨금, annuity = 월 지급액 × months. */
+export type Prize =
+  | { rank: number | null; bonus: boolean; amount_won: number; winners: number; payout: "lump" }
+  | { rank: number | null; bonus: boolean; amount_won: number; winners: number; payout: "annuity"; months: number };
 
 export type LottoDraw = {
   draw_no: number;
   draw_date: string;
   nums: number[];
   bonus: number;
+  prizes: Prize[];
   source_url: string;
   source_verified_at: string;
 };
@@ -27,10 +35,23 @@ export type PensionDraw = {
   group_no: number;
   digits: string;
   bonus_digits: string;
+  prizes: Prize[];
   source_url: string;
   source_verified_at: string;
 };
-/** statistics_cache 행 중 홈 요약이 쓰는 부분(number_freq·group_freq: values 1차원, baseline 분수 1개). */
+/** 통계 키(@lotto-lab/types STAT_WINDOWS·STAT_METRICS, task-015 결정 ②). */
+export type StatWindow = "last10" | "last20" | "last50" | "last100" | "all";
+export type StatMetric =
+  | "lotto.number_freq"
+  | "lotto.number_freq_bonus"
+  | "lotto.range_dist"
+  | "lotto.odd_even"
+  | "lotto.sum_dist"
+  | "lotto.gap"
+  | "pension.digit_freq"
+  | "pension.group_freq"
+  | "pension.bonus_digit_freq";
+/** statistics_cache 행 중 화면이 쓰는 부분. payload 형식은 지표마다 다르다(화면이 지표별로 검사해 쓴다). */
 export type StatRow = {
   payload: { baseline: unknown; values: unknown[] };
   range_from: number;
@@ -49,12 +70,11 @@ export type ScreenCore = {
   reader: {
     latestDraw(game: "lotto", options?: ReadOptions): Promise<ReadResult<LottoDraw>>;
     latestDraw(game: "pension", options?: ReadOptions): Promise<ReadResult<PensionDraw>>;
-    statistics(
-      game: Game,
-      window: "last10",
-      metric: "lotto.number_freq" | "pension.group_freq",
-      options?: ReadOptions,
-    ): Promise<ReadResult<StatRow>>;
+    statistics(game: Game, window: StatWindow, metric: StatMetric, options?: ReadOptions): Promise<ReadResult<StatRow>>;
+    drawByRound(game: "lotto", round: number, options?: ReadOptions): Promise<ReadResult<LottoDraw>>;
+    drawByRound(game: "pension", round: number, options?: ReadOptions): Promise<ReadResult<PensionDraw>>;
+    listDraws(game: "lotto", options?: ListDrawsOptions): Promise<ReadResult<LottoDraw[]>>;
+    listDraws(game: "pension", options?: ListDrawsOptions): Promise<ReadResult<PensionDraw[]>>;
   };
   tickets: { list(): Promise<Ticket[]> };
   generator: {
@@ -147,6 +167,13 @@ export function sourceHost(url: string): string {
   } catch {
     return url;
   }
+}
+
+const wonFormatter = new Intl.NumberFormat("ko-KR");
+
+/** 정수 원 → "2,000,000,000원"(천 단위 쉼표). */
+export function formatWon(won: number): string {
+  return `${wonFormatter.format(won)}원`;
 }
 
 /** 정수 분수 기준선 → 소수 한 자리 표시(표시 전용, 계산에 쓰지 않는다). */

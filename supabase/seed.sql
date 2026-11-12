@@ -24,14 +24,14 @@ insert into public.draws_lotto
   (draw_no, draw_date, nums, bonus, prizes, source_url, ingestion_run_id, source_verified_at)
 values
   (1, '2026-01-03', '{3,11,19,27,35,43}', 7,
-   '[{"rank":1,"amount_won":2000000000,"winners":1,"payout":"lump"},
-     {"rank":5,"amount_won":5000,"winners":250000,"payout":"lump"}]',
+   '[{"rank":1,"bonus":false,"amount_won":2000000000,"winners":1,"payout":"lump"},
+     {"rank":5,"bonus":false,"amount_won":5000,"winners":250000,"payout":"lump"}]',
    'https://synthetic.invalid/lotto/1', '00000000-0000-4000-8000-000000000101', now()),
   (2, '2026-01-10', '{1,2,10,20,30,45}', 44,
-   '[{"rank":1,"amount_won":1500000000,"winners":2,"payout":"lump"}]',
+   '[{"rank":1,"bonus":false,"amount_won":1500000000,"winners":2,"payout":"lump"}]',
    'https://synthetic.invalid/lotto/2', '00000000-0000-4000-8000-000000000102', now()),
   (3, '2026-01-17', '{5,6,14,22,38,41}', 9,
-   '[{"rank":1,"amount_won":3000000000,"winners":1,"payout":"lump"}]',
+   '[{"rank":1,"bonus":false,"amount_won":3000000000,"winners":1,"payout":"lump"}]',
    'https://synthetic.invalid/lotto/3', '00000000-0000-4000-8000-000000000103', now());
 
 -- 합성 연금 회차 (실제 회차 아님, 앞자리 0 보존 확인용) --------------------------
@@ -39,8 +39,8 @@ insert into public.draws_pension
   (draw_no, draw_date, group_no, digits, bonus_digits, prizes, source_url, ingestion_run_id, source_verified_at)
 values
   (1, '2026-01-08', 1, '000719', '052381',
-   '[{"rank":1,"amount_won":7000000,"winners":1,"payout":"annuity","months":240}]',
+   '[{"rank":1,"bonus":false,"amount_won":7000000,"winners":1,"payout":"annuity","months":240}]',
    'https://synthetic.invalid/pension/1', '00000000-0000-4000-8000-000000000201', now()),
   (2, '2026-01-15', 4, '381204', '009917',
-   '[{"rank":1,"amount_won":7000000,"winners":1,"payout":"annuity","months":240}]',
+   '[{"rank":1,"bonus":false,"amount_won":7000000,"winners":1,"payout":"annuity","months":240}]',
    'https://synthetic.invalid/pension/2', '00000000-0000-4000-8000-000000000202', now());

@@ -15,7 +15,14 @@ export const ROUTES: readonly Route[] = [
 export const SUB_ROUTES: readonly SubRoute[] = [
   { path: "/generate/lotto", title: "로또 번호 생성", tab: "/generate" },
   { path: "/generate/pension", title: "연금복권 번호 생성", tab: "/generate" },
+  { path: "/draws", title: "회차 목록", tab: "/stats" },
 ];
+
+/** 회차 상세(M-11) 주소: /draws/{lotto|pension}/{회차}. 회차가 숫자가 아니면 화면이 잘못된 주소로 안내한다. */
+export const DRAW_DETAIL = /^\/draws\/(lotto|pension)\/([^/]+)$/;
+
+export const drawsHref = (game: "lotto" | "pension"): string => href(`/draws?game=${game}`);
+export const drawDetailHref = (game: "lotto" | "pension", round: number): string => href(`/draws/${game}/${round}`);
 
 /** 해시 주소(셸 링크용). */
 export const href = (path: string): string => `#${path}`;
@@ -24,6 +31,7 @@ export const href = (path: string): string => `#${path}`;
 export function routeOf(path: string): { path: string; title: string; tab: string } {
   const sub = SUB_ROUTES.find((route) => route.path === path);
   if (sub) return sub;
+  if (DRAW_DETAIL.test(path)) return { path, title: "회차 상세", tab: "/stats" };
   const route = ROUTES.find((r) => r.path === path) ?? ROUTES[0];
   return { path: route.path, title: route.title, tab: route.path };
 }

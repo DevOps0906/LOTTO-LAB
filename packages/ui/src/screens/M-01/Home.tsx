@@ -306,8 +306,11 @@ function SummaryCard({
         <SummaryBlock game="pension" view={pv} onRetry={onRetry} />
         <p className="ll-summary__note">
           <strong>미래 예측 아님</strong> · 지난 회차 출현 횟수 요약입니다. 기준선은 모든 번호가 고르게 나올 때의 기대 횟수입니다. 동률은 작은
-          번호부터 표시합니다. <a className="ll-link" href={statsHref}>통계 자세히 보기</a>
+          번호부터 표시합니다.
         </p>
+        <a className="ll-link" href={statsHref}>
+          통계 자세히 보기
+        </a>
       </div>
     </Card>
   );

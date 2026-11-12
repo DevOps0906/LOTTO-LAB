@@ -489,6 +489,9 @@
 .ll-summary__note strong {
   color: var(--color-text);
 }
+.ll-summary > .ll-link {
+  justify-self: start;
+}
 
 .ll-shell a.ll-cta,
 .ll-cta {
@@ -946,5 +949,311 @@
 @media (width >= 75em) {
   .ll-gen__layout {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+
+/* ── M-04 통계 · M-16 회차 목록 · M-11 회차 상세(DESIGN.md 4.6) — 시각 기준 design/reference/m-stats.png ──
+   ~1199 1열, 1200~ 통계 2열[조건 | 차트]. 세그먼트(.ll-seg)는 생성 화면과 같은 강조 변수(--gen-*)를 쓴다. */
+.ll-stats,
+.ll-draws {
+  --gen-accent: var(--color-primary);
+  --gen-soft: var(--color-primary-soft);
+  --gen-soft-fg: var(--color-primary-soft-fg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+.ll-stats[data-game="pension"],
+.ll-draws[data-game="pension"] {
+  --gen-accent: var(--color-pension);
+  --gen-soft: var(--color-pension-soft);
+  --gen-soft-fg: var(--color-pension-soft-fg);
+}
+.ll-stats[data-game="pension"] .ll-seg__item input:checked + span,
+.ll-draws[data-game="pension"] .ll-seg__item input:checked + span {
+  color: var(--color-pension-fg);
+}
+.ll-stats .ll-header,
+.ll-draws .ll-header {
+  padding: 0;
+}
+/* 칩 글자는 줄바꿈하지 않고, 넘치면 칩 단위로 다음 줄 */
+.ll-stats .ll-seg__item {
+  flex: 1 1 auto;
+}
+.ll-stats .ll-seg__item span {
+  white-space: nowrap;
+}
+.ll-stats__notice {
+  margin: 0;
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-stats__notice strong {
+  color: var(--color-text);
+}
+.ll-stats__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  align-items: start;
+  min-width: 0;
+}
+.ll-stats__controls,
+.ll-draws__controls {
+  display: grid;
+  gap: calc(var(--spacing) * 4);
+  min-width: 0;
+}
+.ll-stats__summary,
+.ll-stats__panel,
+.ll-stats__body,
+.ll-stats__chart {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--spacing) * 3);
+  min-width: 0;
+}
+.ll-stats__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+}
+.ll-stats__meta div {
+  min-width: 0;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+}
+.ll-stats__meta dt {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-stats__meta dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing);
+  margin: 0;
+  font-weight: 700;
+  font-size: var(--text-caption);
+}
+.ll-stats__chart-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-stats__chart-head p {
+  margin: 0;
+}
+.ll-link[aria-pressed="true"] {
+  text-decoration: underline;
+}
+
+/* 차트: 1 viewBox 단위 = CSS 1px. 막대가 많으면 카드 안에서만 가로 스크롤(페이지 가로 스크롤 금지) */
+.ll-chart {
+  overflow-x: auto;
+  min-width: 0;
+  padding-bottom: var(--spacing);
+}
+.ll-chart:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+.ll-chart__svg {
+  display: block;
+  width: calc(var(--spacing) * var(--chart-slot) * var(--chart-slots));
+  height: calc(var(--spacing) * 48);
+  overflow: visible;
+}
+.ll-chart__bar {
+  fill: var(--color-chart-1);
+}
+.ll-chart__svg[data-game="pension"] .ll-chart__bar {
+  fill: var(--color-chart-2);
+}
+.ll-chart__svg .ll-chart__bar--censored {
+  fill: var(--color-chart-5);
+}
+.ll-chart__axis {
+  stroke: var(--color-chart-grid);
+  stroke-width: 1;
+}
+.ll-chart__baseline {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+.ll-chart__value,
+.ll-chart__label {
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.ll-chart__value {
+  fill: var(--color-text);
+  font-weight: 700;
+}
+.ll-chart__label {
+  fill: var(--color-text-muted);
+}
+
+/* 히트맵: 5단계 색 + 칸 안 숫자(색만으로 전달하지 않음) */
+.ll-heat {
+  display: grid;
+  grid-template-columns: calc(var(--spacing) * 14) repeat(10, minmax(calc(var(--spacing) * 6), 1fr));
+  gap: calc(var(--spacing) * 0.5);
+  min-width: calc(var(--spacing) * 78);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.ll-heat__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--spacing) * 8);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+.ll-heat__cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--spacing) * 9);
+  border-radius: calc(var(--radius-control) / 2);
+  font-weight: 700;
+}
+/* 단계별 배경·글자 토큰 쌍(대비 4.5:1 이상, 라이트·다크 — test/heat-contrast.test.tsx가 토큰 값으로 계산해 고정).
+   라이트: 1 13.7 · 2 10.2 · 3 6.8 · 4 4.62 · 5 6.3 / 다크: 1 12.4 · 2 8.6 · 3 5.4 · 4 4.84 · 5 8.9 */
+.ll-heat__cell[data-level="1"] {
+  background: var(--color-heat-1);
+  color: var(--color-text);
+}
+.ll-heat__cell[data-level="2"] {
+  background: var(--color-heat-2);
+  color: var(--color-text);
+}
+.ll-heat__cell[data-level="3"] {
+  background: var(--color-heat-3);
+  color: var(--color-text);
+}
+.ll-heat__cell[data-level="4"] {
+  background: var(--color-heat-4);
+  color: var(--color-navy);
+}
+.ll-heat__cell[data-level="5"] {
+  background: var(--color-heat-5);
+  color: var(--color-primary-fg);
+}
+
+/* 회차 목록·상세 */
+.ll-draws__search {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-draws__search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-draws__list,
+.ll-draws__detail {
+  display: grid;
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+.ll-draws__list > .ll-muted {
+  margin: 0;
+}
+.ll-draws__items {
+  display: grid;
+  gap: var(--spacing-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-draws__item {
+  position: relative;
+  min-height: calc(var(--spacing) * 11);
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  min-width: 0;
+}
+.ll-draws__title {
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+.ll-shell a.ll-draws__title {
+  color: var(--color-text);
+}
+/* 카드 전체가 상세 링크의 터치 영역(링크 이름은 "제 N회 상세 보기" 하나) */
+.ll-draws__title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+}
+.ll-draws__title:focus-visible {
+  outline: none;
+}
+.ll-draws__title:focus-visible::after {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+.ll-draws__item:hover {
+  box-shadow: var(--shadow-raised);
+}
+.ll-draws__verified {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing);
+  margin-left: auto;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.ll-draws__verified .ll-icon {
+  color: var(--color-success);
+}
+.ll-draws__more {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  justify-items: center;
+}
+.ll-draws__pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-draws__detail .ll-draw__date {
+  margin: 0 0 calc(var(--spacing) * 3);
+}
+.ll-draws__detail .ll-draw__source {
+  margin-top: calc(var(--spacing) * 3);
+}
+
+@media (width < 48em) {
+  .ll-stats__meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (width >= 75em) {
+  .ll-stats__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   }
 }

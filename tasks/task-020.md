@@ -19,5 +19,5 @@
 - 차트 라이브러리 추가는 팀장 승인 후(새 의존성이면 위험도 높음으로 전환)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-04` 통과(필수 표기 5종 렌더 확인, 표본 0 → 기간 변경 CTA)
-- [ ] `grep -rE "확률 상승|당첨 확률이 높은" packages/ui/src/screens/M-04` 0건
+- [x] `pnpm --filter ./packages/ui test -- M-04` 통과(필수 표기 5종 렌더 확인, 표본 0 → 기간 변경 CTA)
+- [x] `grep -rE "확률 상승|당첨 확률이 높은" packages/ui/src/screens/M-04` 0건

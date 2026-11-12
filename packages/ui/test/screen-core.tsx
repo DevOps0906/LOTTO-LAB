@@ -59,6 +59,12 @@ export function mockCore() {
   const statistics = vi.fn<(game: "lotto" | "pension", window: string, metric: string, options?: object) => Promise<Read<unknown>>>(
     async (game) => (game === "lotto" ? ok(LOTTO_STAT) : ok(PENSION_STAT)),
   );
+  const drawByRound = vi.fn<(game: "lotto" | "pension", round: number, options?: object) => Promise<Read<unknown>>>(async (game, round) =>
+    ok(game === "lotto" ? { ...LOTTO, draw_no: round } : { ...PENSION, draw_no: round }),
+  );
+  const listDraws = vi.fn<(game: "lotto" | "pension", options?: { before?: number; limit?: number; force?: boolean }) => Promise<Read<unknown[]>>>(
+    async (game) => ok(game === "lotto" ? [LOTTO] : [PENSION]),
+  );
   const list = vi.fn(async (): Promise<Ticket[]> => []);
   const history = vi.fn(async (): Promise<Generated[]> => []);
   const generate = vi.fn(async () => ({
@@ -67,10 +73,10 @@ export function mockCore() {
   }));
   const open = vi.fn<(url: string) => Promise<void>>(async () => {});
   const core = {
-    reader: { latestDraw, statistics },
+    reader: { latestDraw, statistics, drawByRound, listDraws },
     tickets: { list },
     generator: { generate, history },
     adapters: { openExternal: { open } },
   } as unknown as ScreenCore;
-  return { core, latestDraw, statistics, list, history, generate, open };
+  return { core, latestDraw, statistics, drawByRound, listDraws, list, history, generate, open };
 }
