@@ -22,5 +22,5 @@
 - 로그인·동기화(P1), 서버 생성 호출(D4)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/app-core test` 통과: 추천→구매 미승격, purchased→favorite 거부, 오프라인 시 캐시 반환
-- [ ] `pnpm lint` 통과(`@capacitor/*`·`@tauri-apps/*` import 없음)
+- [x] `pnpm --filter ./packages/app-core test` 통과: 추천→구매 미승격, purchased→favorite 거부, 오프라인 시 캐시 반환
+- [x] `pnpm lint` 통과(`@capacitor/*`·`@tauri-apps/*` import 없음)

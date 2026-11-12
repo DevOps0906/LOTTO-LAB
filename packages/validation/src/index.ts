@@ -24,3 +24,11 @@ export { TicketCreateInputSchema, TicketPurchaseInputSchema, isAllowedTransition
 export { LottoGeneratorConfigSchema, PensionGeneratorConfigSchema } from "./generator.ts";
 export { ErrorCodeSchema, ErrorResponseSchema } from "./errors.ts";
 export type { TypeParity } from "./type-parity.ts";
+export {
+  GENERATION_METHODS,
+  LOCAL_RECORD_VERSION,
+  LocalGeneratedSchema,
+  LocalSettingsSchema,
+  LocalTicketSchema,
+} from "./local.ts";
+export type { GenerationMethod, LocalGenerated, LocalSettings, LocalTicket } from "./local.ts";
