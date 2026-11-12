@@ -1,9 +1,9 @@
 # NOW — 재진입 스냅샷 (30줄 이내, 매 작업 끝에 덮어쓴다)
 
 - 갱신: 2026-11-12
-- 현재 작업: 일시 중단(사용자 요청) — W3 모바일 화면 3/7 완료(017·018·019). 020·021 착수 직후 중단, 일부 코드는 `wip/task-020-021-partial`
+- 현재 작업: 일시 중단(사용자 요청) — W3 모바일 7/7 완료, W4 Windows 2/5(024·025). 026~028 중단분은 `wip/task-026-028-partial`(리뷰 전)
 - 마지막으로 한 일: 011 types·Zod(DB 동치 벡터) · 012 lottery-core · 013·014 로또·연금 엔진 · 015 통계 정본 · 016 app-core · 009·010 모바일·Windows 셸(디버그 APK·exe) · 광고 기획 ADR-0006·task-045
-- 다음 한 걸음: task-020·021(통계·회차, wip 브랜치 listDraws 참고) → 022·023 → W4 Windows → W5 워커(task-001 확인 후)
+- 다음 한 걸음: wip/task-026-028-partial 이어받아 디자인 리뷰·보안 리뷰(save_csv Rust 명령·dialog 플러그인)·완료 조건 확인 → 커밋. 이후 task-037(운세 엔진, ADR-0005 착수 결정 반영) 또는 W5(task-001 확인 후)
 - 열린 결정(사용자): ① 운영 메일 서비스 ② 문의처 ③ DESIGN.md 확정 표시 ④ 루트 `.env.example`·apps/web/.env.example 확인 ⑤ task-001 데이터 권리(연금 등위+보너스 동시 당첨 규정 포함) ⑥ GitHub Code security 설정 ⑦ PLAN_BRIEF Q1~Q5, PRD Q6
 - 열린 결정(팀장): 운영 IP 헤더 실측(supabase/README 배포 체크리스트), 로컬 저장(KV vs SQLite), 차트 라이브러리, 워커 위치
 - PR: #1 보안·규칙, #2 PC 디자인, #3 이후 전부(미머지). 미완 보관 브랜치 `wip/task-009-011-partial`은 이제 불필요(011·009 완료) — 삭제 가능
