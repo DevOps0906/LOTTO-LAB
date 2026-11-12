@@ -18,5 +18,5 @@
 - 토큰 값 수정(수정은 tokens.css → `design-preview --md` 재생성 절차, 팀장 승인), 화면 구현
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui typecheck && pnpm --filter ./packages/ui test` 통과
-- [ ] `~/.claude/nomad/bin/token-audit` 하드코딩 색·크기 0건
+- [x] `pnpm --filter ./packages/ui typecheck && pnpm --filter ./packages/ui test` 통과
+- [x] `~/.claude/nomad/bin/design-preview --scan packages/ui/src` 하드코딩 색·크기 0건

@@ -1,0 +1,632 @@
+/* @lotto-lab/ui 블록 스타일 — 토큰 CSS 변수만 쓴다(hex·px 금지). 시각 기준: design/reference/d-home.html·d-lotto.html.
+   소비 측 순서: (tailwindcss) → @lotto-lab/design-tokens/tokens.css → @lotto-lab/ui/styles.css
+   구간 경계: 48em = 768, 75em = 1200 (DESIGN.md 2장, @lotto-lab/design-tokens BREAKPOINTS). 다크 모드는 .dark 토큰 덮어쓰기로 자동. */
+
+.ll-sr-only {
+  position: absolute;
+  width: calc(var(--spacing) / 4);
+  height: calc(var(--spacing) / 4);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.ll-icon {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ll-shell :focus-visible,
+.ll-button:focus-visible,
+.ll-ball-grid__cell:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * 0.5);
+}
+
+/* ── AppShell: ~767 1열 + 하단 탭 / 768~1199 아이콘 레일 / 1200~ 사이드바. 내비 면은 하단 탭과 같은 surface 톤 ── */
+.ll-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+.ll-shell a {
+  color: inherit;
+  text-decoration: none;
+}
+.ll-shell__side {
+  display: none;
+}
+.ll-shell__main {
+  min-width: 0;
+  padding-bottom: calc(var(--spacing-tabbar) + var(--spacing-gap) * 2 + env(safe-area-inset-bottom, 0));
+}
+.ll-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: var(--color-surface);
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-tabbar ul {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  height: var(--spacing-tabbar);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-tabbar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 0.5);
+  height: 100%;
+  min-height: calc(var(--spacing) * 11);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-tabbar a[aria-current="page"] {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.ll-side__brand {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  font-size: var(--text-h2);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+.ll-side__nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-side__nav a {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  height: var(--spacing-control);
+  padding: 0 calc(var(--spacing) * 3.5);
+  border-radius: var(--radius-control);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.ll-side__nav a:hover {
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+.ll-side__nav a[aria-current="page"] {
+  color: var(--color-primary);
+  font-weight: 800;
+  box-shadow: inset calc(var(--spacing) * 0.75) 0 0 var(--color-primary);
+}
+.ll-side__foot {
+  margin-top: auto;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+@media (width >= 48em) {
+  .ll-shell {
+    grid-template-columns: var(--spacing-sidebar-rail) minmax(0, 1fr);
+  }
+  .ll-tabbar {
+    display: none;
+  }
+  .ll-shell__side {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 6);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: calc(var(--spacing) * 5) calc(var(--spacing) * 3);
+    background: var(--color-surface);
+    border-right: calc(var(--spacing) / 4) solid var(--color-border);
+  }
+  .ll-shell__main {
+    padding: var(--spacing-page);
+    padding-bottom: calc(var(--spacing) * 10);
+  }
+  .ll-side__brand {
+    justify-content: center;
+  }
+  /* 레일: 라벨은 화면에서 숨기고 aria-label·title(툴팁)로 전달 */
+  .ll-side__label,
+  .ll-side__brand-text,
+  .ll-side__foot {
+    position: absolute;
+    width: calc(var(--spacing) / 4);
+    height: calc(var(--spacing) / 4);
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .ll-side__nav a {
+    justify-content: center;
+    padding: 0;
+  }
+}
+/* 레일 구간만: 호버·키보드 포커스 때 라벨을 시각 툴팁으로 보인다(aria-label 유지) */
+@media (width >= 48em) and (width < 75em) {
+  .ll-side__nav a {
+    position: relative;
+  }
+  .ll-side__nav a:hover .ll-side__label,
+  .ll-side__nav a:focus-visible .ll-side__label {
+    left: calc(100% + var(--spacing) * 2);
+    top: 50%;
+    z-index: 20;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    transform: translateY(-50%);
+    padding: var(--spacing) calc(var(--spacing) * 2.5);
+    border-radius: var(--radius-control);
+    background: var(--color-navy);
+    color: var(--color-navy-fg);
+    font-size: var(--text-caption);
+    font-weight: 600;
+    box-shadow: var(--shadow-raised);
+    pointer-events: none;
+  }
+}
+@media (width >= 75em) {
+  .ll-shell {
+    grid-template-columns: var(--spacing-sidebar) minmax(0, 1fr);
+  }
+  .ll-shell__side {
+    padding: calc(var(--spacing) * 6) calc(var(--spacing) * 4);
+  }
+  .ll-side__brand {
+    justify-content: flex-start;
+    padding: 0 calc(var(--spacing) * 2);
+  }
+  .ll-side__label,
+  .ll-side__brand-text,
+  .ll-side__foot {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+  .ll-side__nav a {
+    justify-content: flex-start;
+    padding: 0 calc(var(--spacing) * 3.5);
+  }
+  .ll-side__foot {
+    padding: 0 calc(var(--spacing) * 2);
+  }
+}
+
+/* ── Header ── */
+.ll-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 4) var(--spacing-page);
+}
+.ll-header__titles {
+  min-width: 0;
+}
+.ll-header__title {
+  margin: 0;
+  font-size: var(--text-h1);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.ll-header__subtitle {
+  margin: var(--spacing) 0 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-header__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+}
+@media (width >= 48em) {
+  .ll-header {
+    padding: 0 0 calc(var(--spacing) * 2);
+  }
+}
+
+/* ── Card ── */
+.ll-card {
+  min-width: 0;
+  padding: calc(var(--spacing) * 5);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.ll-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 2);
+  margin-bottom: calc(var(--spacing) * 3);
+}
+.ll-card__title {
+  margin: 0;
+  font-size: var(--text-h2);
+  font-weight: 800;
+}
+
+/* ── Stat (KPI 카드, DESIGN.md 4.3) ── */
+.ll-stat {
+  display: grid;
+  gap: var(--spacing);
+  margin: 0;
+  padding: calc(var(--spacing) * 4);
+  background: var(--color-surface);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.ll-stat__label {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-stat__value {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-kpi);
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.ll-stat__hint {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+/* 글자는 --color-text(대비 4.5 이상), 색은 아이콘에만(3:1 기준) */
+.ll-stat__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.ll-stat__delta[data-trend="up"] .ll-icon {
+  color: var(--color-success);
+}
+.ll-stat__delta[data-trend="down"] .ll-icon {
+  color: var(--color-danger);
+}
+.ll-stat__delta[data-trend="flat"] .ll-icon {
+  color: var(--color-text-muted);
+}
+.ll-stat__delta .ll-icon {
+  width: calc(var(--spacing) * 4);
+  height: calc(var(--spacing) * 4);
+}
+
+/* ── Table: ~767은 카드 목록, 768~ 표. 넓으면 카드 안에서만 가로 스크롤 ── */
+.ll-table {
+  min-width: 0;
+}
+.ll-table__scroll {
+  display: none;
+  overflow-x: auto;
+}
+.ll-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-body);
+}
+.ll-table caption {
+  text-align: left;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  padding-bottom: calc(var(--spacing) * 2);
+}
+.ll-table th,
+.ll-table td {
+  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 3);
+  text-align: left;
+  border-bottom: calc(var(--spacing) / 4) solid var(--color-border);
+  vertical-align: middle;
+}
+.ll-table th {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.ll-table [data-numeric="true"] {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ll-table__cards {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-table__card {
+  display: grid;
+  gap: var(--spacing);
+  margin: 0;
+  padding: calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-table__card div {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-table__card dt {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-table__card dd {
+  margin: 0;
+  text-align: right;
+}
+@media (width >= 48em) {
+  .ll-table__scroll {
+    display: block;
+  }
+  .ll-table__cards {
+    display: none;
+  }
+}
+
+/* ── Updated (출처·검증 시각) ── */
+.ll-updated {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 calc(var(--spacing) * 3);
+  margin: 0;
+  padding-top: calc(var(--spacing) * 3);
+  border-top: calc(var(--spacing) / 4) dashed var(--color-border);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-updated strong {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+/* ── StateView (빈·로딩·오류) ── */
+.ll-state {
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 8) var(--spacing-page);
+  text-align: center;
+  color: var(--color-text);
+}
+.ll-state__icon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 12);
+  height: calc(var(--spacing) * 12);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-fg);
+}
+.ll-state[data-kind="error"] .ll-state__icon {
+  background: var(--color-bg);
+  color: var(--color-danger);
+  border: calc(var(--spacing) / 4) solid var(--color-danger);
+}
+.ll-state__title {
+  margin: 0;
+  font-size: var(--text-h2);
+  font-weight: 800;
+}
+.ll-state__desc {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+.ll-state__spinner {
+  width: calc(var(--spacing) * 8);
+  height: calc(var(--spacing) * 8);
+  border-radius: var(--radius-pill);
+  border: calc(var(--spacing) * 0.75) solid var(--color-primary-soft);
+  border-top-color: var(--color-primary);
+  animation: ll-spin 0.8s linear infinite;
+}
+@keyframes ll-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* ── Button ── */
+.ll-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: var(--spacing-control);
+  padding: 0 calc(var(--spacing) * 5);
+  border: calc(var(--spacing) / 4) solid transparent;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.ll-button[data-variant="primary"] {
+  background: var(--color-primary);
+  color: var(--color-primary-fg);
+  box-shadow: var(--shadow-cta);
+}
+.ll-button[data-variant="pension"] {
+  background: var(--color-pension);
+  color: var(--color-pension-fg);
+}
+.ll-button[data-variant="secondary"] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-input);
+}
+.ll-button[data-variant="danger"] {
+  background: var(--color-danger);
+  color: var(--color-danger-fg);
+}
+.ll-button[data-block="true"] {
+  width: 100%;
+}
+.ll-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+/* ── 번호공 (DESIGN.md 4.1) ── */
+.ll-ball {
+  --b: var(--color-ball-31);
+  --bf: var(--color-ball-31-fg);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--spacing-ball);
+  height: var(--spacing-ball);
+  flex: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--text-ball);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--bf);
+  background: radial-gradient(
+    circle at 34% 28%,
+    color-mix(in oklab, var(--b), var(--color-navy-fg) 28%) 0,
+    var(--b) 55%,
+    color-mix(in oklab, var(--b), var(--color-navy) 18%) 100%
+  );
+  box-shadow:
+    inset 0 calc(var(--spacing) * -0.5) var(--spacing) color-mix(in oklab, var(--b), var(--color-navy) 30%),
+    0 calc(var(--spacing) * 0.5) var(--spacing) color-mix(in oklab, var(--color-navy), transparent 82%);
+}
+.ll-ball.b1 { --b: var(--color-ball-1); --bf: var(--color-ball-1-fg); }
+.ll-ball.b11 { --b: var(--color-ball-11); --bf: var(--color-ball-11-fg); }
+.ll-ball.b21 { --b: var(--color-ball-21); --bf: var(--color-ball-21-fg); }
+.ll-ball.b31 { --b: var(--color-ball-31); --bf: var(--color-ball-31-fg); }
+.ll-ball.b41 { --b: var(--color-ball-41); --bf: var(--color-ball-41-fg); }
+/* 미선택·제외: 흰 공 + 입력 경계(색 없이도 구분) */
+.ll-ball[data-state="unselected"],
+.ll-ball[data-state="excluded"] {
+  color: var(--color-ball-empty-fg);
+  background: var(--color-ball-empty);
+  box-shadow: inset 0 0 0 calc(var(--spacing) / 4) var(--color-input);
+}
+.ll-ball[data-state="excluded"] .ll-ball__num {
+  text-decoration: line-through;
+  text-decoration-thickness: calc(var(--spacing) * 0.5);
+  color: var(--color-text-muted);
+}
+.ll-ball__badge {
+  position: absolute;
+  right: calc(var(--spacing) * -1);
+  top: calc(var(--spacing) * -1);
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 4.5);
+  height: calc(var(--spacing) * 4.5);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 calc(var(--spacing) / 4) var(--color-input);
+}
+.ll-ball[data-state="selected"] .ll-ball__badge {
+  color: var(--color-primary-soft-fg);
+}
+.ll-ball[data-state="excluded"] .ll-ball__badge {
+  color: var(--color-danger);
+}
+.ll-ball__badge .ll-icon {
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+  stroke-width: 2.5;
+}
+.ll-ball-bonus {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1.5);
+}
+.ll-ball-bonus__plus {
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+/* ── 번호 선택 그리드 1~45: ~767 7열 / 768~ 9열, 터치 영역 44 = spacing×11 ── */
+.ll-ball-grid {
+  display: grid;
+  column-gap: 0; /* 셀(터치 영역)이 열 너비를 꽉 채운다 — 간격은 셀 안 여백으로 */
+  row-gap: var(--spacing);
+  min-width: 0;
+}
+.ll-ball-grid.ll-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+@media (width >= 24.375em) { /* 390 */
+  .ll-ball-grid.ll-cols-sm-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+@media (width >= 48em) { /* 768 */
+  .ll-ball-grid.ll-cols-md-9 {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+}
+.ll-ball-grid__cell {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(var(--spacing) * 11);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+}
+.ll-ball-grid__cell .ll-ball {
+  width: min(var(--spacing-ball), 100%);
+  height: auto;
+  aspect-ratio: 1;
+}
+.ll-ball-grid__cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll-state__spinner {
+    animation: none;
+  }
+}
