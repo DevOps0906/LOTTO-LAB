@@ -23,6 +23,7 @@
 | A-14 | PATCH | `/v1/tickets/{id}` | path `id`, `purchase_status:"purchased"`, `purchase_date`, `amount_won` | 갱신된 `saved_tickets` 행 | 로그인(본인 행만, RLS). 허용 전환 favorite→purchased(R2), 역전환 금지(R19) | 400, 401, 404, 422 | `saved_tickets` | RLS |
 | A-15 | POST | `/v1/waitlist` | `email`, `consent_marketing:true`, `age_confirmed:true`(만 19세 이상), `turnstile_token`(R21) | `202`(본문 없음, 중복 이메일도 동일) | 공개(anon) | 400, 429 | `waitlist_signups`(INSERT만) | EF |
 | A-16 | POST | `/v1/admin/ingestions/{id}/reverify` | path `id` | run + 재검증 결과(`reverified_at`, `reverify_errors`) | 관리자 + MFA | 401, 403, 404, 409(이미 처리), 503(출처 접속 실패) | `ingestion_runs` | EF |
+| A-17 | GET · PUT · DELETE | `/v1/fortune-profile` | PUT: `birth_date`, `calendar`(solar\|lunar), `is_leap_month?`, `birth_time?`(모르면 NULL), `consented_at`(동의 필수) | 본인 `fortune_profiles` 1행(GET 0행 → 프로필 입력 안내) | 로그인(본인 행만, RLS). 사주 번호 계산은 기기 `fortune-engine`(ADR-0005), 서버 계산 없음 | 400, 401 | `fortune_profiles` | RLS (P1) |
 
 - 연금 번호(`digits`, `bonus_digits`, `ticket_data`)는 요청·응답 모두 **JSON 문자열**. 숫자 변환 금지 → [`05_DATA_MODEL.md#4`](05_DATA_MODEL.md).
 - `prizes`(등위별 당첨금·인원)·`source_url` 형식 → [`05_DATA_MODEL.md#2`](05_DATA_MODEL.md).
@@ -77,3 +78,18 @@
 | 남용 | 스크래핑 → Supabase 기본 한도 | 봇 등록 → Turnstile + 4절 IP 리밋(R21), 가입 여부 탐색 → 중복도 같은 202 | 대량 저장·판정 반복 → 4절 리밋, 중복 저장 → `idempotency_key` | — |
 | 로그 | 요청 수·오류 | 요청 수·거부 사유 O, 이메일 원문 X | 판정 요청 O, `ticket_data` 본문 X | 재검증·승인·반려 감사 로그(누가·언제·run id) O |
 | 결정 | 검증 통과분만 노출([05#5](05_DATA_MODEL.md)) | 보관 6개월 후 삭제([05#2](05_DATA_MODEL.md)), 열람은 service_role만 | 판정·`draw_checks` 쓰기는 서버만 | 재검증 통과 건만 승인, 감사 기록·MFA 필수 |
+
+운세·테마 번호([ADR-0005](adr/0005-fortune-numbers.md)) — 노출 면이 다른 두 기능을 따로 적는다.
+
+| 항목 | 사주 프로필 A-17 (P1) | 테마 번호 (기기 전용, 서버 호출 없음) |
+|---|---|---|
+| 노출 면 | 로그인 사용자 앱(M-18·D-16), RLS 직접 | 없음(오프라인 기기 실행) — 앱 화면 M-17·D-15만 |
+| 인증·인가 | JWT + RLS `auth.uid() = user_id`, 로그인 세션 없으면 화면 진입 차단 | 없음(게스트 가능) |
+| 다루는 데이터 | 생년월일·양/음력·태어난 시각(선택) — 개인정보, 성별 미수집 | 별자리·띠·생년월일·기념일·꿈 키워드(기기 메모리만, 저장 안 함) |
+| 필요한 키 | anon + 사용자 JWT | 없음 |
+| 입력 | 날짜 범위·`calendar` 값·시각 형식 Zod 검증 + DB CHECK 이중 | 기기 Zod 검증, 꿈은 사전 키워드 선택만(자유 텍스트 미전송) |
+| 체인 | RLS 누락 → 타인 생년월일 노출 | 분석 이벤트·크래시 로그에 입력값 혼입 → 의도치 않은 수집 |
+| 피해 범위 | 본인 행(RLS 정상 시) | 기기 사용자 1명 |
+| 남용 | 반복 저장 → Supabase 기본 한도(4절) | — |
+| 로그 | 요청 수·오류 O, 생년월일·시각 원문 X | 생성 이벤트에 `method`만 O, 입력값 X |
+| 결정 | 동의 후 저장·계정 삭제 시 CASCADE 파기·프로필 삭제 버튼 제공 | 입력값 서버 전송·로컬 저장 금지 |

@@ -1,12 +1,12 @@
 {
  "version": "1",
- "generated": "2026-11-12T04:56:23+00:00",
+ "generated": "2026-11-12T05:51:57+00:00",
  "docs": "docs",
  "tokens": "packages/design-tokens/tokens.css",
  "sources": {
-  "docs/03_SCREENS_UX.md": "117d6c32f7c5",
-  "docs/04_API.md": "e4c787dc5e77",
-  "docs/05_DATA_MODEL.md": "f53fa70b9547"
+  "docs/03_SCREENS_UX.md": "7ab95cef535f",
+  "docs/04_API.md": "521d9e51a562",
+  "docs/05_DATA_MODEL.md": "6ce34231d739"
  },
  "changed": [
   "M-01",
@@ -42,7 +42,13 @@
   "W-01",
   "W-02",
   "W-03",
-  "W-04"
+  "W-04",
+  "M-17",
+  "M-18",
+  "M-19",
+  "D-15",
+  "D-16",
+  "D-17"
  ],
  "removed": [],
  "screens": {
@@ -192,7 +198,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "ca0d6106d69e",
+   "hash": "9e66119bb895",
    "wireframe": "design/wireframes/M-01.html"
   },
   "M-02": {
@@ -319,7 +325,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "83c83778d642",
+   "hash": "e0b0b2f5a973",
    "wireframe": "design/wireframes/M-02.html"
   },
   "M-03": {
@@ -446,7 +452,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "eb9d8c57e96d",
+   "hash": "444eeb8a761f",
    "wireframe": "design/wireframes/M-03.html"
   },
   "M-04": {
@@ -580,7 +586,7 @@
     "할 일·알림(지표가 행동으로 이어지게)"
    ],
    "states_missing": [],
-   "hash": "577bb6f02ae9",
+   "hash": "af216e87332e",
    "wireframe": "design/wireframes/M-04.html"
   },
   "M-05": {
@@ -681,7 +687,7 @@
     "중간 저장·이어하기"
    ],
    "states_missing": [],
-   "hash": "ec2cad27f095",
+   "hash": "09b546fb7810",
    "wireframe": "design/wireframes/M-05.html"
   },
   "M-06": {
@@ -755,7 +761,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "96d9b1c5b9f2",
+   "hash": "dc5898c5aac0",
    "wireframe": "design/wireframes/M-06.html"
   },
   "M-07": {
@@ -887,7 +893,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "ce5b77ac3a41",
+   "hash": "b96138e83729",
    "wireframe": "design/wireframes/M-07.html"
   },
   "M-08": {
@@ -1014,7 +1020,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "a2db9f92f66a",
+   "hash": "71bc3127540e",
    "wireframe": "design/wireframes/M-08.html"
   },
   "M-09": {
@@ -1094,7 +1100,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "9e34976fbb35",
+   "hash": "5393b43beac7",
    "wireframe": "design/wireframes/M-09.html"
   },
   "M-10": {
@@ -1212,7 +1218,7 @@
     "중간 저장·이어하기"
    ],
    "states_missing": [],
-   "hash": "d20f57c89096",
+   "hash": "3feadadb77d3",
    "wireframe": "design/wireframes/M-10.html"
   },
   "M-11": {
@@ -1313,7 +1319,7 @@
     "활동·변경 이력"
    ],
    "states_missing": [],
-   "hash": "ff939e66488e",
+   "hash": "fd77f0bc6053",
    "wireframe": "design/wireframes/M-11.html"
   },
   "M-12": {
@@ -1414,7 +1420,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "bf98d2128b6a",
+   "hash": "486c173bb8a8",
    "wireframe": "design/wireframes/M-12.html"
   },
   "M-13": {
@@ -1510,7 +1516,7 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "f9172bd022e7",
+   "hash": "9ae7816a9ede",
    "wireframe": "design/wireframes/M-13.html"
   },
   "M-14": {
@@ -1617,7 +1623,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "c5eb14dc29d5",
+   "hash": "2bf6d59bbf88",
    "wireframe": "design/wireframes/M-14.html"
   },
   "M-15": {
@@ -1689,6 +1695,14 @@
      "items": [
       "지난 설정 재사용"
      ]
+    },
+    {
+     "type": "button",
+     "label": "운세·테마 번호(P1)",
+     "items": [
+      "운세",
+      "테마 번호(P1)"
+     ]
     }
    ],
    "data": [
@@ -1699,7 +1713,9 @@
    "next": [
     "M-01",
     "M-02",
-    "M-03"
+    "M-03",
+    "M-17",
+    "M-19"
    ],
    "states_combined": "",
    "source": "docs/03_SCREENS_UX.md",
@@ -1710,7 +1726,7 @@
     "활동·변경 이력"
    ],
    "states_missing": [],
-   "hash": "0a942635b896",
+   "hash": "6a188fc041cc",
    "wireframe": "design/wireframes/M-15.html"
   },
   "M-16": {
@@ -1792,8 +1808,425 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "af389c0beb9c",
+   "hash": "f1025af242c7",
    "wireframe": "design/wireframes/M-16.html"
+  },
+  "M-17": {
+   "id": "M-17",
+   "name": "테마 번호(P1)",
+   "type_raw": "폼",
+   "route": "/m/generate/theme",
+   "purpose": "별자리·띠·날짜·꿈 테마로 오늘의 번호 생성",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "추천·테마 번호",
+     "items": [
+      "추천",
+      "테마 번호"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "별자리·띠·생년월일·기념일·행운 숫자·꿈",
+     "items": [
+      "별자리",
+      "띠",
+      "생년월일",
+      "기념일",
+      "행운 숫자",
+      "꿈"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "테마*·별자리 12궁 또는 띠 12지 선택·생년월일·기념일 날짜·꿈 키워드(사전 목록 선택)",
+     "items": [
+      "테마*",
+      "별자리 12궁 또는 띠 12지 선택",
+      "생년월일",
+      "기념일 날짜",
+      "꿈 키워드(사전 목록 선택)"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "입력값은 기기에서만 처리·서버 전송·저장 안 함·같은 날 같은 입력은 같은 번호",
+     "items": [
+      "입력값은 기기에서만 처리",
+      "서버 전송",
+      "저장 안 함",
+      "같은 날 같은 입력은 같은 번호"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "행운 숫자는 고정 번호 설정",
+     "items": [
+      "행운 숫자는 고정 번호 설정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "번호 6개·테마 출처(method)·저장 상태",
+     "items": [
+      "번호 6개",
+      "테마 출처(method)",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "사주 번호(회원)",
+     "items": [
+      "사주 번호(회원)"
+     ]
+    }
+   ],
+   "data": [
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "M-02",
+    "M-07",
+    "M-15",
+    "M-19"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "e210d2eaf40a",
+   "wireframe": "design/wireframes/M-17.html"
+  },
+  "M-18": {
+   "id": "M-18",
+   "name": "사주 프로필(P1)",
+   "type_raw": "폼",
+   "route": "/m/fortune/profile",
+   "purpose": "동의 후 사주 계산용 프로필 저장·삭제",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "breadcrumb",
+     "label": "사주 번호·프로필",
+     "items": [
+      "사주 번호",
+      "프로필"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "생년월일*·양력/음력*·윤달 여부·태어난 시각(모르면 비움)·개인정보 수집·이용 동의*",
+     "items": [
+      "생년월일*",
+      "양력",
+      "음력*",
+      "윤달 여부",
+      "태어난 시각(모르면 비움)",
+      "개인정보 수집",
+      "이용 동의*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "수집 항목·목적·계정 삭제 시 파기·성별 등 미수집",
+     "items": [
+      "수집 항목",
+      "목적",
+      "계정 삭제 시 파기",
+      "성별 등 미수집"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "저장",
+     "items": [
+      "저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "프로필 삭제",
+     "items": [
+      "프로필 삭제"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "삭제 영향 확인",
+     "items": [
+      "삭제 영향 확인"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "개인정보 처리방침",
+     "items": [
+      "개인정보 처리방침"
+     ]
+    }
+   ],
+   "data": [
+    "fortune_profiles"
+   ],
+   "api": [
+    "A-17"
+   ],
+   "role": "성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)",
+   "next": [
+    "M-19",
+    "M-06"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "ee5e1bf2fd2a",
+   "wireframe": "design/wireframes/M-18.html"
+  },
+  "M-19": {
+   "id": "M-19",
+   "name": "사주 번호(P1)",
+   "type_raw": "폼",
+   "route": "/m/fortune/saju",
+   "purpose": "사주 프로필로 오늘의 번호 생성",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "nav",
+     "label": "홈·추천·통계·내번호",
+     "items": [
+      "홈",
+      "추천",
+      "통계",
+      "내번호"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "추천·사주 번호",
+     "items": [
+      "추천",
+      "사주 번호"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "프로필 요약·천간지지·오행",
+     "items": [
+      "프로필 요약",
+      "천간지지",
+      "오행"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "고정 번호 포함 여부",
+     "items": [
+      "고정 번호 포함 여부"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "기기에서 계산·같은 날 같은 결과",
+     "items": [
+      "기기에서 계산",
+      "같은 날 같은 결과"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "번호 6개·고정 포함 표시·출처 saju·저장 상태",
+     "items": [
+      "번호 6개",
+      "고정 포함 표시",
+      "출처 saju",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "프로필 수정",
+     "items": [
+      "프로필 수정"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "로그인 필요·가입 유도",
+     "items": [
+      "로그인 필요",
+      "가입 유도"
+     ]
+    }
+   ],
+   "data": [
+    "fortune_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-17"
+   ],
+   "role": "성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)",
+   "next": [
+    "M-18",
+    "M-06",
+    "M-07",
+    "M-17"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "필수 표시·도움말",
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "781a433055cb",
+   "wireframe": "design/wireframes/M-19.html"
   },
   "D-01": {
    "id": "D-01",
@@ -1957,7 +2390,9 @@
     "D-08",
     "D-09",
     "D-13",
-    "D-14"
+    "D-14",
+    "D-15",
+    "D-17"
    ],
    "states_combined": "",
    "source": "docs/03_SCREENS_UX.md",
@@ -1968,7 +2403,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "6c7818237dc3",
+   "hash": "86f8dd782445",
    "wireframe": "design/wireframes/D-01.html"
   },
   "D-02": {
@@ -2094,7 +2529,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "6001e7809298",
+   "hash": "8cd25160390d",
    "wireframe": "design/wireframes/D-02.html"
   },
   "D-03": {
@@ -2220,7 +2655,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "082e08f3de2c",
+   "hash": "dd5da1c9c90a",
    "wireframe": "design/wireframes/D-03.html"
   },
   "D-04": {
@@ -2363,7 +2798,7 @@
     "할 일·알림(지표가 행동으로 이어지게)"
    ],
    "states_missing": [],
-   "hash": "0e03d6bbbc54",
+   "hash": "02eb57e567e4",
    "wireframe": "design/wireframes/D-04.html"
   },
   "D-05": {
@@ -2509,7 +2944,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "770297a8d02e",
+   "hash": "96443c233e27",
    "wireframe": "design/wireframes/D-05.html"
   },
   "D-06": {
@@ -2638,7 +3073,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "d263e48e83fa",
+   "hash": "8c054a3d3747",
    "wireframe": "design/wireframes/D-06.html"
   },
   "D-07": {
@@ -2721,7 +3156,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "29db3769664c",
+   "hash": "0ab081bb20c3",
    "wireframe": "design/wireframes/D-07.html"
   },
   "D-08": {
@@ -2825,7 +3260,7 @@
     "활동·변경 이력"
    ],
    "states_missing": [],
-   "hash": "c8e67d1f7cfc",
+   "hash": "c240d37df1fb",
    "wireframe": "design/wireframes/D-08.html"
   },
   "D-09": {
@@ -2928,7 +3363,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "c27951703ade",
+   "hash": "f51af7ad6f48",
    "wireframe": "design/wireframes/D-09.html"
   },
   "D-10": {
@@ -2994,7 +3429,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "7b98a83d14fb",
+   "hash": "882901291126",
    "wireframe": "design/wireframes/D-10.html"
   },
   "D-11": {
@@ -3095,7 +3530,7 @@
     "중간 저장·이어하기"
    ],
    "states_missing": [],
-   "hash": "a3808f1581bd",
+   "hash": "694d3b810858",
    "wireframe": "design/wireframes/D-11.html"
   },
   "D-12": {
@@ -3209,7 +3644,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "cbccd24eed60",
+   "hash": "4329bb044872",
    "wireframe": "design/wireframes/D-12.html"
   },
   "D-13": {
@@ -3314,7 +3749,7 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "5a7396710c0f",
+   "hash": "9455771c8542",
    "wireframe": "design/wireframes/D-13.html"
   },
   "D-14": {
@@ -3407,8 +3842,442 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "43d9faea6fba",
+   "hash": "a31908557df3",
    "wireframe": "design/wireframes/D-14.html"
+  },
+  "D-15": {
+   "id": "D-15",
+   "name": "Windows 테마 번호(P1)",
+   "type_raw": "폼",
+   "route": "/desktop/generate/theme",
+   "purpose": "좌측 테마 입력·우측 오늘의 번호",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·운세 번호·통계·내번호·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "운세 번호",
+      "통계",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "tabs",
+     "label": "별자리·띠·생년월일·기념일·행운 숫자·꿈",
+     "items": [
+      "별자리",
+      "띠",
+      "생년월일",
+      "기념일",
+      "행운 숫자",
+      "꿈"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "좌측 테마*·별자리/띠 선택·생년월일·기념일 날짜·꿈 키워드(사전 목록 선택)",
+     "items": [
+      "좌측 테마*",
+      "별자리",
+      "띠 선택",
+      "생년월일",
+      "기념일 날짜",
+      "꿈 키워드(사전 목록 선택)"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "입력값 기기 처리·서버 전송·저장 안 함",
+     "items": [
+      "입력값 기기 처리",
+      "서버 전송",
+      "저장 안 함"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "행운 숫자는 고정 번호 설정",
+     "items": [
+      "행운 숫자는 고정 번호 설정"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "우측 번호 6개·테마 출처(method)·저장 상태",
+     "items": [
+      "우측 번호 6개",
+      "테마 출처(method)",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "M-17 컴포넌트 재사용·조건 좌/결과 우 배치만 다름",
+     "items": [
+      "M-17 컴포넌트 재사용",
+      "조건 좌",
+      "결과 우 배치만 다름"
+     ]
+    }
+   ],
+   "data": [
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [],
+   "role": "성인 확인 게스트/회원",
+   "next": [
+    "D-02",
+    "D-05",
+    "D-01",
+    "D-17"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "722e3b1ef298",
+   "wireframe": "design/wireframes/D-15.html"
+  },
+  "D-16": {
+   "id": "D-16",
+   "name": "Windows 사주 프로필(P1)",
+   "type_raw": "폼",
+   "route": "/desktop/fortune/profile",
+   "purpose": "동의 후 사주 프로필 저장·삭제",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·운세 번호·내번호·설정",
+     "items": [
+      "대시보드",
+      "운세 번호",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "breadcrumb",
+     "label": "사주 번호·프로필",
+     "items": [
+      "사주 번호",
+      "프로필"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "생년월일*·양력/음력*·윤달 여부·태어난 시각(모르면 비움)·개인정보 수집·이용 동의*",
+     "items": [
+      "생년월일*",
+      "양력",
+      "음력*",
+      "윤달 여부",
+      "태어난 시각(모르면 비움)",
+      "개인정보 수집",
+      "이용 동의*"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "수집 항목·목적·계정 삭제 시 파기·성별 등 미수집",
+     "items": [
+      "수집 항목",
+      "목적",
+      "계정 삭제 시 파기",
+      "성별 등 미수집"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "button",
+     "label": "저장",
+     "items": [
+      "저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "프로필 삭제",
+     "items": [
+      "프로필 삭제"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "삭제 영향 확인",
+     "items": [
+      "삭제 영향 확인"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "개인정보 처리방침",
+     "items": [
+      "개인정보 처리방침"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "M-18 컴포넌트 재사용",
+     "items": [
+      "M-18 컴포넌트 재사용"
+     ]
+    }
+   ],
+   "data": [
+    "fortune_profiles"
+   ],
+   "api": [
+    "A-17"
+   ],
+   "role": "성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)",
+   "next": [
+    "D-17",
+    "D-10"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "d71831a6e084",
+   "wireframe": "design/wireframes/D-16.html"
+  },
+  "D-17": {
+   "id": "D-17",
+   "name": "Windows 사주 번호(P1)",
+   "type_raw": "폼",
+   "route": "/desktop/fortune/saju",
+   "purpose": "좌측 프로필 요약·우측 오늘의 번호",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "sidebar",
+     "label": "대시보드·로또 생성·연금 생성·운세 번호·통계·내번호·설정",
+     "items": [
+      "대시보드",
+      "로또 생성",
+      "연금 생성",
+      "운세 번호",
+      "통계",
+      "내번호",
+      "설정"
+     ]
+    },
+    {
+     "type": "card",
+     "label": "좌측 프로필 요약·천간지지·오행",
+     "items": [
+      "좌측 프로필 요약",
+      "천간지지",
+      "오행"
+     ]
+    },
+    {
+     "type": "form",
+     "label": "고정 번호 포함 여부",
+     "items": [
+      "고정 번호 포함 여부"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "재미·참고용",
+     "items": [
+      "재미",
+      "참고용"
+     ]
+    },
+    {
+     "type": "전통 상징 해석이며 당첨 확률과 무관(고정 표기)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "기기 계산·같은 날 같은 결과",
+     "items": [
+      "기기 계산",
+      "같은 날 같은 결과"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "생성",
+     "items": [
+      "생성"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "취소",
+     "items": [
+      "취소"
+     ]
+    },
+    {
+     "type": "table",
+     "label": "우측 번호 6개·고정 포함 표시·출처 saju·저장 상태",
+     "items": [
+      "우측 번호 6개",
+      "고정 포함 표시",
+      "출처 saju",
+      "저장 상태"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "선택 저장",
+     "items": [
+      "선택 저장"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "복사·공유",
+     "items": [
+      "복사",
+      "공유"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "프로필 수정",
+     "items": [
+      "프로필 수정"
+     ]
+    },
+    {
+     "type": "modal",
+     "label": "로그인 필요·가입 유도",
+     "items": [
+      "로그인 필요",
+      "가입 유도"
+     ]
+    },
+    {
+     "type": "text",
+     "label": "M-19 컴포넌트 재사용·좌우 배치만 다름",
+     "items": [
+      "M-19 컴포넌트 재사용",
+      "좌우 배치만 다름"
+     ]
+    }
+   ],
+   "data": [
+    "fortune_profiles",
+    "generated_batches",
+    "generated_numbers",
+    "saved_tickets"
+   ],
+   "api": [
+    "A-17"
+   ],
+   "role": "성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)",
+   "next": [
+    "D-16",
+    "D-10",
+    "D-05",
+    "D-15"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "form",
+   "must_missing": [],
+   "should_missing": [
+    "필수 표시·도움말",
+    "임시 저장(긴 폼)"
+   ],
+   "states_missing": [],
+   "hash": "71e36a469ee7",
+   "wireframe": "design/wireframes/D-17.html"
   },
   "W-01": {
    "id": "W-01",
@@ -3532,7 +4401,7 @@
     "가격"
    ],
    "states_missing": [],
-   "hash": "dc13d96bb223",
+   "hash": "03c9953631bb",
    "wireframe": "design/wireframes/W-01.html"
   },
   "W-02": {
@@ -3593,7 +4462,7 @@
    "must_missing": [],
    "should_missing": [],
    "states_missing": [],
-   "hash": "d93de2d513b7",
+   "hash": "e10bd8258993",
    "wireframe": "design/wireframes/W-02.html"
   },
   "W-03": {
@@ -3698,7 +4567,7 @@
     "저장된 보기·열 설정"
    ],
    "states_missing": [],
-   "hash": "6c41d3c21511",
+   "hash": "88b74e3d29a6",
    "wireframe": "design/wireframes/W-03.html"
   },
   "W-04": {
@@ -3836,7 +4705,7 @@
     "관련 항목 탭"
    ],
    "states_missing": [],
-   "hash": "9c87ed4759d4",
+   "hash": "b0723ac48867",
    "wireframe": "design/wireframes/W-04.html"
   }
  },
@@ -3937,6 +4806,24 @@
    "오류": "조회 실패는 캐시·검증 시각과 재시도",
    "성공": "선택 회차 상세 이동"
   },
+  "M-17": {
+   "빈": "테마 미선택 시 생성 비활성·테마 안내·고지 표시",
+   "로딩": "기기 생성 중 버튼 잠금",
+   "오류": "입력 오류는 필드 옆 수정·고정 번호와 충돌하면 엔진 충돌 오류 안내·저장 실패 시 결과 보존",
+   "성공": "번호 6개·테마 출처·고지 표시·선택 저장 완료(generated 상태)"
+  },
+  "M-18": {
+   "빈": "프로필 없음은 입력 안내·동의 전 저장 비활성",
+   "로딩": "저장/삭제 중 잠금",
+   "오류": "세션 없음은 진입 차단·M-06 유도·날짜/시각 형식 오류는 필드 옆·저장 실패 시 입력 보존",
+   "성공": "저장됨 후 M-19 이동·삭제 시 프로필 파기 완료 안내"
+  },
+  "M-19": {
+   "빈": "프로필 없으면 M-18 입력 유도",
+   "로딩": "프로필 읽기·기기 계산 중 잠금",
+   "오류": "세션 없음은 진입 차단·가입 유도·프로필 읽기 실패 재시도·고정 번호 충돌은 엔진 충돌 오류 안내",
+   "성공": "번호 6개·고정 포함·출처 saju·고지 표시·선택 저장 완료(generated 상태)"
+  },
   "D-01": {
    "빈": "사용자 기록 없음은 생성/구매등록 CTA",
    "로딩": "최신 회차·상품 카드·기록 카드·회차 표 스켈레톤",
@@ -4020,6 +4907,24 @@
    "로딩": "회차 표 스켈레톤",
    "오류": "캐시·검증 시각 표시·조회 재시도",
    "성공": "회차 상세 이동·검색 상태 복원"
+  },
+  "D-15": {
+   "빈": "좌측 테마 미선택 시 생성 비활성·우측 생성 전 안내·고지 표시",
+   "로딩": "우측 기기 생성 중 잠금",
+   "오류": "입력 오류 필드 강조·고정 번호 충돌은 엔진 충돌 오류 안내·기존 결과 유지",
+   "성공": "우측 번호 6개·테마 출처·고지·저장 상태 갱신"
+  },
+  "D-16": {
+   "빈": "프로필 없음은 입력 안내·동의 전 저장 비활성",
+   "로딩": "저장/삭제 중 잠금",
+   "오류": "세션 없음은 진입 차단·D-10 유도·형식 오류 필드 옆·저장 실패 시 입력 보존",
+   "성공": "저장됨 후 D-17 이동·삭제 시 파기 완료 안내"
+  },
+  "D-17": {
+   "빈": "프로필 없으면 D-16 입력 유도",
+   "로딩": "프로필 읽기·기기 계산 중 잠금",
+   "오류": "세션 없음은 진입 차단·가입 유도·읽기 실패 재시도·고정 번호 충돌 안내",
+   "성공": "우측 번호 6개·고정 포함·출처 saju·고지·저장 상태 갱신"
   },
   "W-01": {
    "빈": "신청 폼 입력 안내·필수 동의/19세 확인 전 신청 비활성",
@@ -4504,6 +5409,23 @@
     "구현": "EF"
    },
    "source": "docs/04_API.md"
+  },
+  "A-17": {
+   "id": "A-17",
+   "method": "GET · PUT · DELETE",
+   "path": "/v1/fortune-profile",
+   "row": {
+    "ID": "A-17",
+    "메서드": "GET · PUT · DELETE",
+    "경로": "/v1/fortune-profile",
+    "입력": "PUT: `birth_date`, `calendar`(solar|lunar), `is_leap_month?`, `birth_time?`(모르면 NULL), `consented_at`(동의 필수)",
+    "출력": "본인 `fortune_profiles` 1행(GET 0행 → 프로필 입력 안내)",
+    "권한": "로그인(본인 행만, RLS). 사주 번호 계산은 기기 `fortune-engine`(ADR-0005), 서버 계산 없음",
+    "오류": "400, 401",
+    "사용 테이블": "fortune_profiles",
+    "구현": "RLS (P1)"
+   },
+   "source": "docs/04_API.md"
   }
  },
  "tables": {
@@ -4548,7 +5470,7 @@
    "name": "generated_batches",
    "row": {
     "테이블": "generated_batches",
-    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int`(대상 회차) · `strategy text NOT NULL`(원본 5장 전략 키) · `engine_version text NOT NULL",
+    "컬럼 · 타입 · 제약": "id uuid PK` · `user_id` · `game game_type NOT NULL` · `round int`(대상 회차) · `strategy text NOT NULL`(원본 5장 전략 키) · `method text NOT NULL DEFAULT 'random' CHECK(in 'random','condition','zodiac','birthday','dream','saju')`(생성 출처, ADR-0005) · `engine_version text NOT NULL",
     "인덱스": "(`user_id`, `created_at desc`)"
    },
    "source": "docs/05_DATA_MODEL.md"
@@ -4619,6 +5541,16 @@
     "anon": "없음",
     "authenticated": "SELECT 본인",
     "쓰기 주체": "service_role만(스토어 영수증 검증, P2)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "fortune_profiles": {
+   "name": "fortune_profiles",
+   "row": {
+    "테이블": "fortune_profiles",
+    "anon": "없음",
+    "authenticated": "SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK (auth.uid() = user_id)",
+    "쓰기 주체": "본인(A-17) · 계정 삭제 시 CASCADE 파기"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -4701,6 +5633,36 @@
   ],
   [
    "🟡",
+   "M-17",
+   "테마 번호(P1) 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "M-17",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+  ],
+  [
+   "🟡",
+   "M-18",
+   "사주 프로필(P1) 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "M-18",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+  ],
+  [
+   "🟡",
+   "M-19",
+   "사주 번호(P1) 권장: 필수 표시·도움말, 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "M-19",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+  ],
+  [
+   "🟡",
    "D-01",
    "Windows 대시보드 권장: 이전 기간 대비(증감), 세그먼트·담당자 필터"
   ],
@@ -4743,6 +5705,36 @@
    "🟡",
    "D-14",
    "Windows 회차 목록 권장: 새로 만들기, 일괄 작업(선택·삭제·내보내기), 저장된 보기·열 설정"
+  ],
+  [
+   "🟡",
+   "D-15",
+   "Windows 테마 번호(P1) 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "D-15",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+  ],
+  [
+   "🟡",
+   "D-16",
+   "Windows 사주 프로필(P1) 권장: 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "D-16",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
+  ],
+  [
+   "🟡",
+   "D-17",
+   "Windows 사주 번호(P1) 권장: 필수 표시·도움말, 임시 저장(긴 폼)"
+  ],
+  [
+   "ℹ️",
+   "D-17",
+   "모르는 블록(회색 상자로 표시): 전통 상징 해석이며 당첨 확률과 무관(고정 표기)"
   ],
   [
    "🟡",

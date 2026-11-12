@@ -7,12 +7,14 @@ flowchart LR
     n_M_11["M-11 공식 회차 상세<br/>/m/draws/:game/:round"]
     n_M_15["M-15 추천 복권 선택<br/>/m/generate"]
     n_M_16["M-16 회차 목록<br/>/m/draws"]
+    n_M_17["M-17 테마 번호(P1)<br/>/m/generate/theme"]
     n_D_01["D-01 Windows 대시보드<br/>/desktop/home"]
     n_D_02["D-02 Windows 로또 생성<br/>/desktop/generate/lotto"]
     n_D_03["D-03 Windows 연금 생성<br/>/desktop/generate/pension"]
     n_D_04["D-04 Windows 통계<br/>/desktop/statistics"]
     n_D_08["D-08 Windows 회차 상세<br/>/desktop/draws/:game/:round"]
     n_D_14["D-14 Windows 회차 목록<br/>/desktop/draws"]
+    n_D_15["D-15 Windows 테마 번호(P1)<br/>/desktop/generate/theme"]
   end
   subgraph g1["첫 실행 누구나"]
     n_M_05["M-05 온보딩·19세 확인<br/>/m/onboarding"]
@@ -43,16 +45,22 @@ flowchart LR
     n_M_14["M-14 로컬·클라우드 병합(P1)<br/>/m/sync"]
     n_D_12["D-12 Windows 동기화(P1)<br/>/desktop/sync"]
   end
-  subgraph g7["공개"]
+  subgraph g7["성인 확인 로그인 본인(세션 없으면 진입 차단·가입 유도)"]
+    n_M_18["M-18 사주 프로필(P1)<br/>/m/fortune/profile"]
+    n_M_19["M-19 사주 번호(P1)<br/>/m/fortune/saju"]
+    n_D_16["D-16 Windows 사주 프로필(P1)<br/>/desktop/fortune/profile"]
+    n_D_17["D-17 Windows 사주 번호(P1)<br/>/desktop/fortune/saju"]
+  end
+  subgraph g8["공개"]
     n_W_01["W-01 웹 랜딩(P1 가정)<br/>/"]
   end
-  subgraph g8["운영 계정 인증 전"]
+  subgraph g9["운영 계정 인증 전"]
     n_W_02["W-02 관리자 로그인(P1)<br/>/admin/login"]
   end
-  subgraph g9["서버에서 관리자 역할 확인"]
+  subgraph g10["서버에서 관리자 역할 확인"]
     n_W_03["W-03 관리자 수집 검토 목록(P1)<br/>/admin/collections"]
   end
-  subgraph g10["서버에서 관리자 역할 확인·쓰기 재검사"]
+  subgraph g11["서버에서 관리자 역할 확인·쓰기 재검사"]
     n_W_04["W-04 관리자 수집 검토 상세(P1)<br/>/admin/collections/:id"]
   end
   n_M_01 --> n_M_02
@@ -112,8 +120,20 @@ flowchart LR
   n_M_15 --> n_M_01
   n_M_15 --> n_M_02
   n_M_15 --> n_M_03
+  n_M_15 --> n_M_17
+  n_M_15 --> n_M_19
   n_M_16 --> n_M_11
   n_M_16 --> n_M_04
+  n_M_17 --> n_M_02
+  n_M_17 --> n_M_07
+  n_M_17 --> n_M_15
+  n_M_17 --> n_M_19
+  n_M_18 --> n_M_19
+  n_M_18 --> n_M_06
+  n_M_19 --> n_M_18
+  n_M_19 --> n_M_06
+  n_M_19 --> n_M_07
+  n_M_19 --> n_M_17
   n_D_01 --> n_D_02
   n_D_01 --> n_D_03
   n_D_01 --> n_D_04
@@ -122,6 +142,8 @@ flowchart LR
   n_D_01 --> n_D_09
   n_D_01 --> n_D_13
   n_D_01 --> n_D_14
+  n_D_01 --> n_D_15
+  n_D_01 --> n_D_17
   n_D_02 --> n_D_03
   n_D_02 --> n_D_04
   n_D_02 --> n_D_05
@@ -163,6 +185,16 @@ flowchart LR
   n_D_13 --> n_D_09
   n_D_14 --> n_D_08
   n_D_14 --> n_D_04
+  n_D_15 --> n_D_02
+  n_D_15 --> n_D_05
+  n_D_15 --> n_D_01
+  n_D_15 --> n_D_17
+  n_D_16 --> n_D_17
+  n_D_16 --> n_D_10
+  n_D_17 --> n_D_16
+  n_D_17 --> n_D_10
+  n_D_17 --> n_D_05
+  n_D_17 --> n_D_15
   n_W_02 --> n_W_01
   n_W_02 --> n_W_03
   n_W_03 --> n_W_04
