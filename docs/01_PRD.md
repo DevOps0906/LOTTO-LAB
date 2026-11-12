@@ -87,7 +87,7 @@
 | 보안 레벨 | L2 배포 — 앱 배포 + 개인정보 + 공개 API (D9) |
 | 고객·판매 대상 | 개인(국내 만 19세 이상) |
 | 배포 형태 | 설치형·앱 포함: Android/iOS 앱(Capacitor 8), Windows 설치본(Tauri 2, MSI/NSIS), 웹(Next.js) |
-| 인터넷 노출 면 | 공개 페이지(랜딩·사전알림 폼: 이메일·수신 동의·만 19세 확인 → A-15 `POST /v1/waitlist`, `waitlist_signups` anon INSERT만·SELECT 금지, 위협 메모 `04_API.md` A-15) · 공개 API(Supabase Edge Function `/v1/*`, RLS 직접 CRUD) · 관리자(웹 관리자·회차 검토, **MFA 필수(TOTP)** — `04_API.md#5`) · 웹훅 없음 · 파일 업로드 없음 · 업데이트 배포 채널(Windows 자동 업데이트) |
+| 인터넷 노출 면 | 공개 페이지(랜딩·사전알림 폼: 이메일·수신 동의·만 19세 확인 → A-15 `POST /v1/waitlist`, `waitlist_signups` anon·authenticated 직접 접근 없음(REVOKE), EF(service_role)만 INSERT·SELECT 금지, 위협 메모 `04_API.md` A-15) · 공개 API(Supabase Edge Function `/v1/*`, RLS 직접 CRUD) · 관리자(웹 관리자·회차 검토, **MFA 필수(TOTP)** — `04_API.md#5`) · 웹훅 없음 · 파일 업로드 없음 · 업데이트 배포 채널(Windows 자동 업데이트) |
 | 민감 데이터 | 개인정보(계정 식별자·이메일, 만 19세 확인 여부, 사전알림 이메일·수신 동의 — 출시 알림 발송 직후 파기, 늦어도 6개월(메일마다 수신 거부·삭제 링크 A-18, 사용자 결정 2026-11-12)) · 저장 번호·구매/당첨 이력 · 결제 없음(P2 전) · OAuth 토큰(로그인 방식에 따라). 보관 기간: 팀장 결정 필요(계정 삭제 시 파기 원칙, 원본 11장) · 사주 프로필(생년월일·양/음력·태어난 시각 선택, 성별 미수집 — 회원 동의 후 `fortune_profiles` owner-only RLS, 계정 삭제 시 파기, 위협 메모 `04_API.md` A-17) · 테마 번호 입력값(별자리·띠·생년월일·기념일·꿈 키워드)은 기기에서만 처리, 서버 전송·저장 없음(ADR-0005) |
 | 키·권한 | 서버 전용: Supabase service_role(Edge Function·Python 워커만), 관리자 권한 키. 앱 번들 허용: Supabase anon(공개) 키만(RLS 전제). 서명 키: Android 업로드 키, Windows 코드 서명 인증서(Q4), Tauri 업데이트 서명 키 — 저장소·CI 비밀로만. Cloudflare Turnstile secret(EF 환경변수만). AI 에이전트 접근 범위: 로컬 Supabase·anon 키만, 운영 service_role·서명 키·운영 DB 접근 금지 |
 | 라이선스 예외 | 없음 |

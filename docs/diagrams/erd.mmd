@@ -1,0 +1,15 @@
+erDiagram
+  waitlist_signups {
+    uuid id PK
+    text email
+    text email_norm
+    boolean consent_marketing
+    boolean age_confirmed
+    timestamptz consented_at
+    timestamptz created_at
+  }
+  rate_limits {
+    text key PK
+    timestamptz window_start PK
+    int hits
+  }

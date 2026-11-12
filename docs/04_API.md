@@ -50,6 +50,9 @@
 | 422 | `INVALID_TRANSITION` | 허용되지 않은 구매 상태 전환(purchased→favorite, R19) | A-14 |
 | 429 | `RATE_LIMITED` | 레이트 리밋 초과(`Retry-After` 헤더) | 4절 대상 |
 | 503 | `DATA_STALE` | 공식 데이터 미갱신·검토 대기(해당 회차 미수집) | A-09 |
+| 503 | `SERVICE_UNAVAILABLE` | 의존 서비스 장애(Turnstile 검증·레이트리밋·저장 실패) — fail-closed | A-15 |
+| 500 | `INTERNAL` | 서버 설정 누락(필수 환경변수) | EF 공통 |
+| 405 | `METHOD_NOT_ALLOWED` | 허용되지 않은 메서드 | EF 공통 |
 | 503 | `SOURCE_UNAVAILABLE` | 재검증 중 출처 접속 실패(R20) | A-16 |
 
 ## 3. 생성 API(A-04·A-05) — 결정됨(R5)
@@ -62,7 +65,7 @@
 | A-07·A-08·A-10·A-14 | 캐시 안 함(사용자 데이터) | Supabase 기본 한도. 쓰기 남용 한도 팀장 결정 필요 |
 | A-09 | 캐시 안 함 | 사용자 기준, 수치 팀장 결정 필요 |
 | A-11~A-13·A-16 | 캐시 안 함 | 관리자 기준, 수치 팀장 결정 필요 |
-| A-15 | 캐시 안 함 | IP 기준 + Turnstile 봇 차단(R3·R21), 수치 팀장 결정 필요 |
+| A-15 | 캐시 안 함 | IP 기준 고정 창 10분 5회(env `WAITLIST_RATE_WINDOW_SEC`·`WAITLIST_RATE_MAX`, 측정 후 조정) — DB 카운터, 키 sha256(`RATE_SALT`‖IP, IPv6 /64), IP는 `x-real-ip` → XFF 맨 오른쪽(로컬 Kong 확인, 운영 배포 후 재확인). Turnstile 봇 차단(R3·R21·R22) |
 
 - EF 레이트 리밋 구현 방식(DB 카운터 / 외부 저장소)은 팀장 결정 필요(새 의존성이면 `security-baseline`).
 
@@ -70,11 +73,11 @@
 | 항목 | 공개 읽기 A-01~A-03·A-06 | 사전알림 A-15 | 사용자 A-07~A-10·A-14 | 관리자 A-11~A-13·A-16 |
 |---|---|---|---|---|
 | 노출 면 | 인터넷 누구나(anon 키, RLS 직접) | 공개 웹 W-01 폼 | 로그인 사용자 앱(모바일·Windows) | 관리자 웹(W-xx, P1) |
-| 인증·인가 | 없음, SELECT 전용 RLS | 없음, INSERT 전용 RLS(SELECT 금지) | JWT + RLS `auth.uid() = user_id` | JWT + `role=admin` + `aal2`(TOTP MFA 필수, R13) |
+| 인증·인가 | 없음, SELECT 전용 RLS | 없음 — 테이블 직접 접근 차단(REVOKE), EF(service_role)만 쓰기 | JWT + RLS `auth.uid() = user_id` | JWT + `role=admin` + `aal2`(TOTP MFA 필수, R13) |
 | 다루는 데이터 | 공개 추첨 결과·당첨금·통계 | 이메일(개인정보)·동의·연령 확인 | 사용자 번호·구매 여부·구매일·금액·구독 상태 | 수집 원본 응답·검증·재검증 오류 |
-| 필요한 키 | anon(앱 번들 허용) | anon(EF 경유) + Turnstile secret(EF 환경변수만) | anon + 사용자 JWT | EF 내부 service_role(앱 번들 금지, D9) |
+| 필요한 키 | anon(앱 번들 허용) | 키 없이 EF 호출(verify_jwt=false) — EF 내부 service_role·Turnstile secret·RATE_SALT(환경변수만) | anon + 사용자 JWT | EF 내부 service_role(앱 번들 금지, D9) |
 | 입력 | 클라이언트 필터 값 검증, 쓰기 RLS 없음 | 이메일 형식·길이, 동의·연령 `true` 필수(DB CHECK 이중) | `ticket_data` 스키마 검증(연금 `^[0-9]{6}$`, 로또 1~45 6개), `amount_won ≥ 0` — DB CHECK 이중 방어 | `id` UUID, `reason` 길이 제한 |
-| 체인 | 오염된 수집값 → 잘못된 판정·알림 | 스팸 대량 등록 → 발송 평판·저장 비용 | RLS 누락 → 타인 번호·구매 정보 노출 | 관리자 탈취 → 오염 회차 승인 → 전체 판정·알림 오염 |
+| 체인 | 오염된 수집값 → 잘못된 판정·알림 | 스팸 대량 등록 → 발송 평판·저장 비용. 남은 위험: 이메일 소유 확인 없음 → 제3자 이메일 등록 가능(사용자 결정 대기 — 확인 메일 이중 동의 여부) | RLS 누락 → 타인 번호·구매 정보 노출 | 관리자 탈취 → 오염 회차 승인 → 전체 판정·알림 오염 |
 | 피해 범위 | 데이터 신뢰도 | 대기자 명단 품질·발송 도메인 | 본인 행(RLS 정상 시) | 전 사용자 판정·알림 |
 | 남용 | 스크래핑 → Supabase 기본 한도 | 봇 등록 → Turnstile + 4절 IP 리밋(R21), 가입 여부 탐색 → 중복도 같은 202 | 대량 저장·판정 반복 → 4절 리밋, 중복 저장 → `idempotency_key` | — |
 | 로그 | 요청 수·오류 | 요청 수·거부 사유 O, 이메일 원문 X | 판정 요청 O, `ticket_data` 본문 X | 재검증·승인·반려 감사 로그(누가·언제·run id) O |

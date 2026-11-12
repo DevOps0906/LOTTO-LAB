@@ -20,6 +20,6 @@
 - 다른 테이블 마이그레이션(task-007·008), 랜딩 UI(task-004)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `supabase db reset` 성공, `supabase test db` 통과(anon SELECT/UPDATE/DELETE 거부, 동의 false INSERT 거부)
-- [ ] `supabase functions serve` 상태에서 중복 이메일·신규 이메일 모두 202, 잘못된 토큰 400, 한도 초과 429 테스트 통과
-- [ ] `~/.claude/nomad/bin/secscan` 통과
+- [x] `supabase db reset` 성공, `supabase test db` 통과(anon SELECT/UPDATE/DELETE 거부, 동의 false INSERT 거부)
+- [x] `supabase functions serve` 상태에서 중복 이메일·신규 이메일 모두 202, 잘못된 토큰 400, 한도 초과 429 테스트 통과
+- [x] `~/.claude/nomad/bin/secscan` 통과
