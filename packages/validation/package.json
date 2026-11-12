@@ -7,10 +7,16 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@lotto-lab/types": "workspace:*"
+    "@lotto-lab/types": "workspace:*",
+    "zod": "4.6.7"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "fast-check": "4.10.2",
+    "vitest": "5.1.0"
   }
 }
