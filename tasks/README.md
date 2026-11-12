@@ -42,7 +42,7 @@
 | task-035 | 배포 빌드 MSI/NSIS + AAB | W6 | 034 | 높음 | builder | 대기 |
 | task-036 | 출시 전 점검·보안 최종 점검 | W6 | 001, 033, 035 | 높음 | reviewer+planner | 대기 |
 | task-037 | fortune-engine 테마·사주 결정적 생성 (ADR-0005) | W7(P1) | 013, 014 | 높음 | builder+tester | 완료 |
-| task-038 | 모바일 M-17 테마 번호 | W7(P1) | 018, 037 | 보통 | builder | 대기 |
+| task-038 | 모바일 M-17 테마 번호 | W7(P1) | 018, 037 | 보통 | builder | 완료 |
 | task-039 | Windows D-15 테마 번호 | W7(P1) | 025, 038 | 보통 | builder | 대기 |
 | task-040 | `fortune_profiles` 스키마 + RLS | W7(P1) | 008 | 높음 | builder | 대기 |
 | task-041 | 모바일 M-18·M-19 사주 프로필·번호 | W7(P1) | 037, 038, 040, 043 | 높음 | builder | 대기 |

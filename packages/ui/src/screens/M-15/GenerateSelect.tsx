@@ -1,13 +1,13 @@
 // M-15 추천 복권 선택: 로또·연금 생성기로 이동, 최근 생성한 복권의 지난 설정으로 다시 만들기(생성기가 지난 조건을 복원 — task-018·019). 생성은 기기에서 실행 — 오프라인에서도 된다.
-// 운세·테마 번호(M-17·M-19)는 P1이라 버튼을 두지 않는다.
+// 테마 번호(M-17)는 links.theme이 있을 때만 버튼을 보인다(셸에 화면이 있을 때). 사주 번호(M-19)는 아직 없다.
 import { Card } from "../../components/Card";
 import { Header } from "../../components/Header";
 import { Icon } from "../../components/icons";
 import { StateView } from "../../components/StateView";
 import { GAME_NAME, formatTime, useAsync, type Generated, type ScreenCore } from "../common/data";
 
-/** lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소 */
-export type GenerateSelectLinks = { home: string; lotto: string; pension: string; lottoLast: string; pensionLast: string };
+/** lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소, theme = 테마 번호(M-17, 없으면 버튼 숨김) */
+export type GenerateSelectLinks = { home: string; lotto: string; pension: string; lottoLast: string; pensionLast: string; theme?: string };
 
 export type GenerateSelectProps = {
   core: Pick<ScreenCore, "generator">;
@@ -45,6 +45,17 @@ export function GenerateSelect({ core, links }: GenerateSelectProps) {
           </a>
         </Card>
       </div>
+
+      {links.theme && (
+        <Card title="테마 번호">
+          <p className="ll-select__desc">별자리·띠·날짜·꿈 테마로 오늘의 번호를 만듭니다. 재미·참고용 · 전통 상징 해석이며 당첨 확률과 무관합니다.</p>
+          <a className="ll-button" data-variant="secondary" data-block="true" href={links.theme}>
+            <Icon name="spark" />
+            운세·테마 번호
+            <Icon name="arrow" />
+          </a>
+        </Card>
+      )}
 
       <Card title="지난 설정으로 다시 만들기" busy={last.status === "loading"}>
         {last.status === "loading" && <StateView kind="loading" title="이 기기의 생성 기록을 읽는 중입니다" />}

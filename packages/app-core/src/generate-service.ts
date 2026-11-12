@@ -20,6 +20,11 @@ export type GenerateRequest =
  * saved = false면 표시만 하고 이력 저장(일부 또는 전부)에 실패한 것. 이미 쓴 줄은 남는다.
  * pruneFailed = true면 저장은 됐지만 200개 정리에 실패한 것(다음 생성 때 다시 정리한다).
  */
+/** 생성 이력 한 줄의 번호 부분(id·배치·시각·method는 저장할 때 붙인다). 연금 digits는 문자열. */
+export type GeneratedLine =
+  | { game: "lotto"; numbers: { nums: number[] }; group_no: null; engine_version: string }
+  | { game: "pension"; numbers: { digits: string }; group_no: number; engine_version: string };
+
 export type GenerateResult = { batch_id: string; records: LocalGenerated[]; saved: boolean; pruneFailed: boolean };
 
 export class GenerateService {
@@ -38,24 +43,36 @@ export class GenerateService {
     const rng = createCryptoRng((buffer) => this.random.fill(buffer));
     const batchId = uuidV4(this.random);
     const createdAt = this.clock.now().toISOString();
-    const common = { v: 1, created_at: createdAt, batch_id: batchId, method: methodOf(request) };
 
-    const raw =
+    const lines: GeneratedLine[] =
       request.game === "lotto"
         ? (() => {
             const r = generateLotto(request.config, rng);
-            return r.games.map((nums) => ({ game: "lotto", numbers: { nums }, group_no: null, engine_version: r.engine_version }));
+            return r.games.map((nums) => ({ game: "lotto" as const, numbers: { nums }, group_no: null, engine_version: r.engine_version }));
           })()
         : (() => {
             const r = generatePension(request.config, rng);
             return r.tickets.map((t) => ({
-              game: "pension",
+              game: "pension" as const,
               numbers: { digits: t.digits },
               group_no: t.group_no,
               engine_version: r.engine_version,
             }));
           })();
-    const records = raw.map((line, i) => LocalGeneratedSchema.parse({ ...common, ...line, id: uuidV4(this.random), line_no: i + 1 }));
+    return this.persist(batchId, createdAt, methodOf(request), lines);
+  }
+
+  /**
+   * 다른 엔진(운세 번호 등)이 만든 결과 줄을 한 배치로 생성 이력에 저장한다 — generate와 같은 저장·정리 경로.
+   * 줄에는 번호·엔진 버전만 담는다(입력값을 넣을 자리가 없다 — 스키마가 추가 키를 거부한다).
+   */
+  saveBatch(method: GenerationMethod, lines: GeneratedLine[]): Promise<GenerateResult> {
+    return this.persist(uuidV4(this.random), this.clock.now().toISOString(), method, lines);
+  }
+
+  private async persist(batchId: string, createdAt: string, method: GenerationMethod, lines: GeneratedLine[]): Promise<GenerateResult> {
+    const common = { v: 1, created_at: createdAt, batch_id: batchId, method };
+    const records = lines.map((line, i) => LocalGeneratedSchema.parse({ ...common, ...line, id: uuidV4(this.random), line_no: i + 1 }));
 
     const outcome = await this.store.run(async () => {
       try {

@@ -3,6 +3,7 @@
 import type { Adapters, AppConfig } from "./adapters.ts";
 import { AgeGate } from "./age-gate.ts";
 import { CheckService } from "./check-service.ts";
+import { FortuneService } from "./fortune-service.ts";
 import { GenerateService } from "./generate-service.ts";
 import { LastConfigStore } from "./last-config.ts";
 import { LocalData, ThemeStore } from "./local-data.ts";
@@ -25,7 +26,28 @@ export {
   type LocalExport,
   type ThemePreference,
 } from "./local-data.ts";
-export { GENERATED_HISTORY_LIMIT, GenerateService, type GenerateRequest, type GenerateResult } from "./generate-service.ts";
+export {
+  GENERATED_HISTORY_LIMIT,
+  GenerateService,
+  type GenerateRequest,
+  type GenerateResult,
+  type GeneratedLine,
+} from "./generate-service.ts";
+export { FORTUNE_SECRET_KEY, FortuneService, type FortuneOutcome } from "./fortune-service.ts";
+// 테마 번호 화면(ui)이 쓰는 선택 목록·입력 타입 — ui는 엔진을 직접 의존하지 않는다.
+export {
+  DREAM_KEYWORDS,
+  DREAM_KEYWORDS_MAX,
+  DREAM_KEYWORDS_MIN,
+  ZODIAC_ANIMAL_IDS,
+  ZODIAC_SIGN_IDS,
+  type DreamKeywordId,
+  type FortuneMethod,
+  type FortuneRequest,
+  type FortuneTheme,
+  type ZodiacAnimalId,
+  type ZodiacSignId,
+} from "@lotto-lab/fortune-engine";
 export {
   DRAW_CACHE_TTL_MS,
   DRAW_PAGE_DEFAULT,
@@ -52,6 +74,8 @@ export {
 export type AppCore = {
   ageGate: AgeGate;
   generator: GenerateService;
+  /** 운세·테마 번호(기기 생성, 입력값 미저장) */
+  fortune: FortuneService;
   tickets: TicketService;
   reader: PublicReader;
   checker: CheckService;
@@ -69,9 +93,11 @@ export function createAppCore(adapters: Adapters, config: AppConfig, options: { 
   const store = new LocalStore(adapters.store, options.migrations);
   const reader = new PublicReader(config, adapters.fetch, adapters.clock, store);
   const tickets = new TicketService(store, adapters.clock, adapters.random, reader);
+  const generator = new GenerateService(store, adapters.clock, adapters.random);
   return {
     ageGate: new AgeGate(store, adapters.clock),
-    generator: new GenerateService(store, adapters.clock, adapters.random),
+    generator,
+    fortune: new FortuneService(store, adapters.store, adapters.clock, adapters.random, generator),
     tickets,
     reader,
     checker: new CheckService(tickets, reader),

@@ -333,7 +333,8 @@ export function GeneratedResults({
   /** 생성 이력이 기기에 저장됐는지(아니면 즐겨찾기로 저장할 수 없다) */
   savable: boolean;
   variant: "primary" | "pension";
-  onRegenerate: () => void;
+  /** 없으면 다시 생성 버튼을 숨긴다(M-17: 같은 날 같은 입력은 같은 번호라 의미 없음) */
+  onRegenerate?: () => void;
   regenerateDisabled?: boolean;
   /** false면 공유 버튼·메뉴를 숨긴다(Windows: 공유 = 클립보드 복사라 "복사"와 겹친다) */
   canShare?: boolean;
@@ -422,9 +423,11 @@ export function GeneratedResults({
       className="ll-gen__result"
       busy={saving}
       action={
-        <button type="button" className="ll-icon-button" aria-label="같은 조건으로 다시 생성" onClick={onRegenerate} disabled={regenerateDisabled}>
-          <Icon name="redo" />
-        </button>
+        onRegenerate && (
+          <button type="button" className="ll-icon-button" aria-label="같은 조건으로 다시 생성" onClick={onRegenerate} disabled={regenerateDisabled}>
+            <Icon name="redo" />
+          </button>
+        )
       }
     >
       {savable ? (

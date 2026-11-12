@@ -11,6 +11,7 @@
 | 쓰기 허용 | `apps/mobile/**` |
 
 ## 할 것
+- M-17 "사주 번호(회원)" 링크 연결(task-038에서 M-19 미구현으로 보류 — `apps/mobile/src/routes/screens.tsx` THEME_LINKS에 saju 추가)
 - 로그인 세션 없으면 M-18·M-19 진입 차단 + 가입 유도(M-06)
 - M-18: 동의 후 A-17 저장·삭제, M-19: 프로필 → `fortune-engine` 기기 계산 → 결과 저장(generated, `method=saju`), 고지 고정 표기
 

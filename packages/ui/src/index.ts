@@ -34,6 +34,17 @@ export { GenerateSelect, type GenerateSelectLinks, type GenerateSelectProps } fr
 export { LottoGenerator, type LottoGeneratorLinks, type LottoGeneratorProps } from "./screens/M-02/LottoGenerator";
 export { PensionGenerator, type PensionGeneratorLinks, type PensionGeneratorProps } from "./screens/M-03/PensionGenerator";
 export type { GeneratorCore } from "./screens/common/generator";
+export {
+  FORTUNE_METHOD_LABEL,
+  FORTUNE_NOTICE,
+  ThemeGenerator,
+  type DreamDictionary,
+  type FortuneCore,
+  type FortuneRequestInput,
+  type FortuneThemeInput,
+  type ThemeGeneratorLinks,
+  type ThemeGeneratorProps,
+} from "./screens/M-17/ThemeGenerator";
 export { Statistics, type StatisticsLinks, type StatisticsProps } from "./screens/M-04/Statistics";
 export { DrawList, type DrawListLinks, type DrawListProps } from "./screens/M-16/DrawList";
 export { DrawDetail, type DrawDetailLinks, type DrawDetailProps } from "./screens/M-11/DrawDetail";
