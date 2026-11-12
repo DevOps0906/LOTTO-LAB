@@ -33,6 +33,8 @@ export type SettingsProps = {
   onThemeChange: (theme: ThemePreference) => void;
   /** 모두 삭제 뒤 셸이 처음 상태(19세 확인부터)로 다시 시작한다 */
   onCleared: () => void;
+  /** false면 "내보내기(공유)"를 숨긴다(Windows: 공유 = 클립보드 복사라 JSON 복사와 겹친다) */
+  canShare?: boolean;
 };
 
 /** 모두 삭제 확인 문구(사용자가 그대로 입력해야 삭제 버튼이 켜진다). */
@@ -40,7 +42,7 @@ export const CLEAR_PHRASE = "모두 삭제";
 
 type Loaded = { theme: ThemePreference; confirmedAt: string | null; summary: LocalDataSummary };
 
-export function Settings({ core, appVersion, onThemeChange, onCleared }: SettingsProps) {
+export function Settings({ core, appVersion, onThemeChange, onCleared, canShare = true }: SettingsProps) {
   const [state, reload] = useAsync<Loaded>(async () => {
     const [theme, confirmedAt, summary] = await Promise.all([core.theme.get(), core.ageGate.confirmedAt(), core.data.summary()]);
     return { theme, confirmedAt, summary };
@@ -65,7 +67,7 @@ export function Settings({ core, appVersion, onThemeChange, onCleared }: Setting
           action={<Button onClick={() => reload()}>다시 시도</Button>}
         />
       ) : (
-        <Body core={core} loaded={state.value} appVersion={appVersion} onThemeChange={onThemeChange} onCleared={onCleared} />
+        <Body core={core} loaded={state.value} appVersion={appVersion} onThemeChange={onThemeChange} onCleared={onCleared} canShare={canShare} />
       )}
     </div>
   );
@@ -77,12 +79,14 @@ function Body({
   appVersion,
   onThemeChange,
   onCleared,
+  canShare,
 }: {
   core: SettingsCore;
   loaded: Loaded;
   appVersion: string;
   onThemeChange: (theme: ThemePreference) => void;
   onCleared: () => void;
+  canShare: boolean;
 }) {
   const notice = useNotice();
   const [theme, setTheme] = useState(loaded.theme);
@@ -183,9 +187,11 @@ function Body({
           <Button variant="secondary" disabled={total === 0} onClick={() => void exportTo("copy")}>
             내보내기(JSON 복사)
           </Button>
-          <Button variant="secondary" disabled={total === 0} onClick={() => void exportTo("share")}>
-            내보내기(공유)
-          </Button>
+          {canShare && (
+            <Button variant="secondary" disabled={total === 0} onClick={() => void exportTo("share")}>
+              내보내기(공유)
+            </Button>
+          )}
         </div>
         {total === 0 && <p className="ll-muted">내보낼 기록이 아직 없습니다.</p>}
       </Card>

@@ -30,13 +30,18 @@ const GROUPS = [1, 2, 3, 4, 5] as const;
 const BASE_PRESETS = [1, 5, 10] as const;
 export const DIGIT_LABELS = ["십만", "만", "천", "백", "십", "일"] as const;
 
-export type PensionGeneratorLinks = { home: string; generate: string; stats: string };
+/** stats가 없으면(셸에 통계 화면이 아직 없으면) 통계 링크를 숨긴다 */
+export type PensionGeneratorLinks = { home: string; generate: string; stats?: string };
 
 export type PensionGeneratorProps = {
   core: GeneratorCore;
   links: PensionGeneratorLinks;
   /** true면 지난 설정을 불러와 조건을 채운다("지난 설정으로 다시 만들기") */
   restoreLast?: boolean;
+  /** "split" = Windows(D-02·D-03): 768~에서도 조건(좌)·결과(우). 기본 "stack"은 ~1199 상하·1200~ 좌우 */
+  layout?: "stack" | "split";
+  /** false면 공유 버튼을 숨긴다(Windows는 공유가 클립보드 복사라 "복사"와 겹친다) */
+  canShare?: boolean;
 };
 
 type Kind = "single" | "select" | "set";
@@ -47,7 +52,7 @@ function kindOf(groups: readonly number[]): Kind {
   return groups.length === 1 ? "single" : "select";
 }
 
-export function PensionGenerator({ core, links, restoreLast = false }: PensionGeneratorProps) {
+export function PensionGenerator({ core, links, restoreLast = false, layout = "stack", canShare = true }: PensionGeneratorProps) {
   const [kind, setKind] = useState<Kind>("single");
   const [groups, setGroups] = useState<number[]>([1]);
   const [positions, setPositions] = useState<(string | null)[]>(AUTO);
@@ -102,18 +107,20 @@ export function PensionGenerator({ core, links, restoreLast = false }: PensionGe
   const cta = kind === "set" ? "세트 생성" : "번호 생성";
 
   return (
-    <div className="ll-gen" data-game="pension">
-      <nav className="ll-breadcrumb" aria-label="현재 위치">
-        <ol>
-          <li>
-            <a href={links.home}>홈</a>
-          </li>
-          <li>
-            <a href={links.generate}>추천</a>
-          </li>
-          <li aria-current="page">연금복권 720+</li>
-        </ol>
-      </nav>
+    <div className="ll-gen" data-game="pension" data-layout={layout === "split" ? "split" : undefined}>
+      {layout !== "split" && (
+        <nav className="ll-breadcrumb" aria-label="현재 위치">
+          <ol>
+            <li>
+              <a href={links.home}>홈</a>
+            </li>
+            <li>
+              <a href={links.generate}>추천</a>
+            </li>
+            <li aria-current="page">연금복권 720+</li>
+          </ol>
+        </nav>
+      )}
       <Header title="연금복권 번호 생성" subtitle="번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다." />
 
       <div className="ll-gen__layout">
@@ -242,6 +249,7 @@ export function PensionGenerator({ core, links, restoreLast = false }: PensionGe
               savable={batch.saved}
               variant="pension"
               onRegenerate={generate}
+              canShare={canShare}
               regenerateDisabled={!canGenerate}
             />
           ) : (
@@ -251,10 +259,12 @@ export function PensionGenerator({ core, links, restoreLast = false }: PensionGe
               </Card>
             )
           )}
-          <a className="ll-link" href={links.stats}>
-            <Icon name="stats" />
-            지난 회차 통계 보기
-          </a>
+          {links.stats && (
+            <a className="ll-link" href={links.stats}>
+              <Icon name="stats" />
+              지난 회차 통계 보기
+            </a>
+          )}
         </div>
       </div>
     </div>

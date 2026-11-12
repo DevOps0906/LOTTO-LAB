@@ -28,8 +28,8 @@
 | task-021 | 모바일 M-16·M-11 회차 | W3 | 017 | 보통 | builder | 완료 |
 | task-022 | 모바일 M-07·M-08 내 번호·기기 판정 | W3 | 018, 019, 021 | 보통 | builder | 완료 |
 | task-023 | 모바일 M-09 구매등록·M-12 설정 | W3 | 022 | 보통 | builder | 완료 |
-| task-024 | Windows D-11·D-01·D-09 | W4 | 010, 017, 023 | 보통 | builder | 대기 |
-| task-025 | Windows D-02·D-03 생성 | W4 | 018, 019, 024 | 보통 | builder | 대기 |
+| task-024 | Windows D-11·D-01·D-09 | W4 | 010, 017, 023 | 보통 | builder | 완료 |
+| task-025 | Windows D-02·D-03 생성 | W4 | 018, 019, 024 | 보통 | builder | 완료 |
 | task-026 | Windows D-04·D-14·D-08 | W4 | 020, 021, 024 | 보통 | builder | 대기 |
 | task-027 | Windows D-05 내 번호 + CSV | W4 | 022, 024 | 보통 | builder | 대기 |
 | task-028 | Windows D-06·D-07 | W4 | 023, 027 | 보통 | builder | 대기 |

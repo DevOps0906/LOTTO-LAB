@@ -1,7 +1,7 @@
 // M-01 홈(대시보드): 히어로 → 최신 회차(출처·검증 시각) → 로또·연금 진입 → 이번 주 통계 요약(최근 10회, 미래 예측 아님)
 // → 번호 생성 CTA·1게임 빠른 생성 → 내 기록 요약(저장·구매등록·확인대기). 알림·설정·로그인은 P1이라 비활성.
 // 읽기 실패는 마지막 정상본·출처·검증 시각을 유지하고 배너·다시 시도로 알린다(R6). 광고 슬롯(P1)은 두지 않는다.
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Ball } from "../../components/Ball";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
@@ -31,20 +31,37 @@ import {
   type Ticket,
 } from "../common/data";
 
-/** lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소 */
-export type HomeLinks = { generate: string; lotto: string; pension: string; lottoLast: string; pensionLast: string; stats: string; tickets: string; settings: string };
+/**
+ * lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소. register(선택) = 구매 등록 — 있으면 기록 없음 안내에 함께 보인다.
+ * stats·tickets가 없으면(셸에 그 화면이 아직 없으면) 해당 링크를 숨긴다.
+ */
+export type HomeLinks = {
+  generate: string;
+  lotto: string;
+  pension: string;
+  lottoLast: string;
+  pensionLast: string;
+  stats?: string;
+  tickets?: string;
+  settings: string;
+  register?: string;
+};
 
 export type HomeProps = {
   core: ScreenCore;
   /** 셸 라우트 주소(해시 등) */
   links: HomeLinks;
+  /** 화면 제목(기본 "홈", Windows D-01은 "대시보드") */
+  title?: string;
+  /** 좌측 열 아래에 덧붙일 블록(Windows D-01: 지난 회차 결과) */
+  leftExtra?: ReactNode;
 };
 
 type Draws = { lotto: ReadResult<LottoDraw>; pension: ReadResult<PensionDraw> };
 type Stats = { lotto: ReadResult<StatRow>; pension: ReadResult<StatRow> };
 type Records = { tickets: Ticket[]; last: Generated | undefined };
 
-export function Home({ core, links }: HomeProps) {
+export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
   const [draws, reloadDraws] = useAsync<Draws>(async (force) => {
     const [lotto, pension] = await Promise.all([
       core.reader.latestDraw("lotto", { force }),
@@ -78,7 +95,7 @@ export function Home({ core, links }: HomeProps) {
   return (
     <div className="ll-home">
       <Header
-        title="홈"
+        title={title}
         actions={
           <>
             <button type="button" className="ll-icon-button" disabled aria-label="알림 (준비 중)" title="알림은 준비 중입니다">
@@ -146,6 +163,7 @@ export function Home({ core, links }: HomeProps) {
               </span>
             </a>
           </nav>
+          {leftExtra}
         </div>
 
         <div className="ll-home__col">
@@ -285,7 +303,7 @@ function SummaryCard({
 }: {
   lotto: ReadResult<StatRow> | undefined;
   pension: ReadResult<StatRow> | undefined;
-  statsHref: string;
+  statsHref: string | undefined;
   onRetry: () => void;
 }) {
   const lv = readView(lotto);
@@ -308,9 +326,11 @@ function SummaryCard({
           <strong>미래 예측 아님</strong> · 지난 회차 출현 횟수 요약입니다. 기준선은 모든 번호가 고르게 나올 때의 기대 횟수입니다. 동률은 작은
           번호부터 표시합니다.
         </p>
-        <a className="ll-link" href={statsHref}>
-          통계 자세히 보기
-        </a>
+        {statsHref && (
+          <a className="ll-link" href={statsHref}>
+            통계 자세히 보기
+          </a>
+        )}
       </div>
     </Card>
   );
@@ -500,7 +520,7 @@ function RecordsCard({
   onRetry: () => void;
 }) {
   return (
-    <Card title="내 기록" headingLevel={2} busy={state.status === "loading"} action={<a className="ll-link" href={links.tickets}>내 번호 보기</a>}>
+    <Card title="내 기록" headingLevel={2} busy={state.status === "loading"} action={links.tickets && <a className="ll-link" href={links.tickets}>내 번호 보기</a>}>
       {state.status === "loading" && <p role="status" className="ll-muted">내 기록을 불러오는 중입니다</p>}
       {state.status === "failed" && (
         <StateView kind="error" title="내 기록을 읽지 못했습니다" description="기기 저장소를 읽지 못했습니다." action={<Button onClick={onRetry}>다시 시도</Button>} />
@@ -513,6 +533,11 @@ function RecordsCard({
 function RecordsBody({ records, latest, links }: { records: Records; latest: Partial<Record<Game, number>>; links: HomeLinks }) {
   const { tickets, last } = records;
   const reuse = last ? (last.game === "lotto" ? links.lottoLast : links.pensionLast) : null;
+  const generateLink = (
+    <a className="ll-button" data-variant="primary" href={links.generate}>
+      번호 생성하기
+    </a>
+  );
   return (
     <>
       {tickets.length === 0 ? (
@@ -521,9 +546,16 @@ function RecordsBody({ records, latest, links }: { records: Records; latest: Par
           title="아직 저장한 번호가 없습니다"
           description="번호를 생성한 뒤 마음에 드는 조합을 저장해 보세요."
           action={
-            <a className="ll-button" data-variant="primary" href={links.generate}>
-              번호 생성하기
-            </a>
+            links.register ? (
+              <div className="ll-gen__actions">
+                {generateLink}
+                <a className="ll-button" data-variant="secondary" href={links.register}>
+                  구매 등록하기
+                </a>
+              </div>
+            ) : (
+              generateLink
+            )
           }
         />
       ) : (

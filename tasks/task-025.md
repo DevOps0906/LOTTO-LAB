@@ -19,5 +19,8 @@
 - 고급 조건 동작(P1, 자리 표시만)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- D-02 D-03` 통과(오프라인 모의에서 생성 성공, `000719` 보존)
-- [ ] `pnpm --filter ./apps/desktop tauri build --debug` 성공
+- [x] `pnpm --filter ./packages/ui test -- D-02 D-03` 통과(오프라인 모의에서 생성 성공, `000719` 보존)
+- [x] `pnpm --filter ./apps/desktop tauri build --debug` 성공
+
+## 진행 메모 (2026-11-13 builder)
+- M-02·M-03에 `layout="split"`(768~ 좌우, 결과 열이 좁으면 결과 줄 두 줄 — 컨테이너 쿼리)·`canShare={false}`(Windows 공유 = 복사). 캡처 `design/shots/D-0{2,3}-app-*`.

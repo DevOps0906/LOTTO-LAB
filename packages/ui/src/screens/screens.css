@@ -1550,3 +1550,84 @@
 .ll-tickets__provenance .ll-muted {
   margin: 0;
 }
+
+/* ── Windows D 화면(ADR-0004: 같은 블록, 배치만 다름) — 시각 기준 design/reference/d-home.html·d-lotto.html ── */
+/* D-11 온보딩: 창 가운데 카드(가운데 정렬은 셸이 감싼다) */
+.ll-onboarding[data-layout="card"] {
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: calc(var(--spacing) * 8);
+  background: var(--color-surface);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-raised);
+}
+
+/* D-01 지난 회차 결과(공식 결과 + 회차별 내 구매 기록 수) */
+.ll-recent__items {
+  display: grid;
+  margin: 0 0 calc(var(--spacing) * 3);
+  padding: 0;
+  list-style: none;
+  container-type: inline-size;
+}
+.ll-recent__row {
+  display: grid;
+  grid-template-columns: calc(var(--spacing) * 26) minmax(0, 1fr) auto;
+  grid-template-areas: "round balls status";
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 3) 0;
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-recent__row:first-child {
+  border-top: 0;
+}
+.ll-recent__round {
+  grid-area: round;
+  display: grid;
+}
+.ll-recent__row > .ll-balls {
+  grid-area: balls;
+}
+.ll-recent__row > :last-child {
+  grid-area: status;
+  justify-self: end;
+}
+/* 좁은 열(1024 창 좌측 열): 회차·구매 기록 한 줄 → 번호 공 아래 줄 */
+@container (width < 34em) {
+  .ll-recent__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "round status"
+      "balls balls";
+  }
+}
+.ll-recent > .ll-muted {
+  margin: calc(var(--spacing) * 2) 0 0;
+}
+
+/* D-02·D-03 생성: 768~에서도 조건(좌)·결과(우). 결과 줄은 결과 열이 좁으면(1024 창) 두 줄 배치를 유지한다 */
+@media (width >= 48em) {
+  .ll-gen[data-layout="split"] .ll-gen__layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+  .ll-gen[data-layout="split"] .ll-result {
+    container-type: inline-size;
+  }
+}
+@container (width < 34em) {
+  .ll-gen[data-layout="split"] .ll-result__row {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "check label status menu"
+      "content content content content";
+  }
+}
+
+/* 이월(task-024): 다크 모드에서 남색 "구매 기록" 배지가 카드 면과 섞이지 않게 테두리를 둔다(모바일·Windows 공통).
+   --color-border는 다크 카드 면 대비가 3:1 미만이라 --color-input(3:1 이상, 테스트 고정)을 쓴다 */
+.dark .ll-badge[data-status="purchased"] {
+  border-color: var(--color-input);
+}

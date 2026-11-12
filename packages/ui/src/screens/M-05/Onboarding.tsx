@@ -14,13 +14,15 @@ export type OnboardingProps = {
   onExit?: () => void;
   /** 약관·개인정보 처리방침 주소. 없으면 준비 중 표기 */
   termsHref?: string;
+  /** "card" = Windows(D-11) 창 가운데 카드 배치. 기본은 모바일 전체 화면 */
+  layout?: "page" | "card";
 };
 
 const STEPS = ["서비스 안내", "만 19세 확인", "시작"] as const;
 type Step = 0 | 1 | 2;
 type Exit = "minor" | "declined";
 
-export function Onboarding({ confirm, onDone, onExit, termsHref }: OnboardingProps) {
+export function Onboarding({ confirm, onDone, onExit, termsHref, layout = "page" }: OnboardingProps) {
   const [step, setStep] = useState<Step>(0);
   const [read, setRead] = useState(false);
   const [adult, setAdult] = useState<"yes" | "no" | null>(null);
@@ -31,7 +33,7 @@ export function Onboarding({ confirm, onDone, onExit, termsHref }: OnboardingPro
 
   if (exit) {
     return (
-      <div className="ll-onboarding">
+      <div className="ll-onboarding" data-layout={layout === "card" ? "card" : undefined}>
         <Header title="이용 안내" />
         <StateView
           kind="empty"
@@ -85,7 +87,7 @@ export function Onboarding({ confirm, onDone, onExit, termsHref }: OnboardingPro
   }
 
   return (
-    <div className="ll-onboarding">
+    <div className="ll-onboarding" data-layout={layout === "card" ? "card" : undefined}>
       <Header title="LOTTO LAB 시작하기" subtitle={`${step + 1} / ${STEPS.length} 단계 · ${STEPS[step]}`} />
       <ol className="ll-steps" aria-label="진행 단계">
         {STEPS.map((label, i) => (

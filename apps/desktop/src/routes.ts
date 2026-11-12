@@ -22,6 +22,9 @@ export const TAB_ROUTES: readonly { path: string; label: string }[] = [
   { path: "/tickets", label: "내번호" },
 ];
 
+/** 해시 주소(셸 링크용). */
+export const href = (path: string): string => `#${path}`;
+
 /** 모르는 경로는 대시보드로 본다. */
 export function routeOf(path: string): Route {
   return ROUTES.find((route) => route.path === path) ?? ROUTES[0];

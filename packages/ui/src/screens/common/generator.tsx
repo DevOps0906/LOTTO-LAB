@@ -325,6 +325,7 @@ export function GeneratedResults({
   variant,
   onRegenerate,
   regenerateDisabled,
+  canShare = true,
 }: {
   core: Pick<GeneratorCore, "tickets" | "adapters">;
   title: ReactNode;
@@ -334,6 +335,8 @@ export function GeneratedResults({
   variant: "primary" | "pension";
   onRegenerate: () => void;
   regenerateDisabled?: boolean;
+  /** false면 공유 버튼·메뉴를 숨긴다(Windows: 공유 = 클립보드 복사라 "복사"와 겹친다) */
+  canShare?: boolean;
 }) {
   const notice = useNotice();
   const [keys] = useState<Record<string, string>>(() => Object.fromEntries(rows.map((r) => [r.id, core.tickets.newIdempotencyKey()])));
@@ -473,7 +476,7 @@ export function GeneratedResults({
                 items={[
                   { id: "save", label: isSaved ? "저장됨" : "즐겨찾기로 저장", disabled: isSaved || !savable || saving, onSelect: () => void save([row.id]) },
                   { id: "copy", label: "복사", onSelect: () => copy(row.text) },
-                  { id: "share", label: "공유", onSelect: () => share(row.text) },
+                  ...(canShare ? [{ id: "share", label: "공유", onSelect: () => share(row.text) }] : []),
                 ]}
               />
             </li>
@@ -494,9 +497,11 @@ export function GeneratedResults({
         <Button variant="secondary" onClick={() => copy(allText)}>
           전체 복사
         </Button>
-        <Button variant="secondary" onClick={() => share(allText)}>
-          공유
-        </Button>
+        {canShare && (
+          <Button variant="secondary" onClick={() => share(allText)}>
+            공유
+          </Button>
+        )}
       </div>
       {GENERATED_NOTE}
     </Card>

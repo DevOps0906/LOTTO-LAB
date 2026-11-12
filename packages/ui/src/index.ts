@@ -28,6 +28,7 @@ export { Table, type TableColumn, type TableProps } from "./components/Table";
 export { Updated, type UpdatedProps } from "./components/Updated";
 export { Onboarding, type OnboardingProps } from "./screens/M-05/Onboarding";
 export { Home, type HomeLinks, type HomeProps } from "./screens/M-01/Home";
+export { Dashboard, RECENT_DRAWS, type DashboardLinks, type DashboardProps } from "./screens/D-01/Dashboard";
 export type { ScreenCore } from "./screens/common/data";
 export { GenerateSelect, type GenerateSelectLinks, type GenerateSelectProps } from "./screens/M-15/GenerateSelect";
 export { LottoGenerator, type LottoGeneratorLinks, type LottoGeneratorProps } from "./screens/M-02/LottoGenerator";

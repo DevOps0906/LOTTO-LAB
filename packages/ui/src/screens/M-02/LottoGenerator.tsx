@@ -33,19 +33,24 @@ export const LOTTO_FIXED_LIMIT = 6;
 export const LOTTO_EXCLUDED_LIMIT = 39;
 const GAME_PRESETS = [1, 5, 10, 20] as const;
 
-export type LottoGeneratorLinks = { home: string; generate: string; stats: string };
+/** stats가 없으면(셸에 통계 화면이 아직 없으면) 통계 링크를 숨긴다 */
+export type LottoGeneratorLinks = { home: string; generate: string; stats?: string };
 
 export type LottoGeneratorProps = {
   core: GeneratorCore;
   links: LottoGeneratorLinks;
   /** true면 지난 설정을 불러와 조건을 채운다("지난 설정으로 다시 만들기") */
   restoreLast?: boolean;
+  /** "split" = Windows(D-02·D-03): 768~에서도 조건(좌)·결과(우). 기본 "stack"은 ~1199 상하·1200~ 좌우 */
+  layout?: "stack" | "split";
+  /** false면 공유 버튼을 숨긴다(Windows는 공유가 클립보드 복사라 "복사"와 겹친다) */
+  canShare?: boolean;
 };
 
 type Mode = "random" | "condition";
 type Pick = "fixed" | "excluded";
 
-export function LottoGenerator({ core, links, restoreLast = false }: LottoGeneratorProps) {
+export function LottoGenerator({ core, links, restoreLast = false, layout = "stack", canShare = true }: LottoGeneratorProps) {
   const [mode, setMode] = useState<Mode>("random");
   const [pick, setPick] = useState<Pick>("fixed");
   const [fixed, setFixed] = useState<number[]>([]);
@@ -95,18 +100,20 @@ export function LottoGenerator({ core, links, restoreLast = false }: LottoGenera
   const fixedInResult = new Set(batch?.request.game === "lotto" ? batch.request.config.fixed : []);
 
   return (
-    <div className="ll-gen">
-      <nav className="ll-breadcrumb" aria-label="현재 위치">
-        <ol>
-          <li>
-            <a href={links.home}>홈</a>
-          </li>
-          <li>
-            <a href={links.generate}>추천</a>
-          </li>
-          <li aria-current="page">로또 6/45</li>
-        </ol>
-      </nav>
+    <div className="ll-gen" data-layout={layout === "split" ? "split" : undefined}>
+      {layout !== "split" && (
+        <nav className="ll-breadcrumb" aria-label="현재 위치">
+          <ol>
+            <li>
+              <a href={links.home}>홈</a>
+            </li>
+            <li>
+              <a href={links.generate}>추천</a>
+            </li>
+            <li aria-current="page">로또 6/45</li>
+          </ol>
+        </nav>
+      )}
       <Header title="로또 번호 생성" subtitle="번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다." />
 
       <div className="ll-gen__layout">
@@ -225,6 +232,7 @@ export function LottoGenerator({ core, links, restoreLast = false }: LottoGenera
               savable={batch.saved}
               variant="primary"
               onRegenerate={generate}
+              canShare={canShare}
               regenerateDisabled={!canGenerate}
             />
           ) : (
@@ -234,10 +242,12 @@ export function LottoGenerator({ core, links, restoreLast = false }: LottoGenera
               </Card>
             )
           )}
-          <a className="ll-link" href={links.stats}>
-            <Icon name="stats" />
-            지난 회차 통계 보기
-          </a>
+          {links.stats && (
+            <a className="ll-link" href={links.stats}>
+              <Icon name="stats" />
+              지난 회차 통계 보기
+            </a>
+          )}
         </div>
       </div>
     </div>

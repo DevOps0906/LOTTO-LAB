@@ -13,3 +13,14 @@ html {
   gap: var(--spacing-gap);
   padding: var(--spacing-page);
 }
+
+/* D-11 온보딩: 셸 밖, 창 가운데 카드(최소 창 1024×700) */
+.app-center {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-page);
+}
+.app-center > * {
+  width: min(100%, calc(var(--spacing) * 160));
+}
