@@ -79,7 +79,7 @@
 ## 8. 보안·공급망 (기준: `security-baseline` 스킬)
 | 항목 | 값 |
 |---|---|
-| 보안 레벨 | **L2 배포** — 앱 배포 + 개인정보 + 공개 API (D9) |
+| 보안 레벨 | L2 배포 — 앱 배포 + 개인정보 + 공개 API (D9) |
 | 고객·판매 대상 | 개인(국내 만 19세 이상) |
 | 배포 형태 | 설치형·앱 포함: Android/iOS 앱(Capacitor 8), Windows 설치본(Tauri 2, MSI/NSIS), 웹(Next.js) |
 | 인터넷 노출 면 | 공개 페이지(랜딩·사전알림 폼: 이메일·수신 동의·만 19세 확인 → A-15 `POST /v1/waitlist`, `waitlist_signups` anon INSERT만·SELECT 금지, 위협 메모 `04_API.md` A-15) · 공개 API(Supabase Edge Function `/v1/*`, RLS 직접 CRUD) · 관리자(웹 관리자·회차 검토, **MFA 필수(TOTP)** — `04_API.md#5`) · 웹훅 없음 · 파일 업로드 없음 · 업데이트 배포 채널(Windows 자동 업데이트) |
