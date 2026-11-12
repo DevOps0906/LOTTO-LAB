@@ -430,3 +430,9 @@ enabled = true
 [functions.waitlist]
 enabled = true
 verify_jwt = false
+
+# A-19 사전알림 이메일 확인(docs/04_API.md#1): 로그인 없는 웹 확인 화면(W-05)이 부르므로 JWT 검증을 끈다.
+# 남용 방어는 함수 안에서 한다: 입력 검증 → IP 레이트리밋(키 `confirm:` 접두) → 토큰 해시 RPC.
+[functions.waitlist-confirm]
+enabled = true
+verify_jwt = false

@@ -1,6 +1,21 @@
-// A-15 POST /v1/waitlist — 순수 핸들러. 외부 호출(Turnstile·DB)은 deps로 주입한다.
-// 순서: 필수 env → 입력 검증 → IP 레이트리밋 → Turnstile → INSERT(충돌 시 동의 갱신) → 202
-import { clientIp, normalizeIp } from "./ip.ts";
+// A-15 POST /v1/waitlist — 순수 핸들러. 외부 호출(Turnstile·DB·메일)은 deps로 주입한다.
+// 순서: 필수 env → 입력 검증 → IP 레이트리밋 → Turnstile → RPC waitlist_request_confirm → 202
+// 응답은 확인 여부·이메일별 한도·발송 결과와 무관하게 항상 같은 202. 메일은 응답 뒤 waitUntil로 보낸다.
+import {
+  BODY_TIMEOUT_MS,
+  corsHeaders,
+  DEFAULT_RATE_MAX,
+  DEFAULT_RATE_WINDOW_SEC,
+  error,
+  ipRateKey,
+  isBodyFailure,
+  logReason as log,
+  parseObject,
+  positiveInt,
+  readBody,
+  sha256Hex,
+} from "../_shared/http.ts";
+import { confirmMail, loadMailConfig, type MailConfig, type MailMessage } from "../_shared/mailer.ts";
 import type { TurnstileResult } from "./turnstile.ts";
 
 export const REQUIRED_ENV = [
@@ -12,10 +27,10 @@ export const REQUIRED_ENV = [
   "ALLOWED_ORIGIN",
 ] as const;
 
-export const DEFAULT_RATE_WINDOW_SEC = 600;
-export const DEFAULT_RATE_MAX = 5;
-export const MAX_BODY_BYTES = 4096;
-export const BODY_TIMEOUT_MS = 5000;
+// 확인 메일: 토큰 24시간 유효, 이메일별 24시간 3통(제3자 메일 폭탄 방지)
+export const CONFIRM_TTL_SEC = 86400;
+export const CONFIRM_MAX_SENDS = 3;
+export const CONFIRM_WINDOW_SEC = 86400;
 const MAX_TOKEN_LEN = 2048;
 // 로컬부: 공백·@·따옴표·괄호 등 특수문자 제외(점 규칙은 아래에서 따로 검사)
 const LOCAL_RE = /^[^\s@"(),:;<>[\\\]]+$/;
@@ -37,7 +52,7 @@ export function isValidEmail(email: string): boolean {
   return TLD_RE.test(labels[labels.length - 1]);
 }
 
-export interface Config {
+export interface Config extends MailConfig {
   supabaseUrl: string;
   serviceRoleKey: string;
   turnstileSecret: string;
@@ -52,28 +67,27 @@ export interface Deps {
   env: Record<string, string | undefined>;
   verifyTurnstile(cfg: Config, token: string, remoteIp: string | null): Promise<TurnstileResult>;
   rateHit(cfg: Config, key: string, windowSec: number, max: number): Promise<boolean>;
-  insert(cfg: Config, email: string): Promise<void>;
+  // true = 확인 메일을 보낼 것(신규·미확인·한도 이내)
+  requestConfirm(
+    cfg: Config,
+    email: string,
+    tokenHash: string,
+    o: { ttlSec: number; maxSends: number; windowSec: number },
+  ): Promise<boolean>;
+  sendMail(cfg: Config, msg: MailMessage): Promise<void>;
+  // 운영: EdgeRuntime.waitUntil. 없으면(런타임 미지원) 응답 뒤 발송을 보장할 수 없으므로 500(fail-closed)
+  waitUntil?: (p: Promise<unknown>) => void;
   bodyTimeoutMs?: number; // 테스트용. 기본 BODY_TIMEOUT_MS
-}
-
-const MESSAGES: Record<string, string> = {
-  INVALID_INPUT: "입력값을 확인해 주세요.",
-  RATE_LIMITED: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
-  SERVICE_UNAVAILABLE: "일시적인 오류입니다. 잠시 후 다시 시도해 주세요.",
-  METHOD_NOT_ALLOWED: "허용되지 않은 요청입니다.",
-  INTERNAL: "서버 설정 오류입니다.",
-};
-
-function positiveInt(v: string | undefined, fallback: number): number {
-  const n = Number(v);
-  return Number.isInteger(n) && n > 0 ? n : fallback;
 }
 
 export function loadConfig(env: Record<string, string | undefined>): Config | null {
   if (REQUIRED_ENV.some((k) => !env[k]?.trim())) return null;
   const hostnames = env.TURNSTILE_HOSTNAMES!.split(",").map((s) => s.trim()).filter(Boolean);
   if (hostnames.length === 0) return null;
+  const mail = loadMailConfig(env);
+  if (!mail) return null;
   return {
+    ...mail,
     supabaseUrl: env.SUPABASE_URL!.replace(/\/+$/, ""),
     serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY!,
     turnstileSecret: env.TURNSTILE_SECRET!,
@@ -85,32 +99,12 @@ export function loadConfig(env: Record<string, string | undefined>): Config | nu
   };
 }
 
-function corsHeaders(origin: string | undefined): Record<string, string> {
-  if (!origin) return {};
-  return {
-    "access-control-allow-origin": origin,
-    "access-control-allow-methods": "POST, OPTIONS",
-    "access-control-allow-headers": "authorization, apikey, content-type, x-client-info",
-    "access-control-max-age": "600",
-    vary: "Origin",
-  };
-}
+const logReason = (reason: string) => log("waitlist", reason);
 
-function error(status: number, code: string, cors: Record<string, string>, extra: Record<string, string> = {}) {
-  return new Response(JSON.stringify({ error: { code, message: MESSAGES[code] } }), {
-    status,
-    headers: { ...cors, ...extra, "content-type": "application/json; charset=utf-8" },
-  });
-}
-
-// 로그에는 사유 코드만 남긴다(이메일·IP·토큰 원문 금지).
-function logReason(reason: string) {
-  console.warn(JSON.stringify({ fn: "waitlist", reason }));
-}
-
-export async function sha256Hex(s: string): Promise<string> {
-  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+// 32바이트 랜덤 → base64url(패딩 없음, 43자)
+export function newConfirmToken(): string {
+  const b = crypto.getRandomValues(new Uint8Array(32));
+  return btoa(String.fromCharCode(...b)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 interface Input {
@@ -118,61 +112,9 @@ interface Input {
   token: string;
 }
 
-type BodyFailure = "body_too_large" | "body_timeout" | "invalid_input";
-
-// 본문을 바이트 기준 MAX_BODY_BYTES까지만, timeoutMs 안에 읽는다. 초과·지연 즉시 중단.
-async function readBody(req: Request, timeoutMs: number): Promise<string | BodyFailure> {
-  if (Number(req.headers.get("content-length") ?? "0") > MAX_BODY_BYTES) return "body_too_large";
-  if (!req.body) return "";
-  const reader = req.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<"timeout">((r) => {
-    timer = setTimeout(() => r("timeout"), timeoutMs);
-  });
-  try {
-    while (true) {
-      const next = await Promise.race([reader.read(), timeout]);
-      if (next === "timeout") {
-        reader.cancel().catch(() => {});
-        return "body_timeout";
-      }
-      if (next.done) break;
-      total += next.value.byteLength;
-      if (total > MAX_BODY_BYTES) {
-        reader.cancel().catch(() => {});
-        return "body_too_large";
-      }
-      chunks.push(next.value);
-    }
-  } catch {
-    return "invalid_input";
-  } finally {
-    clearTimeout(timer);
-  }
-  const buf = new Uint8Array(total);
-  let off = 0;
-  for (const c of chunks) {
-    buf.set(c, off);
-    off += c.byteLength;
-  }
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(buf);
-  } catch {
-    return "invalid_input";
-  }
-}
-
 function parseInput(raw: string): Input | null {
-  let b: unknown;
-  try {
-    b = JSON.parse(raw);
-  } catch {
-    return null;
-  }
-  if (typeof b !== "object" || b === null || Array.isArray(b)) return null;
-  const o = b as Record<string, unknown>;
+  const o = parseObject(raw);
+  if (!o) return null;
   if (typeof o.email !== "string" || typeof o.turnstile_token !== "string") return null;
   const email = o.email.trim();
   if (!isValidEmail(email)) return null;
@@ -193,21 +135,22 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
       logReason("missing_env");
       return error(500, "INTERNAL", cors);
     }
+    const waitUntil = deps.waitUntil;
+    if (typeof waitUntil !== "function") {
+      logReason("wait_until_unsupported");
+      return error(500, "INTERNAL", cors);
+    }
 
     // 본문 초과·수신 지연도 기존 코드 재사용(400 INVALID_INPUT), 사유는 로그로만 구분
     const raw = await readBody(req, deps.bodyTimeoutMs ?? BODY_TIMEOUT_MS);
-    const failed = raw === "body_too_large" || raw === "body_timeout" || raw === "invalid_input";
-    const input = failed ? null : parseInput(raw);
+    const input = isBodyFailure(raw) ? null : parseInput(raw);
     if (!input) {
-      logReason(failed ? raw : "invalid_input");
+      logReason(isBodyFailure(raw) ? raw : "invalid_input");
       return error(400, "INVALID_INPUT", cors);
     }
 
-    const rawIp = clientIp(req.headers);
-    const ip = normalizeIp(rawIp);
-    // IP를 못 구하면 공통 키("unknown")로 묶어 제한한다(원문은 남기지 않음).
-    if (!ip) logReason("ip_unknown");
-    const key = await sha256Hex(cfg.rateSalt + (ip ?? "unknown"));
+    const { key, ip, rawIp, unknown } = await ipRateKey(req.headers, cfg.rateSalt);
+    if (unknown) logReason("ip_unknown");
     let allowed: boolean;
     try {
       allowed = await deps.rateHit(cfg, key, cfg.rateWindowSec, cfg.rateMax);
@@ -230,11 +173,22 @@ export function createHandler(deps: Deps): (req: Request) => Promise<Response> {
       return error(400, "INVALID_INPUT", cors);
     }
 
+    const token = newConfirmToken();
+    let send: boolean;
     try {
-      await deps.insert(cfg, input.email);
+      send = await deps.requestConfirm(cfg, input.email, await sha256Hex(token), {
+        ttlSec: CONFIRM_TTL_SEC,
+        maxSends: CONFIRM_MAX_SENDS,
+        windowSec: CONFIRM_WINDOW_SEC,
+      });
     } catch {
-      logReason("insert_failed");
+      logReason("request_confirm_failed");
       return error(503, "SERVICE_UNAVAILABLE", cors);
+    }
+    if (send) {
+      waitUntil(
+        deps.sendMail(cfg, confirmMail(cfg, input.email, token)).catch(() => logReason("mail_failed")),
+      );
     }
     return new Response(null, { status: 202, headers: cors });
   };

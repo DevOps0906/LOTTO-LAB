@@ -1,7 +1,9 @@
 // 오프라인 단위 테스트: npx deno test supabase/functions/waitlist/ (네트워크·DB 없이 가짜 deps)
 import assert from "node:assert/strict";
-import { createHandler, type Deps, isValidEmail } from "./handler.ts";
-import { clientIp, normalizeIp } from "./ip.ts";
+import { CONFIRM_MAX_SENDS, CONFIRM_TTL_SEC, CONFIRM_WINDOW_SEC, createHandler, type Deps, isValidEmail } from "./handler.ts";
+import { clientIp, normalizeIp } from "../_shared/ip.ts";
+import { sha256Hex } from "../_shared/http.ts";
+import type { MailMessage } from "../_shared/mailer.ts";
 import { type TurnstileResult, verifyTurnstile } from "./turnstile.ts";
 
 const ORIGIN = "https://lotto-lab.example";
@@ -12,20 +14,37 @@ const ENV = {
   TURNSTILE_HOSTNAMES: "lotto-lab.example",
   RATE_SALT: "test-salt",
   ALLOWED_ORIGIN: ORIGIN,
+  MAIL_API_URL: "https://mail.test/api/v1/send",
+  MAIL_API_KEY: "test-mail-key",
+  MAIL_FROM: "noreply@lotto-lab.example",
+  CONFIRM_BASE_URL: "https://lotto-lab.example/",
 };
 
 interface Fake {
   deps: Deps;
   emails: Set<string>;
   hits: Map<string, number>;
-  inserts: number;
+  requests: { email: string; tokenHash: string; o: { ttlSec: number; maxSends: number; windowSec: number } }[];
+  mails: MailMessage[];
+  waited: Promise<unknown>[];
 }
 
-function fake(over: Partial<{ turnstile: TurnstileResult; rateThrows: boolean; insertThrows: boolean; env: Record<string, string | undefined> }> = {}): Fake {
+type FakeOpts = {
+  turnstile: TurnstileResult;
+  rateThrows: boolean;
+  confirmThrows: boolean;
+  send: boolean; // requestConfirm 결과(false = 이미 확인·이메일별 한도 초과)
+  mailThrows: boolean;
+  env: Record<string, string | undefined>;
+};
+
+function fake(over: Partial<FakeOpts> = {}): Fake {
   const f: Fake = {
     emails: new Set(),
     hits: new Map(),
-    inserts: 0,
+    requests: [],
+    mails: [],
+    waited: [],
     deps: {
       env: over.env ?? ENV,
       verifyTurnstile: () => Promise.resolve(over.turnstile ?? "ok"),
@@ -35,11 +54,19 @@ function fake(over: Partial<{ turnstile: TurnstileResult; rateThrows: boolean; i
         f.hits.set(key, n);
         return Promise.resolve(n <= max);
       },
-      insert: (_cfg, email) => {
-        if (over.insertThrows) return Promise.reject(new Error("insert failed"));
-        f.inserts++;
+      requestConfirm: (_cfg, email, tokenHash, o) => {
+        if (over.confirmThrows) return Promise.reject(new Error("rpc failed"));
+        f.requests.push({ email, tokenHash, o });
         f.emails.add(email.trim().toLowerCase()); // ON CONFLICT(email_norm) 흉내
+        return Promise.resolve(over.send ?? true);
+      },
+      sendMail: (_cfg, msg) => {
+        if (over.mailThrows) return Promise.reject(new Error("mail down"));
+        f.mails.push(msg);
         return Promise.resolve();
+      },
+      waitUntil: (p) => {
+        f.waited.push(p);
       },
     },
   };
@@ -181,12 +208,12 @@ Deno.test("IP를 못 구하면 공통 키로 제한", async () => {
   assert.equal(f.hits.size, 1);
 });
 
-Deno.test("Turnstile 거부 → 400 INVALID_INPUT, INSERT 없음", async () => {
+Deno.test("Turnstile 거부 → 400 INVALID_INPUT, RPC 없음", async () => {
   const f = fake({ turnstile: "rejected" });
   const res = await createHandler(f.deps)(post(VALID));
   assert.equal(res.status, 400);
   assert.equal(await code(res), "INVALID_INPUT");
-  assert.equal(f.inserts, 0);
+  assert.equal(f.requests.length, 0);
 });
 
 Deno.test("Turnstile 장애 → 503", async () => {
@@ -194,12 +221,78 @@ Deno.test("Turnstile 장애 → 503", async () => {
   const res = await createHandler(f.deps)(post(VALID));
   assert.equal(res.status, 503);
   assert.equal(await code(res), "SERVICE_UNAVAILABLE");
-  assert.equal(f.inserts, 0);
+  assert.equal(f.requests.length, 0);
 });
 
-Deno.test("INSERT 오류 → 503", async () => {
-  const res = await createHandler(fake({ insertThrows: true }).deps)(post(VALID));
+Deno.test("확인 요청 RPC 오류 → 503, 메일 없음", async () => {
+  const f = fake({ confirmThrows: true });
+  const res = await createHandler(f.deps)(post(VALID));
   assert.equal(res.status, 503);
+  assert.equal(f.waited.length, 0);
+});
+
+Deno.test("확인 메일: RPC true → 202 후 waitUntil로 발송, 링크 토큰의 sha256 = 저장 해시", async () => {
+  const f = fake();
+  const res = await createHandler(f.deps)(post({ ...VALID, email: " user@example.com " }));
+  assert.equal(res.status, 202);
+  assert.equal(await res.text(), "");
+  assert.equal(f.waited.length, 1);
+  await Promise.all(f.waited);
+  assert.equal(f.mails.length, 1);
+  const [m] = f.mails;
+  const [req] = f.requests;
+  assert.equal(m.to, "user@example.com");
+  assert.deepEqual(req.o, { ttlSec: CONFIRM_TTL_SEC, maxSends: CONFIRM_MAX_SENDS, windowSec: CONFIRM_WINDOW_SEC });
+  const token = m.text.match(/https:\/\/lotto-lab\.example\/waitlist\/confirm#token=([A-Za-z0-9_-]{43})(?:\s|$)/)?.[1];
+  assert.ok(token, "프래그먼트 링크·43자 base64url 토큰");
+  assert.equal(req.tokenHash, await sha256Hex(token));
+  assert.ok(!m.text.includes("?token="), "쿼리스트링 토큰 금지");
+  assert.ok(m.text.includes("요청하지 않았다면") && m.text.includes("24시간 후 자동 삭제"));
+  assert.ok(m.text.includes("만 19세 이상"));
+  assert.ok(m.html.includes('href="https://lotto-lab.example/waitlist/confirm#token='));
+});
+
+Deno.test("확인 메일: 요청마다 새 토큰", async () => {
+  const f = fake();
+  const h = createHandler(f.deps);
+  await h(post(VALID));
+  await h(post(VALID));
+  assert.notEqual(f.requests[0].tokenHash, f.requests[1].tokenHash);
+});
+
+Deno.test("확인 메일: RPC false(이미 확인·이메일별 한도) → 같은 202, 발송 없음", async () => {
+  const f = fake({ send: false });
+  const res = await createHandler(f.deps)(post(VALID));
+  assert.equal(res.status, 202);
+  assert.equal(await res.text(), "");
+  assert.equal(f.waited.length, 0);
+  assert.equal(f.mails.length, 0);
+});
+
+Deno.test("확인 메일: 발송 실패도 202(사유 코드만 로그, 거부 없음)", async () => {
+  const f = fake({ mailThrows: true });
+  const res = await createHandler(f.deps)(post(VALID));
+  assert.equal(res.status, 202);
+  await Promise.all(f.waited); // catch 처리되어 reject되지 않는다
+});
+
+Deno.test("waitUntil 미지원 런타임 → 500, DB 접근 없음", async () => {
+  const f = fake();
+  delete f.deps.waitUntil;
+  const res = await createHandler(f.deps)(post(VALID));
+  assert.equal(res.status, 500);
+  assert.equal(await code(res), "INTERNAL");
+  assert.equal(f.hits.size, 0);
+  assert.equal(f.requests.length, 0);
+});
+
+Deno.test("메일 env 형식 오류 → 500(fail-closed)", async () => {
+  for (const [k, v] of [["MAIL_API_URL", "not a url"], ["CONFIRM_BASE_URL", "ftp://x.example"], ["MAIL_FROM", "nobody"]]) {
+    const f = fake({ env: { ...ENV, [k]: v } });
+    const res = await createHandler(f.deps)(post(VALID));
+    assert.equal(res.status, 500, k);
+    assert.equal(f.hits.size, 0);
+  }
 });
 
 Deno.test("레이트리밋 함수 오류 → 503", async () => {
@@ -214,6 +307,7 @@ Deno.test("같은 IP 6번째 → 429 + Retry-After", async () => {
   assert.equal(res.status, 429);
   assert.equal(await code(res), "RATE_LIMITED");
   assert.equal(res.headers.get("retry-after"), "600");
+  assert.equal(res.headers.get("access-control-expose-headers"), "Retry-After");
 });
 
 Deno.test("WAITLIST_RATE_MAX env로 한도 조정", async () => {
