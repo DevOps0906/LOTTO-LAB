@@ -1,12 +1,14 @@
 # NOW — 재진입 스냅샷 (30줄 이내, 매 작업 끝에 덮어쓴다)
 
-- 갱신: 2026-11-12
-- 현재 작업: 일시 중단(사용자 요청) — W3 모바일 7/7 완료, W4 Windows 2/5(024·025). 026~028 중단분은 `wip/task-026-028-partial`(리뷰 전)
-- 마지막으로 한 일: 011 types·Zod(DB 동치 벡터) · 012 lottery-core · 013·014 로또·연금 엔진 · 015 통계 정본 · 016 app-core · 009·010 모바일·Windows 셸(디버그 APK·exe) · 광고 기획 ADR-0006·task-045
-- 다음 한 걸음: wip/task-026-028-partial 이어받아 디자인 리뷰·보안 리뷰(save_csv Rust 명령·dialog 플러그인)·완료 조건 확인 → 커밋. 이후 task-037(운세 엔진, ADR-0005 착수 결정 반영) 또는 W5(task-001 확인 후)
-- 열린 결정(사용자): ① 운영 메일 서비스 ② 문의처 ③ DESIGN.md 확정 표시 ④ 루트 `.env.example`·apps/web/.env.example 확인 ⑤ task-001 데이터 권리(연금 등위+보너스 동시 당첨 규정 포함) ⑥ GitHub Code security 설정 ⑦ PLAN_BRIEF Q1~Q5, PRD Q6
-- 열린 결정(팀장): 운영 IP 헤더 실측(supabase/README 배포 체크리스트), 로컬 저장(KV vs SQLite), 차트 라이브러리, 워커 위치
-- PR: #1 보안·규칙, #2 PC 디자인, #3 이후 전부(미머지). 미완 보관 브랜치 `wip/task-009-011-partial`은 이제 불필요(011·009 완료) — 삭제 가능
-- 도구: Supabase CLI `npx supabase@3.1.0`(로컬 포트 545xx), Deno `npx deno@2.9.6`, Docker 필요
-- 테스트 상태: pnpm typecheck·lint·test·build 전부 통과(app-core 49·lotto 30·pension 36·lottery-core 49·statistics 20·validation 148·ui 61·web 17·mobile·desktop) · supabase test db 548 · deno 39(통합 43)
-- 담당: 팀장(Opus) · builder·challenger·codex-reviewer·reviewer·planner·designer·diagrammer
+- 갱신: 2026-11-13
+- 현재 작업: 모바일 우선(사용자 지시) — 운세·사주 흐름. task-043a(인증 서버 설정·user_consents·계정 삭제 EF) 진행 중
+- 마지막으로 한 일: 037 fortune-engine(cf10c4b) · 038 모바일 M-17 테마 번호(df5021e) · 040 fortune_profiles RLS(84f2aa2) · 인증 작업 043a/043/043b 분리
+- 다음 한 걸음: 043a → 043(모바일 M-06·계정 삭제, 6자리 코드 방식) → 041(모바일 M-18·M-19, M-17 사주 링크 연결) → 046(만세력)
+- 보류: Windows 026~028 `wip/task-026-028-partial`(리뷰 전), 039·042·043b(Windows 운세·인증)
+- 사용자 결정(11-13): 운세 계획 기본값 5개 · 이메일+비밀번호 · 동의는 user_consents · 계정 삭제 포함 · 메일은 개발 중 로컬, 운영 메일 교체는 외부 테스트 배포 전
+- 열린 결정(사용자): ② 문의처 ③ DESIGN.md 확정 표시 ④ `.env.example` 확인 ⑤ task-001 데이터 권리 ⑥ GitHub Code security ⑦ PLAN_BRIEF Q1~Q5, PRD Q6 · 계정 삭제 시 동의 이력(user_consents) 즉시 파기 vs 법정 보관(PRD#8) · design/ 와이어프레임이 기본 토큰으로 재생성된 미커밋 변경(되돌리기 권한 필요) · 12시진 저장 유지 여부(야자시/조자시 구분 없음 — 변경 원하면 041 전에)
+- 열린 결정(팀장): 운영 IP 헤더 실측, 로컬 저장(KV vs SQLite), 차트 라이브러리, 워커 위치
+- PR: #1 보안·규칙, #2 PC 디자인, #3 이후 전부(미머지)
+- 도구: Supabase CLI `npx supabase@3.1.0`(로컬 포트 545xx, Docker), Deno `npx deno@2.9.6`
+- 테스트 상태: typecheck·lint 통과 · fortune-engine 62 · ui 199 · supabase test db 601
+- 담당: 팀장(Opus) · builder·challenger·codex-reviewer·reviewer

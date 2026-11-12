@@ -181,10 +181,10 @@ enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
 enable_manual_linking = false
 # Passwords shorter than this value will be rejected as weak. Minimum 6, recommended 8 or more.
-minimum_password_length = 6
+minimum_password_length = 8
 # Passwords that do not meet the following requirements will be rejected as weak. Supported values
 # are: `letters_digits`, `lower_upper_letters_digits`, `lower_upper_letters_digits_symbols`
-password_requirements = ""
+password_requirements = "letters_digits"
 
 # Configure passkey sign-ins.
 # [auth.passkey]
@@ -226,14 +226,14 @@ enabled = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
-secure_password_change = false
+secure_password_change = true
 # If enabled, users will need to provide their current password to change their password, unless
 # they signed in with a one-time password, magic link, or recovery link.
 # require_current_password = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+max_frequency = "60s"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
@@ -248,6 +248,16 @@ otp_expiry = 3600
 # pass = "env(SENDGRID_API_KEY)"
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
+
+# task-043a(팀장 결정 ①): 가입 확인·비밀번호 재설정은 6자리 코드({{ .Token }})만 — 링크 없음(앱에서 verifyOtp).
+# 운영 대시보드에도 같은 값을 사람이 반영한다(supabase/README.md 점검표).
+[auth.email.template.confirmation]
+subject = "[LOTTO LAB] 가입 확인 코드"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "[LOTTO LAB] 비밀번호 재설정 코드"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
@@ -436,3 +446,9 @@ verify_jwt = false
 [functions.waitlist-confirm]
 enabled = true
 verify_jwt = false
+
+# A-20 계정 삭제(task-043a): 로그인 사용자 본인만. 게이트웨이 JWT 검증 + 함수 안에서 /auth/v1/user로 다시 확인한다.
+# service_role은 함수 환경변수에만(관리자 API로 본인 auth 사용자 삭제 → CASCADE 파기).
+[functions.account-delete]
+enabled = true
+verify_jwt = true

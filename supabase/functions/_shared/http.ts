@@ -8,6 +8,8 @@ export const DEFAULT_RATE_MAX = 5;
 
 const MESSAGES: Record<string, string> = {
   INVALID_INPUT: "입력값을 확인해 주세요.",
+  UNAUTHENTICATED: "로그인이 필요합니다.",
+  REAUTH_REQUIRED: "비밀번호를 다시 입력해 주세요.",
   RATE_LIMITED: "요청이 많습니다. 잠시 후 다시 시도해 주세요.",
   SERVICE_UNAVAILABLE: "일시적인 오류입니다. 잠시 후 다시 시도해 주세요.",
   METHOD_NOT_ALLOWED: "허용되지 않은 요청입니다.",

@@ -122,6 +122,14 @@ erDiagram
     timestamptz consented_at
     timestamptz updated_at
   }
+  user_consents {
+    uuid id PK
+    uuid user_id FK
+    text terms_version
+    text privacy_version
+    boolean adult_confirmed
+    timestamptz consented_at
+  }
   ingestion_runs ||--o{ draws_lotto : "ingestion_run_id"
   ingestion_runs ||--o{ draws_pension : "ingestion_run_id"
   generated_batches ||--o{ generated_numbers : "batch_id"

@@ -20,6 +20,6 @@
 - 적용된 마이그레이션 수정 · 운영 프로젝트에 직접 반영 · 운영 메일(SMTP) 설정
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `npx supabase@3.1.0 db reset` 성공 + `test db` 전체 통과(user_consents RLS: 타인 0행·쓰기 42501·UPDATE/DELETE 거부·anon 거부·CASCADE)
-- [ ] `npx deno@2.9.6 test` account-delete 단위 테스트 + 로컬 통합(본인만 삭제·타인 토큰 불가·JWT 없음 401)
-- [ ] 로컬 가입 시 확인 메일 본문에 6자리 코드만 있고 링크가 없음(로컬 메일 서버 API로 확인)
+- [x] `npx supabase@3.1.0 db reset` 성공 + `test db` 전체 통과(user_consents RLS: 타인 0행·쓰기 42501·UPDATE/DELETE 거부·anon 거부·CASCADE)
+- [x] `npx deno@2.9.6 test` account-delete 단위 테스트 + 로컬 통합(본인만 삭제·타인 토큰 불가·JWT 없음 401)
+- [x] 로컬 가입 시 확인 메일 본문에 6자리 코드만 있고 링크가 없음(로컬 메일 서버 API로 확인)

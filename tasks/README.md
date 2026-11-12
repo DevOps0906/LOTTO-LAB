@@ -47,7 +47,7 @@
 | task-040 | `fortune_profiles` 스키마 + RLS | W7(P1) | 008 | 높음 | builder | 완료 |
 | task-041 | 모바일 M-18·M-19 사주 프로필·번호 | W7(P1) | 037, 038, 040, 043 | 높음 | builder | 대기 |
 | task-042 | Windows D-16·D-17 사주 프로필·번호 | W7(P1) | 039, 041 | 높음 | builder | 대기 |
-| task-043a | 인증 서버 설정·`user_consents`·계정 삭제 EF (P1) | W7(P1) | 008, 040 | 높음 | builder → codex-reviewer+reviewer(security) | 대기 |
+| task-043a | 인증 서버 설정·`user_consents`·계정 삭제 EF (P1) | W7(P1) | 008, 040 | 높음 | builder → codex-reviewer+reviewer(security) | 완료 |
 | task-043 | 모바일 로그인·가입·재설정 M-06·계정 삭제 (Supabase Auth, P1) | W7(P1) | 008, 017, 043a | 높음 | builder → reviewer(security) | 대기 |
 | task-043b | Windows 로그인 대응 (Tauri keyring, P1) | W7(P1) | 043 | 높음 | builder → reviewer(security) | 대기 |
 | task-046 | 사주 만세력 간지·오행 표시(P1, 표시 전용) | W7(P1) | 037, 041 | 높음 | builder+tester | 대기 |

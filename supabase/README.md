@@ -61,6 +61,22 @@
 - [ ] 운영 `EdgeRuntime.waitUntil` 동작 확인: 신청 후 확인 메일이 실제 도착하는지, 로그에 `wait_until_unsupported`·`mail_failed`가 없는지(미지원이면 A-15가 500으로 막힌다).
 - [ ] pg_cron 작업 3개가 `cron.job`에 있고 `cron.job_run_details`에 실패가 없는지.
 
+## Auth 설정 (task-043a) — 운영 대시보드 점검표
+로컬은 `config.toml`이 정본이다. 운영(호스티드) 프로젝트는 config.toml이 자동 반영되지 않으므로 **사람이 대시보드에서 같은 값으로 맞춘다**(Authentication → Sign In / Providers · Email Templates · Rate Limits).
+- [ ] Email provider 사용, 매직 링크 로그인 미사용(앱에서 호출 안 함)
+- [ ] Confirm email = 켜짐(`[auth.email] enable_confirmations = true`)
+- [ ] Secure password change = 켜짐(`secure_password_change = true`)
+- [ ] 비밀번호 최소 길이 8(`[auth] minimum_password_length = 8`), 요구 조건 = 영문+숫자(`password_requirements = "letters_digits"`)
+- [ ] 확인·재설정 메일 재발송 최소 간격 60초(`[auth.email] max_frequency = "60s"`), OTP 6자리·1시간(`otp_length = 6`·`otp_expiry = 3600`)
+- [ ] 메일 템플릿 Confirm signup·Reset password = `templates/confirmation.html`·`templates/recovery.html` 본문 그대로(6자리 `{{ .Token }}`만, `{{ .ConfirmationURL }}` 등 링크 없음), 제목도 config.toml과 같게
+- [ ] 운영 메일(SMTP)은 외부 테스트 배포 전 교체(사용자 결정) — 기본 메일은 시간당 발송 한도가 낮다
+
+## account-delete (A-20) 환경변수
+- 필수: `RATE_SALT` · `ALLOWED_ORIGIN`(앱 WebView origin, Capacitor Android는 `https://localhost`) — `SUPABASE_URL`·`SUPABASE_SERVICE_ROLE_KEY`는 런타임이 주입. 없으면 500 fail-closed.
+- `verify_jwt = true`(게이트웨이) + 함수 안에서 `/auth/v1/user`로 재확인. 액세스 토큰 `amr`의 password·otp 인증이 10분 이내가 아니면 403 `REAUTH_REQUIRED`. `ALLOWED_ORIGIN`은 단일 origin만(`*`·빈 값은 500 설정 오류). 삭제 대상은 JWT 사용자뿐, 레이트리밋 키 `delete:`+sha256(`RATE_SALT`‖user id), 10분 5회.
+- 통합 테스트(`account-delete/integration_test.ts`)는 위 "통합 테스트" 명령에 포함된다(`WAITLIST_IT_URL`·`WAITLIST_IT_SERVICE_KEY` 사용).
+- Deno가 루트 `pnpm-workspace.yaml`을 보고 `package.json`을 고쳐 쓰는 일이 있으므로 Deno 명령은 `DENO_NO_PACKAGE_JSON=1`을 붙여 실행한다(2026-11-13 확인).
+
 ## pg_cron 작업 (UTC)
 | 이름 | 일정 | 내용 |
 |---|---|---|

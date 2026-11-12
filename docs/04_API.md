@@ -26,6 +26,8 @@
 | A-17 | GET · PUT · DELETE | `/v1/fortune-profile` | PUT: `birth_date`(`YYYY-MM-DD` 문자열), `calendar`(solar\|lunar), `is_leap_month?`(lunar만), `birth_hour?`(12시진 ID, 모르면 NULL) — `consented_at`은 보내지 않음(동의 후 저장 시 DB `DEFAULT now()`) | 본인 `fortune_profiles` 1행(GET 0행 → 프로필 입력 안내) | 로그인(본인 행만, RLS). 사주 번호 계산은 기기 `fortune-engine`(ADR-0005), 서버 계산 없음 | 400, 401 | `fortune_profiles` | RLS (P1) |
 | A-18 | GET · POST | `/v1/waitlist/unsubscribe` | 메일 링크의 `e`(email_norm), `t`(HMAC-SHA256(email_norm, UNSUBSCRIBE_SECRET)) — GET은 확인 화면, POST가 삭제 | 삭제 완료 안내(행이 없어도 같은 응답) | 공개(서명 토큰) | 400(서명 불일치), 429 | `waitlist_signups`(DELETE) | EF |
 | A-19 | POST | `/v1/waitlist-confirm`(별도 EF, verify_jwt=false) | `token`(확인 메일 링크 `/waitlist/confirm#token=…` — 쿼리스트링 아님(접근 로그·Referer 유출 방지), 웹 W-05가 버튼 클릭 시 전송 — 스캐너 자동 확인 방지) | `200`(확정, 같은 토큰 재제출로 이미 확정도 200) | 공개(토큰) | 400 `INVALID_INPUT`(없음·만료 구분 없이 동일), 429(IP 키 `confirm:` 접두로 A-15와 분리), 503 | `waitlist_signups`(UPDATE confirmed_at) | EF |
+| A-20 | POST | `/v1/account-delete`(별도 EF, verify_jwt=true) | 본문 없음(보내도 무시 — 삭제 대상은 JWT의 사용자뿐) · `Authorization: Bearer <사용자 JWT>` | `200`(삭제 완료, 이미 삭제된 사용자의 유효 토큰 재호출도 200 — 멱등) | 로그인(본인만). EF가 `/auth/v1/user`로 JWT 재확인 → service_role 관리자 API로 auth 사용자 하드 삭제 → 사용자 테이블 CASCADE 파기 | 401 `UNAUTHENTICATED`(없음·형식·서명 오류), 403 `REAUTH_REQUIRED`(액세스 토큰 `amr`의 password·otp 인증이 10분 넘음 — 앱은 삭제 직전 비밀번호 재입력 → `signInWithPassword`로 새 토큰), 429(사용자 키 `delete:` 접두, 10분 5회), 503 | `auth.users`(DELETE) → `user_consents`·`fortune_profiles`·사용자 데이터 CASCADE | EF (task-043a) |
+| A-21 | POST | `/v1/user-consents` | `user_id`(본인), `terms_version`, `privacy_version`(각 1~32자), `adult_confirmed`(true만) — `consented_at`은 보내지 않음(DB `DEFAULT now()`) | 생성 행 | 로그인(본인 행 SELECT·INSERT만, 추가 전용 — UPDATE·DELETE 없음) | 400, 401, 42501(타인 user_id) | `user_consents` | RLS (task-043a) |
 
 - 연금 번호(`digits`, `bonus_digits`, `ticket_data`)는 요청·응답 모두 **JSON 문자열**. 숫자 변환 금지 → [`05_DATA_MODEL.md#4`](05_DATA_MODEL.md).
 - `prizes`(등위별 당첨금·인원)·`source_url` 형식 → [`05_DATA_MODEL.md#2`](05_DATA_MODEL.md).
@@ -45,6 +47,7 @@
 | 401 | `UNAUTHENTICATED` | 로그인 필요·토큰 만료 | 사용자·관리자 API |
 | 403 | `FORBIDDEN` | 관리자 아님 | A-11~A-13, A-16 |
 | 403 | `MFA_REQUIRED` | 관리자이나 `aal2` 아님(TOTP 미통과) | A-11~A-13, A-16 |
+| 403 | `REAUTH_REQUIRED` | 최근 재인증(10분) 없음 — 비밀번호 재입력 후 재시도 | A-20 |
 | 404 | `NOT_FOUND` | 티켓·run 없음(타인 티켓도 404로 응답) | A-09, A-12~A-14, A-16 |
 | 400 | `INVALID_SOURCE_NUMBER` | `source_number_id`가 본인 생성 번호가 아님(없는 번호와 구분 없음, DB 트리거 23503) | A-07 |
 | 409 | `IDEMPOTENCY_CONFLICT` | 같은 멱등 키로 다른 내용 요청 | A-07 |
