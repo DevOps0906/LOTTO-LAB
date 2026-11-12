@@ -22,6 +22,6 @@
 - 화면 로직·API 호출(`packages/*`에), iOS 빌드, 서명 키 설정(task-035)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./apps/mobile build && pnpm --filter ./apps/mobile exec cap sync android` 성공
-- [ ] `cd apps/mobile/android && ./gradlew assembleDebug` 성공
-- [ ] `grep -rn "service_role" apps/mobile` 0건
+- [x] `pnpm --filter ./apps/mobile build && pnpm --filter ./apps/mobile exec cap sync android` 성공
+- [x] `cd apps/mobile/android && ./gradlew assembleDebug` 성공
+- [x] `grep -rn "service_role" apps/mobile` 0건

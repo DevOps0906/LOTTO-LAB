@@ -19,7 +19,7 @@
         ".env*"
       ],
       "env": [
-        "NEXT_PUBLIC_*"
+        "NEXT_PUBLIC_*", "VITE_*", "CAP_SERVER_URL"
       ],
       "outputs": [
         ".next/**",

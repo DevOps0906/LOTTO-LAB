@@ -101,6 +101,10 @@ export default tseslint.config(
       "**/next-env.d.ts",
       "supabase/**",
       "services/**",
+      // 셸 생성물(task-009·010 결정 ⑤): Android 프로젝트(복사된 웹 자산 포함)·Tauri 빌드·생성 스키마
+      "apps/mobile/android/**",
+      "apps/desktop/src-tauri/target/**",
+      "apps/desktop/src-tauri/gen/**",
     ],
   },
   js.configs.recommended,

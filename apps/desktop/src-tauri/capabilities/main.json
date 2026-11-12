@@ -1,0 +1,20 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "주 창 1개 — P0 사용 API만: core 기본, 저장(Rust가 만든 앱 데이터 폴더 store의 get-store·get·set·delete·keys·save, load 없음), 클립보드 쓰기, 외부 링크(http·https). fs·shell·updater 없음.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "store:allow-get-store",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-delete",
+    "store:allow-keys",
+    "store:allow-save",
+    "clipboard-manager:allow-write-text",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "https://*" }, { "url": "http://*" }]
+    }
+  ]
+}

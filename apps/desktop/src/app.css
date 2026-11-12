@@ -1,0 +1,15 @@
+/* 소비 순서(packages/ui/styles.css 머리말): tailwindcss → 디자인 토큰 → ui 블록. 색·크기는 토큰만 쓴다. */
+@import "tailwindcss";
+@import "@lotto-lab/design-tokens/tokens.css";
+@import "@lotto-lab/ui/styles.css";
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app-page {
+  display: grid;
+  gap: var(--spacing-gap);
+  padding: var(--spacing-page);
+}

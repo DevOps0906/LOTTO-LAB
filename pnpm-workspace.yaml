@@ -1,3 +1,11 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# 단일 버전(catalog): 셸·web·ui가 같은 react 인스턴스·같은 빌드 도구를 쓰도록 버전을 한 곳에서 고정한다(task-009 결정 ④).
+catalog:
+  react: 19.3.1
+  react-dom: 19.3.1
+  typescript: 6.0.3
+  vite: 8.3.8
+  vitest: 5.1.0

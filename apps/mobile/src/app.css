@@ -1,0 +1,17 @@
+/* 소비 순서(packages/ui/styles.css 머리말): tailwindcss → 디자인 토큰 → ui 블록. 색·크기는 토큰만 쓴다. */
+@import "tailwindcss";
+@import "@lotto-lab/design-tokens/tokens.css";
+@import "@lotto-lab/ui/styles.css";
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* 안전 영역: 상단(상태 표시줄·노치)과 좌우. 하단은 ui 탭바가 safe-area를 더한다. */
+.app-page {
+  display: grid;
+  gap: var(--spacing-gap);
+  padding: calc(var(--spacing-page) + env(safe-area-inset-top, 0)) calc(var(--spacing-page) + env(safe-area-inset-right, 0))
+    var(--spacing-page) calc(var(--spacing-page) + env(safe-area-inset-left, 0));
+}

@@ -22,6 +22,6 @@
 - 설치본 서명·updater(task-035, P1), 화면 로직
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./apps/desktop tauri build --debug` 성공
-- [ ] `cargo audit --file apps/desktop/src-tauri/Cargo.lock` 높음 이상 0건(도구 미설치면 팀장 확인)
-- [ ] `grep -rn "service_role" apps/desktop` 0건
+- [x] `pnpm --filter ./apps/desktop tauri build --debug` 성공
+- [x] `cargo audit --file apps/desktop/src-tauri/Cargo.lock` 높음 이상 0건(도구 미설치면 팀장 확인)
+- [x] `grep -rn "service_role" apps/desktop` 0건
