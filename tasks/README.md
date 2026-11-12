@@ -7,6 +7,7 @@
 | task-003 | 사전알림 백엔드 waitlist + A-15 (R21·R22·R23·R25) | W0 | 002 | 높음 | builder | 대기 |
 | task-004 | 웹 랜딩 W-01 + 사전알림 폼 | W0 | 003 | 높음 | builder | 대기 |
 | task-005 | 모노레포 (pnpm + Turborepo) | W1 | 002, 004 | 높음 | builder | 대기 |
+| task-006a | PC 시안 D-01·D-02 확정 (모바일 시각 언어, ADR-0004) | W1 | — | 낮음 | designer | 완료 |
 | task-006 | 디자인 토큰 패키지 + 공유 UI 블록 | W1 | 005 | 낮음 | builder | 대기 |
 | task-007 | 공개·수집 스키마 + RLS | W1 | 003 | 높음 | builder | 대기 |
 | task-008 | 사용자 스키마 + RLS·전환 트리거 | W1 | 007 | 높음 | builder | 대기 |

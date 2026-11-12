@@ -7,7 +7,7 @@
 | 위험도 | 보통 |
 | 보안 영향 | 없음 |
 | 담당 | builder → codex-reviewer(design) |
-| 근거 | `spec D-02` · `spec D-03` · `docs/01_PRD.md#9` 11·12 · R4 |
+| 근거 | `spec D-02` · `spec D-03` · `docs/01_PRD.md#9` 11·12 · R4 · `docs/adr/0004-pc-uses-mobile-visual-language.md` · `design/reference/d-lotto.html` |
 | 쓰기 허용 | `packages/ui/src/screens/{D-02,D-03}/**`, `apps/desktop/src/routes/**` |
 
 ## 할 것

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D-02 로또 생성 — PC hi-fi 시안 (LOTTO LAB, 숫자는 예시)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>
+/* 토큰 로더: 정답 소스 tokens.css(@theme)를 그대로 읽어 :root 로 적용한다. 이 파일에는 색·크기 값을 쓰지 않는다.
+   file:// 로 열 때는 Chrome --allow-file-access-from-files(shot 사용) 또는 저장소 루트 로컬 서버가 필요하다. ?dark 로 다크 모드. */
+(function () {
+  var css = '';
+  try { var x = new XMLHttpRequest(); x.open('GET', '../../packages/design-tokens/tokens.css', false); x.send(); css = x.responseText || ''; } catch (e) {}
+  if (location.search.indexOf('dark') > -1) document.documentElement.classList.add('dark');
+  if (!css) { document.documentElement.setAttribute('data-tokens', 'missing'); return; }
+  css = css.replace(/@custom-variant[^;]*;/g, '').replace(/@theme\s*\{/, ':root{');
+  var s = document.createElement('style'); s.id = 'tokens'; s.textContent = css; document.head.appendChild(s);
+})();
+</script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:calc(var(--spacing)*0.75) solid var(--color-focus);outline-offset:calc(var(--spacing)*0.5)}
+/* 토큰 로드 실패 전용 예외: 토큰이 없으므로 CSS 시스템 색(Mark/MarkText)을 쓴다 */
+.tokens-missing{display:none;position:fixed;top:0;left:0;right:0;z-index:100;margin:0;padding:1.25em 1.5em;font-size:1.25em;font-weight:700;line-height:1.5;background:Mark;color:MarkText;border-bottom:0.2em solid MarkText}
+.tokens-missing code{font-size:0.9em}
+.measure{position:fixed;top:0;right:0;z-index:101;padding:calc(var(--spacing)*2) calc(var(--spacing)*3);background:var(--color-navy);color:var(--color-navy-fg);font-family:var(--font-mono);font-size:var(--text-caption)}
+[data-tokens=missing] .tokens-missing{display:block}
+.ic{width:calc(var(--spacing)*5);height:calc(var(--spacing)*5);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.muted{color:var(--color-text-muted)}
+.cap{font-size:var(--text-caption)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ── 셸 (d-home.html 과 같음) ── */
+.app{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr)}
+.side{display:none}
+.tabbar{position:fixed;left:0;right:0;bottom:0;height:calc(var(--spacing-tabbar) + env(safe-area-inset-bottom, calc(var(--spacing)*0)));padding-bottom:env(safe-area-inset-bottom, calc(var(--spacing)*0));display:grid;grid-template-columns:repeat(4,1fr);background:var(--color-surface);border-top:calc(var(--spacing)/4) solid var(--color-border);z-index:10}
+.tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--spacing)*0.5);font-size:var(--text-caption);color:var(--color-text-muted)}
+.tabbar a[aria-current]{color:var(--color-primary);font-weight:700}
+.main{min-width:0;padding:0 var(--spacing-page) calc(var(--spacing-tabbar) + var(--spacing-gap)*2 + env(safe-area-inset-bottom, calc(var(--spacing)*0)))}
+.brand{display:flex;align-items:center;gap:calc(var(--spacing)*2);font-weight:800;font-size:var(--text-h2)}
+.brand .logo{width:calc(var(--spacing)*7);height:calc(var(--spacing)*7);fill:currentColor;stroke:none}
+.brand small{font-size:var(--text-caption);font-weight:600;letter-spacing:0.04em;color:var(--color-navy-muted)}
+.side nav{display:flex;flex-direction:column;gap:calc(var(--spacing)*1)}
+/* 사이드바·레일 = 모바일 하단 탭과 같은 톤: surface + border, 비활성 text-muted, 활성 primary */
+.side nav a{display:flex;align-items:center;gap:calc(var(--spacing)*3);height:var(--spacing-control);padding:0 calc(var(--spacing)*3.5);border-radius:var(--radius-control);color:var(--color-text-muted);font-weight:600}
+.side nav a:hover{color:var(--color-text);background:var(--color-bg)}
+.side nav a[aria-current]{color:var(--color-primary);font-weight:800;box-shadow:inset calc(var(--spacing)*0.75) 0 0 var(--color-primary)}
+.side .brand .logo{color:var(--color-primary)}
+.side .brand small{color:var(--color-text-muted)}
+.side .foot{margin-top:auto;font-size:var(--text-caption);color:var(--color-text-muted)}
+.iconbtn{display:inline-grid;place-items:center;width:calc(var(--spacing)*10);height:calc(var(--spacing)*10);border-radius:var(--radius-pill);border:0;background:transparent;cursor:pointer}
+
+/* ── 상단: 모바일은 뒤로·가운데 제목·정보 ── */
+.top{display:grid;grid-template-columns:calc(var(--spacing)*10) minmax(0,1fr) calc(var(--spacing)*10);align-items:center;height:calc(var(--spacing)*14)}
+.top h1{text-align:center;font-size:var(--text-h2);font-weight:800}
+.top .sub{display:none}
+
+/* ── 세그먼트 탭 ── */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:calc(var(--spacing)*1);padding:calc(var(--spacing)*1);border-radius:var(--radius-control);background:var(--color-primary-soft)}
+.seg button{height:calc(var(--spacing)*10);border:0;border-radius:calc(var(--radius-control) - var(--spacing));background:transparent;color:var(--color-text-muted);font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected=true],.seg button[aria-pressed=true]{background:var(--color-primary);color:var(--color-primary-fg);box-shadow:var(--shadow-cta)}
+.seg.plain{background:transparent;padding:0;gap:calc(var(--spacing)*2)}
+.seg.plain button{border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-surface);color:var(--color-text)}
+.seg.plain button[aria-pressed=true]{border-color:var(--color-primary);background:var(--color-primary);color:var(--color-primary-fg)}
+
+/* ── 카드 ── */
+.card{background:var(--color-surface);border:calc(var(--spacing)/4) solid var(--color-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:calc(var(--spacing)*4)}
+.sec + .sec{margin-top:calc(var(--spacing)*5)}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--spacing)*2);margin-bottom:calc(var(--spacing)*3)}
+.sec-h h2,.sec-h h3{font-size:var(--text-h2);font-weight:800}
+.sec-h h3 small,.sec-h h2 small{font-size:var(--text-caption);font-weight:600;color:var(--color-text-muted)}
+.sec-h p{font-size:var(--text-caption);color:var(--color-text-muted)}
+.count{flex:none;padding:calc(var(--spacing)*1) calc(var(--spacing)*3);border-radius:var(--radius-pill);background:var(--color-primary-soft);color:var(--color-primary-soft-fg);font-weight:800;font-size:var(--text-caption)}
+
+/* ── 번호 선택 그리드 ── */
+.pick{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:calc(var(--spacing)*2);justify-items:center}
+/* 번호 그리드: ~767 7열(터치 44 확보), 768~ 9열. 히트 영역은 ::before 44, 시각 지름은 --spacing-ball 유지 */
+.pick button::before{content:"";position:absolute;left:50%;top:50%;width:calc(var(--spacing)*11);height:calc(var(--spacing)*11);transform:translate(-50%,-50%);border-radius:var(--radius-pill)}
+.pick button{position:relative;width:100%;max-width:var(--spacing-ball);aspect-ratio:1;border-radius:var(--radius-pill);border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-ball-empty);color:var(--color-ball-empty-fg);font-weight:700;font-size:var(--text-ball);padding:0;cursor:pointer;box-shadow:var(--shadow-card)}
+.pick button:hover{border-color:var(--color-primary)}
+.pick button[aria-pressed=true]{border-color:transparent;color:var(--bf);background:radial-gradient(circle at 34% 28%,color-mix(in oklab,var(--b),var(--color-navy-fg) 28%) 0,var(--b) 55%,color-mix(in oklab,var(--b),var(--color-navy) 18%) 100%);box-shadow:inset 0 calc(var(--spacing)*-0.5) var(--spacing) color-mix(in oklab,var(--b),var(--color-navy) 30%)} /* 선택 = 번호대 색(결과 공과 동일) */
+.pick button.x{color:var(--color-text-muted);text-decoration:line-through;background:var(--color-bg)}
+
+/* ── 옵션 버튼 ── */
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(var(--spacing)*2)}
+.opt{display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing)*1.5);min-height:calc(var(--spacing)*10);padding:0 calc(var(--spacing)*2);border-radius:var(--radius-control);border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-surface);font-weight:700;font-size:var(--text-caption);cursor:pointer;white-space:nowrap}
+.opt .ic{width:calc(var(--spacing)*4.5);height:calc(var(--spacing)*4.5)}
+.opt.fix .ic{color:var(--color-pension)}
+.opt.ban .ic{color:var(--color-danger)}
+.opt.eo .ic{color:var(--color-primary)}
+.adv{display:none}
+.field{display:grid;gap:calc(var(--spacing)*1.5)}
+.field label,.field .lab{font-size:var(--text-caption);font-weight:700;color:var(--color-text-muted)}
+.field select{font:inherit;height:calc(var(--spacing)*10);padding:0 calc(var(--spacing)*3);border-radius:var(--radius-control);border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-surface);color:var(--color-text)}
+
+/* ── CTA ── */
+.cta{display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing)*2);width:100%;min-height:calc(var(--spacing-control) + var(--spacing)*4);border:0;border-radius:var(--radius-card);cursor:pointer;font-size:var(--text-h2);font-weight:800;color:var(--color-primary-fg);box-shadow:var(--shadow-cta);
+  background:linear-gradient(100deg,var(--color-primary) 0,color-mix(in oklab,var(--color-primary),var(--color-primary-soft-fg) 70%) 100%)}
+.cta .ic{width:calc(var(--spacing)*6);height:calc(var(--spacing)*6)}
+.ghost{display:inline-flex;align-items:center;justify-content:center;gap:calc(var(--spacing)*2);min-height:calc(var(--spacing)*11);padding:0 calc(var(--spacing)*4);border-radius:var(--radius-control);border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-surface);font-weight:700;cursor:pointer}
+.ghost.pri{border-color:var(--color-primary);background:var(--color-primary);color:var(--color-primary-fg)}
+
+/* ── 번호공 (d-home.html 과 같음) ── */
+.ball{--b:var(--color-ball-31);--bf:var(--color-ball-31-fg);display:grid;place-items:center;width:100%;max-width:var(--spacing-ball);aspect-ratio:1;border-radius:var(--radius-pill);font-weight:800;font-size:var(--text-ball);line-height:1;color:var(--bf);
+  background:radial-gradient(circle at 34% 28%,color-mix(in oklab,var(--b),var(--color-navy-fg) 28%) 0,var(--b) 55%,color-mix(in oklab,var(--b),var(--color-navy) 18%) 100%);
+  box-shadow:inset 0 calc(var(--spacing)*-0.5) var(--spacing) color-mix(in oklab,var(--b),var(--color-navy) 30%),0 calc(var(--spacing)*0.5) var(--spacing) color-mix(in oklab,var(--color-navy),transparent 82%)}
+.b1{--b:var(--color-ball-1);--bf:var(--color-ball-1-fg)}
+.b11{--b:var(--color-ball-11);--bf:var(--color-ball-11-fg)}
+.b21{--b:var(--color-ball-21);--bf:var(--color-ball-21-fg)}
+.b31{--b:var(--color-ball-31);--bf:var(--color-ball-31-fg)}
+.b41{--b:var(--color-ball-41);--bf:var(--color-ball-41-fg)}
+.ball.fixed{outline:calc(var(--spacing)*0.5) solid var(--color-pension);outline-offset:calc(var(--spacing)*0.5)}
+.balls{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,var(--spacing-ball));gap:calc(var(--spacing)*1.5);align-items:center}
+
+/* ── 결과 표 ── */
+.games{list-style:none;margin:0;padding:0;display:grid;gap:calc(var(--spacing)*2)}
+.games li{display:grid;grid-template-columns:calc(var(--spacing)*12) minmax(0,1fr) auto;align-items:center;gap:calc(var(--spacing)*2);padding:calc(var(--spacing)*2) calc(var(--spacing)*3);border-radius:var(--radius-control);background:var(--color-bg);border:calc(var(--spacing)/4) solid var(--color-border)}
+.games li .lab{font-weight:700;font-size:var(--text-caption)}
+.games .meta{display:none}
+.games input{width:calc(var(--spacing)*5);height:calc(var(--spacing)*5);accent-color:var(--color-primary);margin:0}
+.result-actions{display:flex;flex-wrap:wrap;gap:calc(var(--spacing)*2);margin-top:calc(var(--spacing)*4)}
+.note{margin-top:calc(var(--spacing)*3);font-size:var(--text-caption);color:var(--color-text-muted)}
+.note strong{color:var(--color-text)}
+.summary{display:none}
+.summary dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:calc(var(--spacing)*2) calc(var(--spacing)*4);margin:0;font-size:var(--text-caption)}
+.summary dt{color:var(--color-text-muted)}
+.summary dd{margin:0;font-weight:700}
+
+.layout{display:grid;gap:var(--spacing-gap);margin-top:calc(var(--spacing)*3)}
+.col{display:grid;gap:var(--spacing-gap);align-content:start;min-width:0}
+.cond .cta{margin-top:calc(var(--spacing)*5)}
+
+/* ── 768~1199: 아이콘 레일 72 + 2열(좌 조건 · 우 결과) ── */
+@media (width >= 48em){ /* DESIGN.md 2장 768 */
+  .app{grid-template-columns:var(--spacing-sidebar-rail) minmax(0,1fr)}
+  .tabbar{display:none}
+  .side{display:flex;flex-direction:column;gap:calc(var(--spacing)*6);position:sticky;top:0;height:100vh;padding:calc(var(--spacing)*5) calc(var(--spacing)*3);background:var(--color-surface);color:var(--color-text);border-right:calc(var(--spacing)/4) solid var(--color-border)}
+  .side .brand{justify-content:center}
+  .side .brand .txt,.side .lbl,.side .foot{position:absolute;width:calc(var(--spacing)/4);height:calc(var(--spacing)/4);overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .side nav a{justify-content:center;padding:0}
+  .main{padding:var(--spacing-page);padding-bottom:calc(var(--spacing)*10)}
+  .inner{max-width:calc(var(--spacing)*300);margin:0 auto}
+  .top{display:flex;gap:calc(var(--spacing)*3);height:auto;margin-bottom:var(--spacing-gap)}
+  .top .back{display:none}
+  .top h1{text-align:left;font-size:var(--text-h1)}
+  .top .sub{display:block;font-size:var(--text-caption);color:var(--color-text-muted)}
+  .top .info{margin-left:auto}
+  .tabs{display:none}
+  .layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;margin-top:0}
+  .card{padding:calc(var(--spacing)*5)}
+  .adv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(var(--spacing)*3)}
+  .summary{display:block}
+  .pick{grid-template-columns:repeat(9,minmax(0,1fr))}
+}
+/* ── 1200~: 사이드바 240 + 2열 ── */
+@media (width >= 75em){ /* DESIGN.md 2장 1200 */
+  .app{grid-template-columns:var(--spacing-sidebar) minmax(0,1fr)}
+  .side{padding:calc(var(--spacing)*6) calc(var(--spacing)*4)}
+  .side .brand{justify-content:flex-start;padding:0 calc(var(--spacing)*2)}
+  .side .brand .txt,.side .lbl,.side .foot{position:static;width:auto;height:auto;overflow:visible;clip:auto;white-space:normal}
+  .side nav a{justify-content:flex-start;padding:0 calc(var(--spacing)*3.5)}
+  .side .foot{padding:0 calc(var(--spacing)*2)}
+  .layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .card{padding:calc(var(--spacing)*6)}
+  .pick{gap:calc(var(--spacing)*2.5)}
+  .games li{grid-template-columns:calc(var(--spacing)*14) minmax(0,1fr) auto auto}
+  .games .meta{display:block;font-size:var(--text-caption);color:var(--color-text-muted);white-space:nowrap}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10"/></symbol>
+  <symbol id="i-stats" viewBox="0 0 24 24"><path d="M5 20V12M11 20V5M17 20v-9M3 20h18"/></symbol>
+  <symbol id="i-mine" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14l-4-4M20 16H6l4 4"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+</svg>
+<p class="tokens-missing" role="alert">디자인 토큰(<code>packages/design-tokens/tokens.css</code>)을 읽지 못해 색·크기가 빠진 화면입니다.<br>로컬 서버로 여세요: 저장소 루트에서 <code>npx serve .</code> 실행 후 <code>/design/reference/d-lotto.html</code> 접속 (또는 <code>design/shots</code> 캡처 확인)</p>
+
+<div class="app">
+  <aside class="side" aria-label="주 메뉴">
+    <div class="brand"><svg class="ic logo"><use href="#i-logo"/></svg><span class="txt">로또랩 <small>LOTTO LAB</small></span></div>
+    <nav>
+      <a href="d-home.html" title="대시보드"><svg class="ic"><use href="#i-dash"/></svg><span class="lbl">대시보드</span></a>
+      <a href="d-lotto.html" aria-current="page" title="로또 생성"><svg class="ic"><use href="#i-ball"/></svg><span class="lbl">로또 생성</span></a>
+      <a href="#" title="연금 생성"><svg class="ic"><use href="#i-ticket"/></svg><span class="lbl">연금 생성</span></a>
+      <a href="#" title="통계"><svg class="ic"><use href="#i-stats"/></svg><span class="lbl">통계</span></a>
+      <a href="#" title="내 번호"><svg class="ic"><use href="#i-mine"/></svg><span class="lbl">내 번호</span></a>
+      <a href="#" title="회차"><svg class="ic"><use href="#i-cal"/></svg><span class="lbl">회차</span></a>
+      <a href="#" title="알림"><svg class="ic"><use href="#i-bell"/></svg><span class="lbl">알림</span></a>
+      <a href="#" title="설정"><svg class="ic"><use href="#i-gear"/></svg><span class="lbl">설정</span></a>
+    </nav>
+    <p class="foot">만 19세 이상 이용 · 복권 판매·구매 대행 아님</p>
+  </aside>
+
+  <main class="main">
+    <div class="inner">
+      <header class="top">
+        <a class="iconbtn back" href="d-home.html" aria-label="뒤로"><svg class="ic"><use href="#i-back"/></svg></a>
+        <div><h1>로또 번호 생성</h1><p class="sub">왼쪽에서 조건을 정하고, 오른쪽에서 결과를 비교하세요 · 제 1,133회 대상</p></div>
+        <button class="iconbtn info" aria-label="생성 방식 안내"><svg class="ic"><use href="#i-info"/></svg></button>
+      </header>
+
+      <div class="seg tabs" role="tablist" aria-label="로또 생성 보기">
+        <button role="tab" aria-selected="true">번호 선택</button>
+        <button role="tab" aria-selected="false">추천 결과</button>
+        <button role="tab" aria-selected="false">분석 정보</button>
+      </div>
+
+      <div class="layout">
+        <!-- 좌: 조건 -->
+        <section class="card cond" aria-label="생성 조건">
+          <div class="sec">
+            <div class="sec-h">
+              <div><h2>번호 선택</h2><p>선택한 번호를 포함해 6개 번호를 만듭니다</p></div>
+              <span class="count">선택 3 / 6</span>
+            </div>
+            <div class="pick" role="group" aria-label="1부터 45까지 번호">
+              <button class="b1" aria-pressed="false">1</button><button class="b1" aria-pressed="false">2</button><button class="b1" aria-pressed="false">3</button><button class="b1" aria-pressed="false">4</button><button class="b1" aria-pressed="false">5</button><button class="b1" aria-pressed="false">6</button><button class="b1" aria-pressed="false">7</button><button class="b1" aria-pressed="false">8</button><button class="b1" aria-pressed="false">9</button>
+              <button class="b1" aria-pressed="false">10</button><button class="b11" aria-pressed="false">11</button><button class="b11" aria-pressed="true">12</button><button class="b11" aria-pressed="false">13</button><button class="b11" aria-pressed="false">14</button><button class="b11" aria-pressed="false">15</button><button class="b11" aria-pressed="false">16</button><button class="b11" aria-pressed="false">17</button><button class="b11" aria-pressed="false">18</button>
+              <button class="b11" aria-pressed="false">19</button><button class="b11" aria-pressed="false">20</button><button class="b21" aria-pressed="false">21</button><button class="b21" aria-pressed="false">22</button><button class="b21" aria-pressed="false">23</button><button class="b21" aria-pressed="false">24</button><button class="b21" aria-pressed="false">25</button><button class="b21" aria-pressed="false">26</button><button class="b21" aria-pressed="true">27</button>
+              <button class="b21" aria-pressed="false">28</button><button class="b21" aria-pressed="false">29</button><button class="b21" aria-pressed="false">30</button><button class="b31" aria-pressed="false">31</button><button class="b31" aria-pressed="false">32</button><button class="b31" aria-pressed="false">33</button><button class="b31" aria-pressed="true">34</button><button class="b31" aria-pressed="false">35</button><button class="b31" aria-pressed="false">36</button>
+              <button class="b31" aria-pressed="false">37</button><button class="b31" aria-pressed="false">38</button><button class="b31" aria-pressed="false">39</button><button class="b31" aria-pressed="false">40</button><button class="b41" aria-pressed="false">41</button><button class="b41" aria-pressed="false">42</button><button class="b41" aria-pressed="false">43</button><button class="b41" aria-pressed="false">44</button><button class="b41" aria-pressed="false">45</button>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-h"><h3>추가 옵션 <small>(선택)</small></h3></div>
+            <div class="opts">
+              <button class="opt fix"><svg class="ic"><use href="#i-pin"/></svg>고정번호 (3)</button>
+              <button class="opt ban"><svg class="ic"><use href="#i-ban"/></svg>제외번호 (0)</button>
+              <button class="opt eo"><svg class="ic"><use href="#i-swap"/></svg>홀짝</button>
+            </div>
+          </div>
+
+          <!-- 768~: 넓은 화면에서만 펼쳐 보이는 조건 (모바일은 옵션 시트) -->
+          <div class="sec adv">
+            <div class="field"><label for="mode">생성 방식</label><select id="mode"><option>통계 조건 반영</option><option>완전 무작위</option></select></div>
+            <div class="field"><label for="win">참고 기간</label><select id="win"><option>최근 10회</option><option>최근 50회</option><option>전체 회차</option></select></div>
+            <div class="field"><label for="sum">합계 범위</label><select id="sum"><option>제한 없음</option><option>100 ~ 175</option></select></div>
+            <div class="field"><label for="seq">연속 번호</label><select id="seq"><option>2개까지 허용</option><option>허용 안 함</option></select></div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-h"><h3>생성 게임 수</h3></div>
+            <div class="seg plain" role="group" aria-label="생성 게임 수">
+              <button aria-pressed="false">1게임</button><button aria-pressed="true">5게임</button><button aria-pressed="false">10게임</button><button aria-pressed="false">20게임</button>
+            </div>
+          </div>
+
+          <button class="cta" type="button"><svg class="ic"><use href="#i-spark"/></svg>추천 번호 생성</button>
+        </section>
+
+        <!-- 우: 결과 -->
+        <div class="col">
+          <section class="card" aria-labelledby="res-t">
+            <div class="sec-h">
+              <h2 id="res-t">추천 번호 <small>(5게임)</small></h2>
+              <button class="iconbtn" aria-label="같은 조건으로 다시 생성" style="color:var(--color-primary)"><svg class="ic"><use href="#i-redo"/></svg></button>
+            </div>
+            <ol class="games">
+              <li><span class="lab">1게임</span>
+                <span class="balls" aria-label="12, 18, 27, 34, 40, 44"><span class="ball b11 fixed">12</span><span class="ball b11">18</span><span class="ball b21 fixed">27</span><span class="ball b31 fixed">34</span><span class="ball b31">40</span><span class="ball b41">44</span></span>
+                <span class="meta">합 175 · 홀1:짝5</span><input type="checkbox" aria-label="1게임 선택" checked></li>
+              <li><span class="lab">2게임</span>
+                <span class="balls" aria-label="7, 12, 21, 27, 34, 41"><span class="ball b1">7</span><span class="ball b11 fixed">12</span><span class="ball b21">21</span><span class="ball b21 fixed">27</span><span class="ball b31 fixed">34</span><span class="ball b41">41</span></span>
+                <span class="meta">합 142 · 홀4:짝2</span><input type="checkbox" aria-label="2게임 선택" checked></li>
+              <li><span class="lab">3게임</span>
+                <span class="balls" aria-label="12, 19, 27, 33, 34, 45"><span class="ball b11 fixed">12</span><span class="ball b11">19</span><span class="ball b21 fixed">27</span><span class="ball b31">33</span><span class="ball b31 fixed">34</span><span class="ball b41">45</span></span>
+                <span class="meta">합 170 · 홀4:짝2</span><input type="checkbox" aria-label="3게임 선택"></li>
+              <li><span class="lab">4게임</span>
+                <span class="balls" aria-label="3, 12, 16, 27, 34, 38"><span class="ball b1">3</span><span class="ball b11 fixed">12</span><span class="ball b11">16</span><span class="ball b21 fixed">27</span><span class="ball b31 fixed">34</span><span class="ball b31">38</span></span>
+                <span class="meta">합 130 · 홀2:짝4</span><input type="checkbox" aria-label="4게임 선택"></li>
+              <li><span class="lab">5게임</span>
+                <span class="balls" aria-label="9, 12, 24, 27, 34, 43"><span class="ball b1">9</span><span class="ball b11 fixed">12</span><span class="ball b21">24</span><span class="ball b21 fixed">27</span><span class="ball b31 fixed">34</span><span class="ball b41">43</span></span>
+                <span class="meta">합 149 · 홀3:짝3</span><input type="checkbox" aria-label="5게임 선택"></li>
+            </ol>
+            <div class="result-actions">
+              <button class="ghost pri" type="button"><svg class="ic"><use href="#i-save"/></svg>선택 2게임 저장</button>
+              <button class="ghost" type="button"><svg class="ic"><use href="#i-copy"/></svg>복사·공유</button>
+            </div>
+            <p class="note"><strong>미래 예측 아님</strong> · 생성 번호는 조건을 반영한 무작위 조합이며 당첨과 관계가 없습니다. 저장은 즐겨찾기로만 기록되며, 구매 등록은 내 번호에서 따로 합니다.</p>
+          </section>
+
+          <section class="card summary" aria-labelledby="sum-t">
+            <div class="sec-h"><h3 id="sum-t">조건 요약</h3><span class="cap muted num">생성 2025.01.27 14:32</span></div>
+            <dl>
+              <dt>고정 번호</dt><dd class="num">12 · 27 · 34 <span class="cap muted">(외곽선 표시)</span></dd>
+              <dt>제외 번호</dt><dd>없음</dd>
+              <dt>생성 방식</dt><dd>통계 조건 반영 · 최근 10회</dd>
+              <dt>홀짝 · 합계 · 연속</dt><dd>제한 없음 · 제한 없음 · 2개까지</dd>
+              <dt>통계 출처</dt><dd>동행복권 당첨번호 공개 자료 · 갱신 2025.01.25 21:05</dd>
+            </dl>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="tabbar" aria-label="하단 탭">
+    <a href="d-home.html"><svg class="ic"><use href="#i-home"/></svg>홈</a>
+    <a href="d-lotto.html" aria-current="page"><svg class="ic"><use href="#i-star"/></svg>추천</a>
+    <a href="#"><svg class="ic"><use href="#i-stats"/></svg>통계</a>
+    <a href="#"><svg class="ic"><use href="#i-mine"/></svg>내번호</a>
+  </nav>
+</div>
+<script>
+/* 검증용: 주소 끝에 #measure → 가로 넘침 실측값을 우상단에 표시 (shot 캡처로 확인) */
+if (location.hash === '#measure') addEventListener('load', function () { setTimeout(function () {
+  var d = document.documentElement, p = document.createElement('p');
+  p.className = 'measure'; p.textContent = 'scrollWidth ' + d.scrollWidth + ' / clientWidth ' + d.clientWidth + (d.scrollWidth <= d.clientWidth ? ' OK' : ' OVERFLOW');
+  document.body.appendChild(p);
+}, 300); });
+</script>
+</body>
+</html>

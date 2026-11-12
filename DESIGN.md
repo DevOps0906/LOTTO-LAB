@@ -22,8 +22,9 @@
 |---|---|---|---|
 | 모바일 | ~767 | 하단 탭바 4개(홈·추천·통계·내번호), 높이 `--spacing-tabbar` + safe-area | 1열 카드, 좌우 여백 `--spacing-page` |
 | 태블릿 / 작은 Windows 창 | 768~1199 | 좌측 아이콘형 사이드바 `--spacing-sidebar-rail` (라벨은 툴팁) | 2열 그리드, Windows 생성 화면도 **조건(좌)·결과(우)** (레일 사이드바로 폭 확보). 조건/결과 상하는 모바일·웹 좁은 화면만 |
-| 데스크톱 Windows | 1200~ | 좌측 사이드바 `--spacing-sidebar` (아이콘+라벨) | 대시보드: KPI 카드 행 → 표·차트 넓은 카드, 생성 화면은 **조건(좌)·결과(우)** 한 화면 |
+| 데스크톱 Windows | 1200~ | 좌측 사이드바 `--spacing-sidebar` (아이콘+라벨) | 2~3열 그리드. 홈: 히어로 한 줄 전체 → 아래 2열 [최근 회차 + 상품 카드 2개 \| 이번 주 요약 + 번호 생성 CTA]. 생성 화면은 **조건(좌)·결과(우)** 한 화면 |
 
+- **시각 언어는 하나**([ADR-0004](docs/adr/0004-pc-uses-mobile-visual-language.md)): 히어로 그라데이션·번호 공·상품 카드(로또/연금)·요약 리스트·주 CTA는 3구간 모두 같다(기준 = 모바일 시안 `design/reference/m-*.png`). 구간별로 바꾸는 것은 내비게이션과 열 배치뿐이며 PC 전용 컴포넌트는 만들지 않는다.
 - Windows 창 최소 1024×700. 페이지 가로 스크롤 금지 — 넓은 표·히트맵은 카드 안에서만 스크롤.
 - 카드 간격 `--spacing-gap`, 카드 반경 `--radius-card`, 그림자 `--shadow-card`. 면은 `--color-bg` 위 `--color-surface` 카드.
 - 헤더(모바일 홈 상단·사이드바 배경)는 `--color-navy` / `--color-navy-fg` / `--color-navy-muted`.
@@ -41,7 +42,8 @@
 ### 4.1 번호공 (Ball)
 - 지름 `--spacing-ball`, 반경 `--radius-pill`, 숫자 `--text-ball` 굵게, 숫자는 항상 표시.
 - 구간색: 1~10 `--color-ball-1` · 11~20 `--color-ball-11` · 21~30 `--color-ball-21` · 31~40 `--color-ball-31` · 41~45 `--color-ball-41`, 글자는 각 `-fg`.
-- 상태: 기본(구간색) / 그리드 미선택(`--color-ball-empty` + 1px `--color-input` 테두리) / 선택(`--color-primary` 채움) / 고정수(구간색 + 핀 아이콘) / 제외수(`--color-ball-empty` + 취소선·금지 아이콘) / 보너스(앞에 "+" 기호와 "보너스" 접근성 라벨).
+- 상태: 기본(구간색) / 그리드 미선택(`--color-ball-empty` + 1px `--color-input` 테두리) / 선택(번호대 색 `--color-ball-*` 채움 — 결과 공과 같은 색, 미선택은 흰 공+테두리라 색 없이도 구분) / 고정수(구간색 + 핀 아이콘) / 제외수(`--color-ball-empty` + 취소선·금지 아이콘) / 보너스(앞에 "+" 기호와 "보너스" 접근성 라벨).
+- 번호 선택 그리드(1~45): ~767은 **7열**(터치 영역 44px 확보), 768~는 9열. 시각 지름은 `--spacing-ball`, 터치 영역만 44px로 넓힌다.
 - 색만으로 상태를 전달하지 않는다(아이콘·텍스트 병기). 터치 영역 최소 44px.
 
 ### 4.2 생성 카드 (Generator / Result)
@@ -50,18 +52,21 @@
 - 연금복권: 조 선택 세그먼트·자리별 스테퍼(숫자 `--font-mono`), CTA·강조는 `--color-pension`, 선택행 `--color-pension-soft` / `--color-pension-soft-fg`.
 - 결과 아래 고지(캡션): "과거 데이터를 참고한 조합이며 당첨을 보장하지 않습니다."
 
-### 4.3 KPI 카드 (Windows 대시보드)
+### 4.3 KPI 카드 (개인 기록 요약)
 - `--color-surface` 카드, 라벨 `--text-caption` `--color-text-muted`, 값 `--text-kpi` `--font-mono`, 보조(회차·기준일) 캡션.
-- 증감 표시는 화살표 아이콘 + 부호 문자 + 색(`--color-success`/`--color-danger`) 병기. 4개 1행(1200~), 2×2(768~1199), 모바일은 가로 스크롤 대신 2열.
+- 증감 표시는 화살표 아이콘 + 부호 문자 + 색(`--color-success`/`--color-danger`) 병기.
+- 홈의 주인공이 아니다: Windows 홈(D-01)에서는 우측 열의 작은 카드로 둔다(1200~ 우측 열 세로 묶음, 768~1199 2열 하단). 모바일은 가로 스크롤 대신 2열. 히어로·상품 카드보다 위에 두지 않는다(ADR-0004).
 
 ### 4.4 사이드바 (768~)
 - 배경 `--color-navy`, 항목 글자 `--color-navy-muted`, 활성 항목 `--color-navy-fg` + 좌측 인디케이터 `--color-primary` + 반투명 강조면.
 - 1200~ 폭 `--spacing-sidebar`(아이콘+라벨), 768~1199 `--spacing-sidebar-rail`(아이콘만, 툴팁·aria-label 필수).
 - 항목(정본: `docs/03_SCREENS_UX.md` D-01): 대시보드 · 로또 생성 · 연금 생성 · 통계 · 내 번호 · 회차 · 알림 · 설정.
+- 사이드바는 하단 탭바(4.5)를 대신하는 내비게이션일 뿐이다. 본문 카드·번호 공·CTA는 모바일과 같은 컴포넌트를 쓴다(ADR-0004).
 
 ### 4.5 하단 탭바 (~767)
 - `--color-surface` 배경, 상단 1px `--color-border`, 높이 `--spacing-tabbar` + safe-area.
 - 4개: 홈·추천·통계·내번호. 활성 `--color-primary`(아이콘 채움 + 라벨), 비활성 `--color-text-muted`. 라벨은 항상 표시.
+- 768~에서는 사이드바(4.4)로 바뀐다. 탭바와 사이드바 사이에서 바뀌는 것은 내비게이션 위치뿐이다.
 
 ### 4.6 차트
 - 계열 순서: `--color-chart-1`(로또) → `--color-chart-2`(연금) → `--color-chart-3` → `--color-chart-4` → `--color-chart-5`(평균·기타). 격자 `--color-chart-grid`.

@@ -65,11 +65,13 @@ flowchart LR
   end
   n_M_01 --> n_api_A_01
   n_M_01 --> n_api_A_02
+  n_M_01 --> n_api_A_06
   n_M_01 --> n_api_A_08
   n_M_01 -.-> n_t_draws_lotto
   n_M_01 -.-> n_t_draws_pension
   n_M_01 -.-> n_t_saved_tickets
   n_M_01 -.-> n_t_draw_checks
+  n_M_01 -.-> n_t_statistics_cache
   n_M_02 --> n_api_A_06
   n_M_02 --> n_api_A_07
   n_M_02 -.-> n_t_generator_profiles
@@ -118,11 +120,13 @@ flowchart LR
   n_M_16 -.-> n_t_draws_pension
   n_D_01 --> n_api_A_01
   n_D_01 --> n_api_A_02
+  n_D_01 --> n_api_A_06
   n_D_01 --> n_api_A_08
   n_D_01 -.-> n_t_saved_tickets
   n_D_01 -.-> n_t_draw_checks
   n_D_01 -.-> n_t_draws_lotto
   n_D_01 -.-> n_t_draws_pension
+  n_D_01 -.-> n_t_statistics_cache
   n_D_02 --> n_api_A_06
   n_D_02 --> n_api_A_07
   n_D_02 -.-> n_t_generator_profiles

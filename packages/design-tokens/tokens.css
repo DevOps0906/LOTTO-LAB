@@ -121,7 +121,7 @@
   --color-text: #e8edf7;
   --color-text-muted: #9aa6bd;
   --color-border: #26314a;
-  --color-input: #5d6a86;
+  --color-input: #6b7895;        /* 미선택 번호공(ball-empty) 대비 3.39:1 */
   --color-focus: #7c8cff;
   --color-navy: #0e1730;
   --color-navy-fg: #ffffff;
