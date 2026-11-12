@@ -7,15 +7,18 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 const DOMAIN = ["lottery-core", "lotto-engine", "pension-engine", "statistics", "validation"];
+// 운세 번호 엔진(task-037, ADR-0005 ⑧): app-core → fortune-engine → (lotto-engine·pension-engine) → lottery-core → types
+const FORTUNE = "fortune-engine";
 
 // 패키지별로 import해도 되는 내부 패키지(자기 자신 제외). 나머지 @lotto-lab/*는 금지.
 const ALLOWED = {
-  ui: ["app-core", "design-tokens", ...DOMAIN, "types"],
-  "app-core": [...DOMAIN, "types"],
+  ui: ["app-core", "design-tokens", ...DOMAIN, FORTUNE, "types"],
+  "app-core": [...DOMAIN, FORTUNE, "types"],
   ...Object.fromEntries(DOMAIN.map((name) => [name, ["types"]])),
   // 엔진·통계는 lottery-core(판정·오류 타입·공통 규칙, task-012)를 쓴다. lottery-core·validation은 types만.
   "lotto-engine": ["lottery-core", "types"],
   "pension-engine": ["lottery-core", "types"],
+  [FORTUNE]: ["lotto-engine", "pension-engine", "lottery-core", "types"],
   statistics: ["lottery-core", "types"],
   types: [],
   "design-tokens": [],
