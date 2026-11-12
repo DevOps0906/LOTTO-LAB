@@ -34,3 +34,20 @@ export const INT4_MAX = 2147483647;
 // 저장 티켓 상태(saved_tickets.purchase_status). 추천(generated)은 별도 테이블 — 섞지 않는다.
 export const PURCHASE_STATUSES = ["favorite", "purchased"] as const;
 export type PurchaseStatus = (typeof PURCHASE_STATUSES)[number];
+
+// 통계 키(A-06 window·metric, statistics_cache.window_key·metric) — task-015 팀장 결정 ②.
+// last10은 홈 요약용. "보너스 포함"은 metric 키로 구분한다. 순위·예측 성격의 키(hot·cold·due 등)는 두지 않는다(결정 ⑦).
+export const STAT_WINDOWS = ["last10", "last20", "last50", "last100", "all"] as const;
+export type StatWindow = (typeof STAT_WINDOWS)[number];
+export const STAT_METRICS = [
+  "lotto.number_freq",
+  "lotto.number_freq_bonus",
+  "lotto.range_dist",
+  "lotto.odd_even",
+  "lotto.sum_dist",
+  "lotto.gap",
+  "pension.digit_freq",
+  "pension.group_freq",
+  "pension.bonus_digit_freq",
+] as const;
+export type StatMetric = (typeof STAT_METRICS)[number];

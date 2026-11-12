@@ -1,4 +1,4 @@
-import type { GameType } from "./constants.ts";
+import type { GameType, StatMetric, StatWindow } from "./constants.ts";
 
 // 회차 읽기 DTO(A-01·A-02·A-03). 날짜는 `YYYY-MM-DD` 문자열, 시각은 오프셋 포함 ISO 문자열.
 
@@ -31,12 +31,22 @@ export type DrawPension = {
   source_verified_at: string;
 };
 
+/** 통계 기준선 정수 분수(기약분수, den > 0) — payload에 부동소수 금지(task-015 결정 ④). */
+export type StatFraction = { num: number; den: number };
+/** 미출현 간격(draw_no 차이). 기간 안 미출현이면 gap null + censored true. */
+export type StatGapEntry = { gap: number | null; censored: boolean };
+/** statistics_cache.payload 정본 형식. 지표별 인덱스 규칙은 @lotto-lab/statistics computeStat 주석. */
+export type StatPayload = {
+  baseline: StatFraction | StatFraction[];
+  values: number[] | number[][] | StatGapEntry[];
+};
+
 /** statistics_cache 행(A-06). 기준선·표본·기간 표기에 range_*·sample_size·source·updated_at을 쓴다. */
 export type StatisticsCache = {
   game: GameType;
-  window_key: string;
-  metric: string;
-  payload: unknown;
+  window_key: StatWindow;
+  metric: StatMetric;
+  payload: StatPayload;
   range_from: number;
   range_to: number;
   sample_size: number;

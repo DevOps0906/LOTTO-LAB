@@ -21,5 +21,5 @@
 - 예측·추천 점수 산출, 워커 쪽 구현(task-030은 이 결과와 대조)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/statistics test` 통과(고정 입력 → 기대 결과 골든 파일, 표본 0 처리)
-- [ ] 골든 파일을 `packages/statistics/fixtures/`에 두어 task-030에서 재사용 가능
+- [x] `pnpm --filter ./packages/statistics test` 통과(고정 입력 → 기대 결과 골든 파일, 표본 0 처리)
+- [x] 골든 파일을 `packages/statistics/test/golden/`에 두어 task-030에서 재사용 가능

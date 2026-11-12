@@ -3,13 +3,14 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { ERROR_CODES, ERROR_HTTP_STATUS } from "@lotto-lab/types";
+import { ERROR_CODES, ERROR_HTTP_STATUS, STAT_METRICS, STAT_WINDOWS, type StatMetric, type StatPayload } from "@lotto-lab/types";
 import {
   DrawLottoSchema,
   DrawPensionSchema,
   ErrorResponseSchema,
   LottoGeneratorConfigSchema,
   PensionGeneratorConfigSchema,
+  StatPayloadSchema,
   StatisticsCacheSchema,
   TicketCreateInputSchema,
   TicketPurchaseInputSchema,
@@ -17,6 +18,29 @@ import {
   isoDate,
   isoDateTime,
 } from "../src/index.ts";
+
+/** 지표별 최소 유효 payload(validation은 statistics를 import하지 않는다 — 형태만 손으로 만든다). */
+function payloadFor(metric: StatMetric): StatPayload {
+  const f = { num: 1, den: 3 };
+  switch (metric) {
+    case "lotto.number_freq":
+    case "lotto.number_freq_bonus":
+      return { baseline: f, values: Array<number>(45).fill(0) };
+    case "lotto.range_dist":
+    case "lotto.odd_even":
+    case "lotto.sum_dist": {
+      const n = { "lotto.range_dist": 5, "lotto.odd_even": 7, "lotto.sum_dist": 235 }[metric];
+      return { baseline: Array.from({ length: n }, () => f), values: Array<number>(n).fill(0) };
+    }
+    case "lotto.gap":
+      return { baseline: { num: 15, den: 2 }, values: Array.from({ length: 45 }, (_, i) => (i ? { gap: i, censored: false } : { gap: null, censored: true })) };
+    case "pension.group_freq":
+      return { baseline: f, values: Array<number>(5).fill(0) };
+    case "pension.digit_freq":
+    case "pension.bonus_digit_freq":
+      return { baseline: { num: 1, den: 1 }, values: Array.from({ length: 6 }, () => Array<number>(10).fill(0)) };
+  }
+}
 
 const KEY = "3f1c2b4a-5d6e-4f70-8a9b-0c1d2e3f4a5b";
 const lottoBase = { game: "lotto", round: 1200, ticket_data: { nums: [1, 2, 3, 4, 5, 6] }, idempotency_key: KEY };
@@ -153,7 +177,7 @@ describe("회차 읽기 A-01·A-02", () => {
   });
 
   it("통계 캐시: range_from ≤ range_to, sample_size ≥ 0", () => {
-    const row = { game: "lotto", window_key: "all", metric: "freq", payload: {}, range_from: 1, range_to: 1200, sample_size: 1200, source: "x", updated_at: "2026-11-07T12:00:00Z" };
+    const row = { game: "lotto", window_key: "all", metric: "lotto.number_freq", payload: payloadFor("lotto.number_freq"), range_from: 1, range_to: 1200, sample_size: 1200, source: "x", updated_at: "2026-11-07T12:00:00Z" };
     expect(StatisticsCacheSchema.safeParse(row).success).toBe(true);
     expect(StatisticsCacheSchema.safeParse({ ...row, range_from: 1300 }).success).toBe(false);
     expect(StatisticsCacheSchema.safeParse({ ...row, sample_size: -1 }).success).toBe(false);
@@ -161,6 +185,42 @@ describe("회차 읽기 A-01·A-02", () => {
     expect(StatisticsCacheSchema.safeParse({ ...row, range_to: 2147483648 }).success).toBe(false);
     expect(StatisticsCacheSchema.safeParse({ ...row, sample_size: 2147483648 }).success).toBe(false);
     expect(StatisticsCacheSchema.safeParse({ ...row, range_from: -2147483649 }).success).toBe(false);
+  });
+
+  it("통계 캐시: window·metric은 허용 목록만, 지표는 게임과 맞아야 한다", () => {
+    const row = { game: "pension", window_key: "last10", metric: "pension.digit_freq", payload: payloadFor("pension.digit_freq"), range_from: 1, range_to: 10, sample_size: 10, source: "x", updated_at: "2026-11-07T12:00:00Z" };
+    expect(StatisticsCacheSchema.safeParse(row).success).toBe(true);
+    for (const window_key of STAT_WINDOWS) expect(StatisticsCacheSchema.safeParse({ ...row, window_key }).success).toBe(true);
+    for (const metric of STAT_METRICS) {
+      const game = metric.split(".")[0];
+      expect(StatisticsCacheSchema.safeParse({ ...row, game, metric, payload: payloadFor(metric) }).success, metric).toBe(true);
+    }
+    expect(StatisticsCacheSchema.safeParse({ ...row, window_key: "last30" }).success).toBe(false);
+    expect(StatisticsCacheSchema.safeParse({ ...row, metric: "lotto.hot" }).success).toBe(false);
+    expect(StatisticsCacheSchema.safeParse({ ...row, metric: "lotto.number_freq", payload: payloadFor("lotto.number_freq") }).success).toBe(false);
+  });
+
+  it("통계 payload: 정수·기약분수만, 지표별 형태 최소 검사", () => {
+    const row = { game: "lotto", window_key: "all", metric: "lotto.range_dist", payload: payloadFor("lotto.range_dist"), range_from: 1, range_to: 10, sample_size: 10, source: "x", updated_at: "2026-11-07T12:00:00Z" };
+    const ok = (payload: unknown, metric = row.metric) => StatisticsCacheSchema.safeParse({ ...row, metric, payload }).success;
+    expect(ok(row.payload)).toBe(true);
+    expect(StatPayloadSchema.safeParse({}).success).toBe(false);
+    expect(ok({ baseline: Array(5).fill({ num: 0.5, den: 1 }), values: [0, 0, 0, 0, 0] })).toBe(false); // 부동소수
+    expect(ok({ baseline: Array(5).fill({ num: 2, den: 4 }), values: [0, 0, 0, 0, 0] })).toBe(false); // 기약분수 아님
+    expect(ok({ baseline: Array(5).fill({ num: 1, den: 0 }), values: [0, 0, 0, 0, 0] })).toBe(false);
+    expect(ok({ baseline: Array(5).fill({ num: 1, den: 3 }), values: [0, 0, 0, 0, -1] })).toBe(false);
+    expect(ok({ baseline: Array(5).fill({ num: 1, den: 3 }), values: [0, 0, 0, 0, 1.5] })).toBe(false);
+    expect(ok({ baseline: Array(5).fill({ num: 1, den: 3 }), values: [0, 0, 0, 0] })).toBe(false); // 길이
+    expect(ok({ baseline: { num: 1, den: 3 }, values: [0, 0, 0, 0, 0] })).toBe(false); // 구간 기준선은 배열
+    expect(ok({ ...row.payload, hot: [1] })).toBe(true); // 모르는 키는 버린다(z.object)
+    expect(StatisticsCacheSchema.parse({ ...row, payload: { ...row.payload, hot: [1] } }).payload).toStrictEqual(row.payload);
+    const gaps = payloadFor("lotto.gap");
+    expect(ok(gaps, "lotto.gap")).toBe(true);
+    expect(ok({ ...gaps, values: [{ gap: null, censored: false }, ...gaps.values.slice(1)] }, "lotto.gap")).toBe(false);
+    expect(ok({ ...gaps, values: [{ gap: 3, censored: true }, ...gaps.values.slice(1)] }, "lotto.gap")).toBe(false);
+    expect(ok(payloadFor("lotto.number_freq"), "lotto.gap")).toBe(false);
+    const digits = payloadFor("pension.digit_freq");
+    expect(ok({ ...digits, values: digits.values.map((r) => (r as number[]).slice(1)) }, "pension.digit_freq")).toBe(false);
   });
 });
 

@@ -1,6 +1,16 @@
 // 회차 읽기(A-01·A-02·A-03)·통계 캐시(A-06) 스키마. 읽기 DTO라 모르는 열은 버린다(z.object).
 import { z } from "zod";
-import { GAME_TYPES, LOTTO_PRIZE_RANK_MAX, PRIZE_RANK_MAX, PRIZE_RANK_MIN, type PrizeEntry } from "@lotto-lab/types";
+import {
+  GAME_TYPES,
+  LOTTO_PRIZE_RANK_MAX,
+  PRIZE_RANK_MAX,
+  PRIZE_RANK_MIN,
+  STAT_METRICS,
+  STAT_WINDOWS,
+  type PrizeEntry,
+  type StatMetric,
+  type StatPayload,
+} from "@lotto-lab/types";
 import { int4, intRange, isoDate, isoDateTime, lottoNumber, lottoNums, pensionDigits, pensionGroup } from "./primitives.ts";
 
 const prizeBase = {
@@ -64,16 +74,61 @@ export const DrawPensionSchema = z.object({
   ...provenance,
 });
 
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+
+/** 기준선 정수 분수: num ≥ 0, den ≥ 1, 기약분수. */
+export const StatFractionSchema = z
+  .object({ num: z.int().min(0), den: z.int().min(1) })
+  .refine((f) => gcd(f.num, f.den) === 1, { message: "기준선은 기약분수여야 합니다.", path: ["num"] });
+
+const count = z.int().min(0);
+const StatGapEntrySchema = z
+  .object({ gap: count.nullable(), censored: z.boolean() })
+  .refine((e) => e.censored === (e.gap === null), { message: "미출현(censored)이면 gap은 null입니다.", path: ["censored"] });
+
+/** statistics_cache.payload(task-015 결정 ④): 정수 배열·정수 분수만(부동소수 금지). 지표별 형태는 StatisticsCacheSchema가 검사. */
+export const StatPayloadSchema = z.object({
+  baseline: z.union([StatFractionSchema, z.array(StatFractionSchema)]),
+  values: z.union([z.array(count), z.array(z.array(count)), z.array(StatGapEntrySchema)]),
+});
+
+type Shape = { values: "counts" | "digits" | "gaps"; length: number; baselineArray: boolean };
+/** 지표별 payload 형태(최소 검사): values 종류·길이, 기준선이 배열인지. 인덱스 규칙은 statistics computeStat 주석. */
+const STAT_PAYLOAD_SHAPES: Record<StatMetric, Shape> = {
+  "lotto.number_freq": { values: "counts", length: 45, baselineArray: false },
+  "lotto.number_freq_bonus": { values: "counts", length: 45, baselineArray: false },
+  "lotto.range_dist": { values: "counts", length: 5, baselineArray: true },
+  "lotto.odd_even": { values: "counts", length: 7, baselineArray: true },
+  "lotto.sum_dist": { values: "counts", length: 235, baselineArray: true },
+  "lotto.gap": { values: "gaps", length: 45, baselineArray: false },
+  "pension.digit_freq": { values: "digits", length: 6, baselineArray: false },
+  "pension.group_freq": { values: "counts", length: 5, baselineArray: false },
+  "pension.bonus_digit_freq": { values: "digits", length: 6, baselineArray: false },
+};
+
+function matchesShape(metric: StatMetric, payload: StatPayload): boolean {
+  const shape = STAT_PAYLOAD_SHAPES[metric];
+  const v: unknown[] = payload.values;
+  if (v.length !== shape.length) return false;
+  if (Array.isArray(payload.baseline) !== shape.baselineArray) return false;
+  if (Array.isArray(payload.baseline) && payload.baseline.length !== shape.length) return false;
+  if (shape.values === "counts") return v.every((x) => typeof x === "number");
+  if (shape.values === "gaps") return v.every((x) => typeof x === "object" && x !== null && !Array.isArray(x));
+  return v.every((x) => Array.isArray(x) && x.length === 10);
+}
+
 export const StatisticsCacheSchema = z
   .object({
     game: z.enum(GAME_TYPES),
-    window_key: z.string(),
-    metric: z.string(),
-    payload: z.unknown(),
+    window_key: z.enum(STAT_WINDOWS),
+    metric: z.enum(STAT_METRICS),
+    payload: StatPayloadSchema,
     range_from: int4(),
     range_to: int4(),
     sample_size: int4(0),
     source: z.string(),
     updated_at: isoDateTime,
   })
-  .refine((s) => s.range_from <= s.range_to, { message: "range_from은 range_to 이하여야 합니다.", path: ["range_from"] });
+  .refine((s) => s.range_from <= s.range_to, { message: "range_from은 range_to 이하여야 합니다.", path: ["range_from"] })
+  .refine((s) => s.metric.startsWith(`${s.game}.`), { message: "지표가 게임 종류와 맞지 않습니다.", path: ["metric"] })
+  .refine((s) => matchesShape(s.metric, s.payload), { message: "지표와 payload 형태가 맞지 않습니다.", path: ["payload"] });

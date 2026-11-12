@@ -16,6 +16,8 @@ export {
   LottoPrizesSchema,
   PrizeEntrySchema,
   PrizesSchema,
+  StatFractionSchema,
+  StatPayloadSchema,
   StatisticsCacheSchema,
 } from "./draws.ts";
 export { TicketCreateInputSchema, TicketPurchaseInputSchema, isAllowedTransition } from "./tickets.ts";
