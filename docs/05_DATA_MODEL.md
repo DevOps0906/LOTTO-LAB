@@ -31,7 +31,7 @@
 | `statistics_cache` | `game game_type` · `window_key text`(예약어 `window` 회피 — API 파라미터 이름은 A-06 `window` 유지) · `metric text` · PK(`game, window_key, metric`) · CHECK(`range_from <= range_to`, `sample_size >= 0`) · `payload jsonb NOT NULL`(`{baseline, values}`만 — 형식은 `packages/statistics` 정본, 정수·기약분수, 지표·기간·표본은 열) · `range_from int NOT NULL` · `range_to int NOT NULL` · `sample_size int NOT NULL` · `source text NOT NULL` · `updated_at timestamptz NOT NULL`(원본 2.3 필수 표기) | PK |
 | `push_devices`(task-008 범위 밖 — 알림 작업에서 계정 전환 시 토큰 이전 설계와 함께 생성) | `id uuid PK` · `user_id` · `platform text NOT NULL CHECK(in 'android','ios','windows')` · `token text NOT NULL UNIQUE` · `notify_opt_in boolean NOT NULL DEFAULT false`(원본 10장 5 동의) · `last_seen_at timestamptz` | `user_id`, `token`(UNIQUE) |
 | `subscription_accounts` | `id uuid PK` · `user_id` · `store text NOT NULL` · `product_id text NOT NULL` · `state text NOT NULL` · UNIQUE(`user_id, store, product_id`) — P2, 값 목록은 결제 결정(Q3) 후 | `user_id` |
-| `fortune_profiles` | `user_id uuid PK`(1인 1행, 공통 규칙의 FK·CASCADE) · `birth_date date NOT NULL` CHECK(범위 팀장 결정 필요) · `calendar text NOT NULL CHECK(in 'solar','lunar')` · `is_leap_month boolean NOT NULL DEFAULT false`(음력만 의미) · `birth_time time`(NULL = 모름) · `consented_at timestamptz NOT NULL` · `updated_at timestamptz` — 성별 등 다른 항목 없음, P1([ADR-0005](adr/0005-fortune-numbers.md)) | PK(`user_id`) |
+| `fortune_profiles` | `user_id uuid PK`(1인 1행, 공통 규칙의 FK·CASCADE) · `birth_date text NOT NULL`(`YYYY-MM-DD`, 양력은 실제 날짜·음력은 월 01~12·일 01~30, 범위 `1900-01-01`~KST 오늘) · `calendar text NOT NULL CHECK(in 'solar','lunar')` · `is_leap_month boolean NOT NULL DEFAULT false`(lunar일 때만 true) · `birth_hour text`(12시진 ID `ja·chuk·in·myo·jin·sa·o·mi·sin·yu·sul·hae`, NULL = 모름) · `consented_at timestamptz NOT NULL DEFAULT now()` · `updated_at timestamptz`(UPDATE 트리거) — 성별 등 다른 항목 없음, P1([ADR-0005](adr/0005-fortune-numbers.md), task-040) | PK(`user_id`) |
 
 - 생성 출처: 운세·테마 번호 결과도 `generated_batches`·`generated_numbers`(generated 상태)에 그대로 저장하고 출처 값 `method` ∈ random · condition · zodiac · birthday · dream · saju만 추가한다(ADR-0005). `strategy`(엔진 전략)와 별개인 `method` 열로 둔다(팀장 결정, 아직 미적용 스키마라 정의를 직접 수정). 테마 입력값 자체는 저장하지 않는다.
 
@@ -50,7 +50,7 @@
 | `draw_checks` | 없음 | SELECT `EXISTS(ticket.user_id = auth.uid())` | service_role만(A-09 판정) |
 | `push_devices` | 없음 | SELECT/INSERT/UPDATE/DELETE 본인 | 본인 · 발송은 service_role |
 | `subscription_accounts` | 없음 | SELECT 본인 | service_role만(스토어 영수증 검증, P2) |
-| `fortune_profiles` | 없음 | SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK (auth.uid() = user_id)` | 본인(A-17) · 계정 삭제 시 CASCADE 파기 |
+| `fortune_profiles` | 없음 | SELECT/INSERT/UPDATE/DELETE `USING/WITH CHECK (auth.uid() = user_id)` · INSERT 열 `user_id·birth_date·calendar·is_leap_month·birth_hour`, UPDATE 열은 `consented_at`·`updated_at` 제외(서버 값). `user_id` UPDATE 권한은 PostgREST upsert용, 다른 uid 변경은 WITH CHECK가 42501 | 본인(A-17) · 계정 삭제 시 CASCADE 파기 |
 
 - service_role 키는 EF·워커에만(D9). 정책에 쓰는 컬럼(`user_id`, `batch_id`, `ticket_id`)은 2절 인덱스로 보장.
 

@@ -113,6 +113,15 @@ erDiagram
     boolean bonus_hit
     timestamptz created_at
   }
+  fortune_profiles {
+    uuid user_id PK,FK
+    text birth_date
+    text calendar
+    boolean is_leap_month
+    text birth_hour
+    timestamptz consented_at
+    timestamptz updated_at
+  }
   ingestion_runs ||--o{ draws_lotto : "ingestion_run_id"
   ingestion_runs ||--o{ draws_pension : "ingestion_run_id"
   generated_batches ||--o{ generated_numbers : "batch_id"
