@@ -148,7 +148,7 @@ pnpm --filter @lotto-lab/web dev        # http://localhost:3000
 
 | Windows D-01 대시보드 (구현) | Windows D-02 로또 생성 (구현) |
 |---|---|
-| ![D-01](design/shots/D-01-app-1440.png) | ![D-02](design/shots/D-02-app-1440.png) |
+| ![D-01](design/shots/D-01-app-1440.png) | ![D-02](design/shots/D-02-app-1440-result.png) |
 
 ### Windows · 웹
 | Windows 홈 시안 (확정, ADR-0004) | Windows 로또 생성 시안 | 웹 랜딩 W-01 (구현) |
