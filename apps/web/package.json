@@ -1,9 +1,8 @@
 {
-  "name": "web",
+  "name": "@lotto-lab/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.34.8",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -12,9 +11,11 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@lotto-lab/design-tokens": "workspace:*",
     "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"
@@ -29,7 +30,7 @@
     "@types/react-dom": "19.3.0",
     "jsdom": "31.0.0",
     "tailwindcss": "4.3.5",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
     "vite": "8.3.8",
     "vitest": "5.1.0"
   }

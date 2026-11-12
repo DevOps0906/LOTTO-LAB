@@ -1,0 +1,17 @@
+{
+  "name": "@lotto-lab/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lotto-lab/app-core": "workspace:*",
+    "@lotto-lab/design-tokens": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint ."
+  }
+}

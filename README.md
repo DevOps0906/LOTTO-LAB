@@ -56,6 +56,22 @@
 - [ ] task-003~004 사전알림 백엔드 + 랜딩 (린 검증)
 - [ ] W1 기반 구축 → W2 엔진 → W3·W4 화면
 
+## 개발 환경 (모노레포, task-005)
+
+pnpm workspaces(`apps/*`·`packages/*`) + Turborepo. 내부 패키지는 `@lotto-lab/*`, 모두 `private`, 내부 의존은 `workspace:*`(`.npmrc`의 `link-workspace-packages`로 레지스트리 조회 차단). lockfile은 루트 `pnpm-lock.yaml` 하나.
+
+| 목적 | 명령 |
+|---|---|
+| 설치 | `pnpm install --frozen-lockfile` |
+| 타입 · 린트 · 테스트 · 빌드 | `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` (각각 `turbo run …`) |
+
+**도구 버전** (2026-11-12 `npm view` 기준 최신 stable, 정확한 버전 고정): pnpm 10.34.8 · Turborepo 2.11.11 · TypeScript **6.0.3** · ESLint 10.14.0 · typescript-eslint 8.72.2 · @eslint/js 10.0.1 · globals 17.14.0
+- TypeScript는 최신 7.0.2가 아닌 6.x 최신으로 워크스페이스 전체를 통일했다: typescript-eslint 8.72.2의 peerDependencies가 `typescript >=4.8.4 <6.1.0`(TS 7 미지원). 지원 버전이 나오면 7로 올린다.
+- 린트(루트 `eslint.config.mjs`, 규칙 `lotto-lab/boundaries`): 의존 방향(02#4) 역방향 import, 다른 패키지·앱으로 나가는 상대 경로 import(경로 정규화 후 판정), `@capacitor/*`·`@tauri-apps/*` 직접 import(셸 외)를 정적·동적 import·re-export·require 모두 막는다. `supabase/**`·`services/**`·`**/.next/**` 무시. `pnpm lint`는 먼저 `pnpm check:workspace`(모든 패키지 private·`@lotto-lab/*`, 내부 의존 정확히 `workspace:*`)를 실행한다.
+- Turborepo 텔레메트리는 끈다: 각 개발 기기에서 `pnpm exec turbo telemetry disable`을 한 번 실행하거나 `TURBO_TELEMETRY_DISABLED=1`을 설정한다. 원격 캐시는 쓰지 않는다(`turbo.json` `remoteCache.enabled: false`, `turbo login/link` 금지).
+- 라이선스(`pnpm licenses list`, 2026-11-12): GPL·AGPL 없음. 새 도구(turbo·eslint·typescript-eslint·@eslint/js·globals)는 MIT, TypeScript는 Apache-2.0. 예외 3건(sharp LGPL 바이너리·lightningcss MPL-2.0·caniuse-lite CC-BY-4.0)은 `apps/web/README.md#라이선스` 판단 유지.
+- 메모: `lottery-core`를 Edge Function(Deno)에서 소비하는 방식은 task-012에서 정한다.
+
 ## 디자인 시안
 
 ### 모바일 (원본 시안 — `LOTTO_LAB_Planning_Design.pdf`)

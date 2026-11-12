@@ -24,7 +24,7 @@
 | 개발 서버 | `pnpm dev` |
 | 린트 · 타입 | `pnpm lint` · `pnpm typecheck` |
 | 테스트 | `pnpm test` · `cd services/analytics-worker && pytest -q` |
-| Android 동기화 | `pnpm --filter mobile build && npx cap sync android` |
+| Android 동기화 | `pnpm --filter @lotto-lab/mobile build && npx cap sync android` |
 | DB 초기화 · 타입 (Docker Desktop 필요) | `supabase start` · `supabase db reset` · `supabase gen types typescript --local > apps/web/src/types/db.ts` |
 | ERD 갱신 | `~/.claude/nomad/bin/sql2erd supabase/migrations -o docs/diagrams/erd.mmd` |
 명령은 1단계(기반) 구축 후 실제 스크립트에 맞춰 확정한다. 긴 출력 명령은 `~/.claude/nomad/bin/q <명령>`으로 실행한다.

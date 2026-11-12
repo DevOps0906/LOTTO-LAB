@@ -1,0 +1,17 @@
+{
+  "name": "@lotto-lab/lotto-engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lotto-lab/lottery-core": "workspace:*",
+    "@lotto-lab/types": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint ."
+  }
+}

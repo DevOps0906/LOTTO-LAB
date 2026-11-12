@@ -3,6 +3,7 @@
 > 그림: [`diagrams/architecture.mmd`](diagrams/architecture.mmd) — 코드가 생기면 `deps2mmd`로 다시 생성
 > 결정 근거: [ADR-0001 셸 2개·코드 공유](adr/0001-capacitor-tauri-shared-core.md) · [ADR-0002 엔진 기기 실행](adr/0002-engine-on-device.md) · [ADR-0003 RLS+Edge Function](adr/0003-supabase-rls-edge-function.md)
 > 버전: Capacitor 8 · Tauri 2는 결정된 메이저다. 마이너·패치와 그 밖의 도구(Vite·React·Next.js·pnpm·Turborepo)는 **착수 시 최신 stable 확인** 후 이 문서에 적는다.
+> 확정(2026-11-12, task-005): pnpm 10.34.8 · Turborepo 2.11.11 · TypeScript 6.0.3(typescript-eslint 8.72.2가 TS 7 미지원 → 6.x 통일) · ESLint 10.14.0 · typescript-eslint 8.72.2 · Next.js 16.4.6 · React 19.3.1 · Vite 8.3.8 · Node ≥20.9.0
 
 ## 1. 구성 요소
 | 요소 | 책임 | 기술 | 소유 경로 |
@@ -62,7 +63,7 @@ lotto-lab/                      # pnpm workspaces + Turborepo
 │   └── functions/              # Edge Function /v1/*
 └── docs/
 ```
-- 의존 방향: `apps` → `ui` → `app-core` → (엔진·통계·검증) → `types`. 역방향 import 금지.
+- 의존 방향: `apps` → `ui` → `app-core` → (`lotto-engine`·`pension-engine`·`statistics`·`validation`) → `lottery-core`(엔진·통계만) → `types`. 같은 층끼리·역방향 import 금지(루트 `eslint.config.mjs`가 강제).
 
 ## 5. 플랫폼별 네이티브 기능
 | 기능 | 모바일 (Capacitor) | Windows (Tauri) | 웹 | 우선순위 |

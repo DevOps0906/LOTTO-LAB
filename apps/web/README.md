@@ -15,16 +15,15 @@
 | Next.js | 16.4.6 |
 | React · React DOM | 19.3.1 |
 | Tailwind CSS · @tailwindcss/postcss | 4.3.5 |
-| TypeScript | 7.0.2 |
+| TypeScript | 6.0.3 (워크스페이스 통일, 루트 README 참고) |
 | Vitest · Vite · jsdom | 5.1.0 · 8.3.8 · 31.0.0 |
 | Testing Library (react · user-event · jest-dom) | 16.3.3 · 14.6.10 · 7.0.1 |
 
-## 명령 (모노레포 구성 전까지 이 폴더 단독, task-005에서 workspace로 이전)
+## 명령 (워크스페이스 패키지 `@lotto-lab/web`, 설치는 루트에서 `pnpm install`)
 | 목적 | 명령 |
 |---|---|
-| 설치 | `pnpm --dir apps/web install --ignore-workspace` |
-| 개발 서버 | `pnpm --dir apps/web dev` |
-| 빌드 · 타입 · 테스트 | `pnpm --dir apps/web build` · `typecheck` · `test` |
+| 개발 서버 | `pnpm --filter @lotto-lab/web dev` |
+| 빌드 · 타입 · 테스트 · 린트 | `pnpm --filter @lotto-lab/web build` · `typecheck` · `test` · `lint` (전체는 루트 `pnpm build` 등) |
 
 ## 환경 변수 (`.env.example`이 정본, 값은 커밋 금지)
 | 이름 | 용도 |
