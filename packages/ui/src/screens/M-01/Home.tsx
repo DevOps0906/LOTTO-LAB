@@ -32,7 +32,7 @@ import {
 } from "../common/data";
 
 /** lottoLast·pensionLast = 지난 설정을 복원해 여는 생성기 주소 */
-export type HomeLinks = { generate: string; lotto: string; pension: string; lottoLast: string; pensionLast: string; stats: string; tickets: string };
+export type HomeLinks = { generate: string; lotto: string; pension: string; lottoLast: string; pensionLast: string; stats: string; tickets: string; settings: string };
 
 export type HomeProps = {
   core: ScreenCore;
@@ -84,9 +84,9 @@ export function Home({ core, links }: HomeProps) {
             <button type="button" className="ll-icon-button" disabled aria-label="알림 (준비 중)" title="알림은 준비 중입니다">
               <Icon name="bell" />
             </button>
-            <button type="button" className="ll-icon-button" disabled aria-label="설정 (준비 중)" title="설정은 준비 중입니다">
+            <a className="ll-icon-button" href={links.settings} aria-label="설정">
               <Icon name="gear" />
-            </button>
+            </a>
           </>
         }
       />

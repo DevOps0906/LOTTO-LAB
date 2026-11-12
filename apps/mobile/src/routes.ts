@@ -16,10 +16,19 @@ export const SUB_ROUTES: readonly SubRoute[] = [
   { path: "/generate/lotto", title: "로또 번호 생성", tab: "/generate" },
   { path: "/generate/pension", title: "연금복권 번호 생성", tab: "/generate" },
   { path: "/draws", title: "회차 목록", tab: "/stats" },
+  { path: "/tickets/register", title: "구매 등록", tab: "/tickets" },
+  { path: "/tickets/check", title: "당첨 확인", tab: "/tickets" },
+  { path: "/settings", title: "설정", tab: "/settings" },
 ];
 
 /** 회차 상세(M-11) 주소: /draws/{lotto|pension}/{회차}. 회차가 숫자가 아니면 화면이 잘못된 주소로 안내한다. */
 export const DRAW_DETAIL = /^\/draws\/(lotto|pension)\/([^/]+)$/;
+
+/** 내 번호 상세(M-08) 주소: /tickets/{저장 번호 id}. 목록에 없는 id면 화면이 안내한다. */
+export const TICKET_DETAIL = /^\/tickets\/([0-9a-f-]{36})$/;
+
+export const ticketDetailHref = (id: string): string => href(`/tickets/${id}`);
+export const registerFromHref = (ticketId: string): string => href(`/tickets/register?ticket=${encodeURIComponent(ticketId)}`);
 
 export const drawsHref = (game: "lotto" | "pension"): string => href(`/draws?game=${game}`);
 export const drawDetailHref = (game: "lotto" | "pension", round: number): string => href(`/draws/${game}/${round}`);
@@ -32,6 +41,7 @@ export function routeOf(path: string): { path: string; title: string; tab: strin
   const sub = SUB_ROUTES.find((route) => route.path === path);
   if (sub) return sub;
   if (DRAW_DETAIL.test(path)) return { path, title: "회차 상세", tab: "/stats" };
+  if (TICKET_DETAIL.test(path)) return { path, title: "내 번호 상세", tab: "/tickets" };
   const route = ROUTES.find((r) => r.path === path) ?? ROUTES[0];
   return { path: route.path, title: route.title, tab: route.path };
 }

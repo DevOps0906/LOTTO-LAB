@@ -5,6 +5,7 @@ import { AgeGate } from "./age-gate.ts";
 import { CheckService } from "./check-service.ts";
 import { GenerateService } from "./generate-service.ts";
 import { LastConfigStore } from "./last-config.ts";
+import { LocalData, ThemeStore } from "./local-data.ts";
 import { PublicReader } from "./public-read.ts";
 import { LocalStore, type Migrations } from "./storage.ts";
 import { TicketService } from "./ticket-service.ts";
@@ -14,6 +15,16 @@ export * from "./errors.ts";
 export { AgeGate } from "./age-gate.ts";
 export { CheckService, type CheckOutcome } from "./check-service.ts";
 export { LastConfigStore } from "./last-config.ts";
+export {
+  EXPORT_FORMAT_VERSION,
+  LocalData,
+  THEME_KEY,
+  THEME_PREFERENCES,
+  ThemeStore,
+  type LocalDataSummary,
+  type LocalExport,
+  type ThemePreference,
+} from "./local-data.ts";
 export { GENERATED_HISTORY_LIMIT, GenerateService, type GenerateRequest, type GenerateResult } from "./generate-service.ts";
 export {
   DRAW_CACHE_TTL_MS,
@@ -46,6 +57,10 @@ export type AppCore = {
   checker: CheckService;
   /** 복권별 지난 생성 조건(설정 레코드) */
   lastConfig: LastConfigStore;
+  /** 로컬 데이터 내보내기·모두 삭제(M-12) */
+  data: LocalData;
+  /** 화면 테마 선호(M-12) */
+  theme: ThemeStore;
   adapters: Adapters;
 };
 
@@ -61,6 +76,8 @@ export function createAppCore(adapters: Adapters, config: AppConfig, options: { 
     reader,
     checker: new CheckService(tickets, reader),
     lastConfig: new LastConfigStore(store),
+    data: new LocalData(store, adapters.store, adapters.clock),
+    theme: new ThemeStore(store, adapters.store),
     adapters,
   };
 }

@@ -55,6 +55,19 @@ export class CheckService {
     }
     return out;
   }
+
+  /**
+   * 저장 번호 1개 판정(M-08 상세). purchased가 아니면 null — 즐겨찾기·추천 번호는 대조하지 않는다(DF-5).
+   * 저장 번호가 없거나 읽을 수 없으면(격리) null.
+   */
+  async checkTicket(id: string, options: ReadOptions = {}): Promise<CheckOutcome | null> {
+    const ticket = await this.tickets.get(id);
+    if (!ticket || ticket.purchase_status !== "purchased") return null;
+    if (ticket.round === null) return { ticket, status: "no_round" };
+    return ticket.game === "lotto"
+      ? outcomeOf(ticket, await this.reader.drawByRound("lotto", ticket.round, options), (d) => judgeLotto(ticket.ticket_data, d))
+      : outcomeOf(ticket, await this.reader.drawByRound("pension", ticket.round, options), (d) => judgePension(ticket.ticket_data, d));
+  }
 }
 
 type DrawProvenance = { draw_no: number; source_url: string; source_verified_at: string };

@@ -73,12 +73,12 @@ describe("19세 확인 게이트", () => {
     expect(map.size).toBe(0);
   });
 
-  it("미구현 화면(#/tickets)은 준비 중 + 홈으로 돌아가기", async () => {
+  it("확인 후 #/tickets는 내 번호(M-07) — 저장 번호가 없으면 빈 상태 + 번호 생성 안내", async () => {
     const map = new Map([["ll:v1:settings:app", JSON.stringify({ v: 1, age_confirmed_at: "2026-11-12T00:00:00.000Z" })]]);
     window.location.hash = "#/tickets";
     render(<App core={coreWith(memoryStore(map))} />);
-    expect(await screen.findByText("준비 중")).toBeInTheDocument();
+    expect(await screen.findByText("즐겨찾기한 번호가 없습니다")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("내 번호");
-    expect(screen.getByRole("link", { name: "홈으로 돌아가기" })).toHaveAttribute("href", "#/");
+    expect(screen.getByRole("link", { name: "번호 생성하기" })).toHaveAttribute("href", "#/generate");
   });
 });

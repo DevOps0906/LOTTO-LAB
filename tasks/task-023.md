@@ -18,5 +18,10 @@
 - QR 등록 M-10, 푸시 등록(`push_devices`, P1)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-09 M-12` 통과(확인 체크 전 확정 비활성, 두 번 제출해도 1건, 연금 `000719` 보존)
-- [ ] `pnpm --filter ./apps/mobile build` 성공
+- [x] `pnpm --filter ./packages/ui test -- M-09 M-12` 통과(확인 체크 전 확정 비활성, 두 번 제출해도 1건, 연금 `000719` 보존)
+- [x] `pnpm --filter ./apps/mobile build` 성공
+
+## 결과 (2026-11-13)
+- M-09 `packages/ui/src/screens/M-09/PurchaseRegister.tsx`(멱등 키 진입 시 1회, 회차 suggestRound·확인 필요 시 비움, 회차 나중에 입력 = round null, 즐겨찾기 → 구매 전환), M-12 `M-12/Settings.tsx`(테마·19세 확인·권한·내보내기·모두 삭제 이중 확인·P1 안내). 라우트 `#/tickets/register`·`#/settings`(내 번호 헤더 톱니 링크).
+- app-core 추가: `ageGate.confirmedAt`, `data`(LocalData: summary·export·clearAll), `theme`(ThemeStore, 키 `ll:v1:pref:theme`). 셸 `apps/mobile/src/theme.ts`가 <html>.dark 적용.
+- 확인: ui·mobile·app-core 테스트, 캡처 `design/shots/M-09-app-*`·`M-12-app-*`.

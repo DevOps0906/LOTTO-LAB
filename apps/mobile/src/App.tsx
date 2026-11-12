@@ -6,8 +6,18 @@ import { AgeGateRoute, createSessionAgeGate, type AgeGateLike } from "./routes/A
 import { RouteScreen } from "./routes/screens.tsx";
 import { ROUTES, href, routeOf } from "./routes.ts";
 import { useHashPath } from "./router.ts";
+import type { ThemePreference } from "./theme.ts";
 
-export function App({ core, onExit }: { core: CoreState; onExit?: () => void }) {
+export type AppProps = {
+  core: CoreState;
+  onExit?: () => void;
+  /** 설정(M-12)에서 테마를 바꾸면 즉시 적용 */
+  onThemeChange?: (theme: ThemePreference) => void;
+  /** 설정(M-12) 모두 삭제 뒤 다시 시작 */
+  onCleared?: () => void;
+};
+
+export function App({ core, onExit, onThemeChange, onCleared }: AppProps) {
   const [gate] = useState<AgeGateLike>(() => core.core?.ageGate ?? createSessionAgeGate());
   const hashPath = useHashPath();
   const [path = "/", query = ""] = hashPath.split("?");
@@ -26,7 +36,15 @@ export function App({ core, onExit }: { core: CoreState; onExit?: () => void }) 
           <AppShell brandMark={<NavIcon name="brand" />} brandName="LOTTO LAB" tabItems={items} sideItems={items}>
             <div className="app-page">
               {core.core ? (
-                <RouteScreen key={hashPath} path={route.path} query={query} title={route.title} core={core.core} />
+                <RouteScreen
+                  key={hashPath}
+                  path={route.path}
+                  query={query}
+                  title={route.title}
+                  core={core.core}
+                  onThemeChange={onThemeChange}
+                  onCleared={onCleared}
+                />
               ) : (
                 <>
                   <Header title={route.title} />

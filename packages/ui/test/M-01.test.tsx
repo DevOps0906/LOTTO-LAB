@@ -7,7 +7,7 @@ import { FETCHED, LOTTO, LOTTO_STAT, PENSION_STAT, mockCore, ok } from "./screen
 const links = { generate: "#/generate", lotto: "#/generate/lotto", pension: "#/generate/pension",
   lottoLast: "#/generate/lotto?from=last",
   pensionLast: "#/generate/pension?from=last",
-  stats: "#/stats", tickets: "#/tickets" };
+  stats: "#/stats", tickets: "#/tickets", settings: "#/settings" };
 
 describe("M-01 홈", () => {
   it("로딩: 회차·통계를 받는 동안 스켈레톤과 로딩 알림", () => {
@@ -149,10 +149,10 @@ describe("M-01 홈", () => {
     expect(within(summary).queryByRole("list", { name: "출현 횟수가 많은 조" })).not.toBeInTheDocument();
   });
 
-  it("알림·설정은 P1 비활성", () => {
+  it("알림은 P1 비활성, 설정은 #/settings 링크", () => {
     const m = mockCore();
     render(<Home core={m.core} links={links} />);
     expect(screen.getByRole("button", { name: "알림 (준비 중)" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "설정 (준비 중)" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: "설정" })).toHaveAttribute("href", "#/settings");
   });
 });

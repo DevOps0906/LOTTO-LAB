@@ -1257,3 +1257,296 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   }
 }
+
+/* ── M-07 내 번호 · M-08 상세·당첨 확인 · M-09 구매 등록 · M-12 설정 ──
+   ~767 1열 / 48em(768)~ 목록 2열·설정 2열 / 75em(1200)~ 목록 3열. 상태 배지는 색 + 문구(색만으로 구분하지 않는다). */
+.ll-tickets,
+.ll-settings {
+  --gen-accent: var(--color-primary);
+  --gen-soft: var(--color-primary-soft);
+  --gen-soft-fg: var(--color-primary-soft-fg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+.ll-tickets[data-game="pension"] {
+  --gen-accent: var(--color-pension);
+  --gen-soft: var(--color-pension-soft);
+  --gen-soft-fg: var(--color-pension-soft-fg);
+}
+.ll-tickets[data-game="pension"] .ll-seg__item input:checked + span {
+  color: var(--color-pension-fg);
+}
+.ll-tickets .ll-header,
+.ll-settings .ll-header {
+  padding: 0;
+}
+.ll-shell .ll-header a.ll-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+}
+.ll-tickets__top {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 2);
+}
+/* 탭: 높이 44 이상, 선택 = 밑줄 + 굵게(색 외 표시) */
+.ll-tabs {
+  display: flex;
+  gap: var(--spacing);
+  border-bottom: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-tabs__tab {
+  flex: 1 1 0;
+  min-height: calc(var(--spacing) * 11);
+  padding: 0 calc(var(--spacing) * 2);
+  border: 0;
+  border-bottom: calc(var(--spacing) * 0.75) solid transparent;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ll-tabs__tab[aria-selected="true"] {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-text);
+  font-weight: 800;
+}
+.ll-tabs__tab:focus-visible {
+  outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+  outline-offset: calc(var(--spacing) * -0.5);
+}
+.ll-tickets__panel {
+  display: grid;
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+.ll-tickets__panel > section {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-tickets__panel > section > .ll-muted {
+  margin: 0;
+}
+.ll-tickets__controls {
+  display: grid;
+  gap: calc(var(--spacing) * 4);
+}
+.ll-tickets__filters {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-tickets__items {
+  display: grid;
+  gap: var(--spacing-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-tickets__item {
+  position: relative;
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+  min-width: 0;
+  padding: calc(var(--spacing) * 4);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+.ll-tickets__group .ll-tickets__item {
+  box-shadow: none;
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-tickets__head,
+.ll-tickets__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-tickets__head .ll-badge:last-child,
+.ll-tickets__head .ll-tickets__results {
+  margin-left: auto;
+}
+.ll-tickets__foot {
+  justify-content: space-between;
+}
+.ll-tickets__title {
+  font-size: var(--text-body);
+}
+.ll-shell a.ll-tickets__title {
+  color: var(--color-text);
+}
+.ll-tickets__judge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+}
+.ll-tickets__results {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+}
+.ll-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2);
+  border-radius: var(--radius-pill);
+  border: calc(var(--spacing) / 4) solid transparent;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ll-badge[data-status="generated"] {
+  background: var(--color-bg);
+  border-color: var(--color-input);
+  color: var(--color-text-muted);
+}
+.ll-badge[data-status="favorite"] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-fg);
+}
+.ll-badge[data-status="purchased"] {
+  background: var(--color-navy);
+  color: var(--color-navy-fg);
+}
+.ll-badge[data-result="win"] {
+  background: var(--color-success);
+  color: var(--color-success-fg);
+}
+.ll-badge[data-result="lose"] {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.ll-badge[data-result="wait"] {
+  background: var(--color-warning);
+  color: var(--color-warning-fg);
+}
+.ll-badge[data-result="action"] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-fg);
+}
+.ll-badge[data-result="error"] {
+  background: var(--color-danger);
+  color: var(--color-danger-fg);
+}
+.ll-tickets__info {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin: calc(var(--spacing) * 3) 0;
+}
+.ll-tickets__info > div {
+  display: grid;
+  grid-template-columns: minmax(calc(var(--spacing) * 24), auto) minmax(0, 1fr);
+  gap: calc(var(--spacing) * 3);
+}
+.ll-tickets__info dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+}
+.ll-tickets__info dd {
+  margin: 0;
+  font-weight: 600;
+}
+.ll-tickets__activity {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding-left: calc(var(--spacing) * 5);
+  font-size: var(--text-caption);
+}
+.ll-tickets__outcome {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-tickets__outcome > .ll-muted {
+  margin: 0;
+}
+.ll-tickets__form {
+  display: grid;
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+.ll-tickets__form .ll-card {
+  display: grid;
+  gap: calc(var(--spacing) * 4);
+}
+.ll-tickets__source {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-tickets__source .ll-muted {
+  margin: 0;
+}
+/* 로또 6칸: 320에서도 한 줄 */
+.ll-tickets__nums {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 1.5);
+}
+.ll-tickets__nums .ll-input {
+  width: 100%;
+  padding: 0;
+  text-align: center;
+}
+.ll-tickets .ll-input:disabled {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+.ll-settings__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+  align-items: start;
+}
+.ll-settings .ll-card > .ll-muted {
+  margin: 0 0 calc(var(--spacing) * 3);
+}
+.ll-settings__danger {
+  border: calc(var(--spacing) / 4) solid var(--color-danger);
+}
+.ll-settings__danger .ll-field {
+  margin-bottom: calc(var(--spacing) * 3);
+}
+
+@media (width >= 48em) {
+  .ll-tickets__top {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .ll-tickets__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ll-tickets__panel .ll-tickets__items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ll-tickets__form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .ll-tickets__form > .ll-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .ll-settings__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (width >= 75em) {
+  .ll-tickets__panel .ll-tickets__items {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.ll-tickets__provenance {
+  display: grid;
+  gap: var(--spacing);
+}
+.ll-tickets__provenance .ll-muted {
+  margin: 0;
+}

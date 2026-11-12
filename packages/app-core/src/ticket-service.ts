@@ -94,6 +94,68 @@ export class TicketService {
     });
   }
 
+  /**
+   * 즐겨찾기 → 구매 기록 전환(M-09)을 한 번의 레코드 쓰기로: 전환 검증(isAllowedTransition) + 상태·구매일·금액·회차 갱신.
+   * 이미 purchased면 쓰지 않고 그대로 돌려준다(id 기준 멱등 — 같은 id 재호출 = 같은 결과). 없으면 NOT_FOUND, 입력 오류는 INVALID_INPUT.
+   */
+  purchase(id: string, input: { round: number | null; purchase_date: string; amount_won?: number }): Promise<LocalTicket> {
+    return this.store.run(async () => {
+      const current = await this.store.get("ticket", id, LocalTicketSchema);
+      if (!current) throw new AppCoreError("NOT_FOUND", "ticket");
+      if (!isAllowedTransition(current.purchase_status, "purchased")) throw new AppCoreError("INVALID_TRANSITION");
+      if (current.purchase_status === "purchased") return current;
+      const { round, ...rest } = input;
+      const purchase = TicketPurchaseInputSchema.safeParse({ purchase_status: "purchased", ...rest });
+      if (!purchase.success) throw new AppCoreError("INVALID_INPUT", "purchase");
+      const next = this.parse({
+        ...current,
+        purchase_status: "purchased",
+        purchase_date: purchase.data.purchase_date,
+        amount_won: purchase.data.amount_won ?? null,
+        round,
+        updated_at: this.clock.now().toISOString(),
+      });
+      await this.store.put("ticket", id, next);
+      return next;
+    });
+  }
+
+  /** 저장 번호 1개(없거나 격리 대상이면 null). */
+  get(id: string): Promise<LocalTicket | null> {
+    return this.store.run(() => this.store.get("ticket", id, LocalTicketSchema));
+  }
+
+  /**
+   * 회차 입력·수정(결정 ⑧ — 회차 미입력으로 저장한 구매 기록을 나중에 확인). 상태·번호는 바꾸지 않는다.
+   * 같은 회차면 그대로 돌려준다(id 기준 멱등). round null = 회차 미확인으로 되돌림.
+   */
+  setRound(id: string, round: number | null): Promise<LocalTicket> {
+    return this.store.run(async () => {
+      const current = await this.store.get("ticket", id, LocalTicketSchema);
+      if (!current) throw new AppCoreError("NOT_FOUND", "ticket");
+      if (current.round === round) return current;
+      const next = this.parse({ ...current, round, updated_at: this.clock.now().toISOString() });
+      await this.store.put("ticket", id, next);
+      return next;
+    });
+  }
+
+  /**
+   * 제거 실행 취소: remove로 지운 레코드를 그대로(id·created_at·상태 유지) 되돌린다.
+   * 같은 id 자리에 이미 키가 있으면(복원됨·격리 레코드) 덮어쓰지 않고 기존 유효 레코드를 돌려준다.
+   */
+  restore(ticket: LocalTicket): Promise<LocalTicket> {
+    return this.store.run(async () => {
+      const record = this.parse(ticket);
+      const same = await this.store.get("ticket", record.id, LocalTicketSchema);
+      if (same) return same;
+      if (await this.store.exists("ticket", record.id)) throw new AppCoreError("IDEMPOTENCY_CONFLICT");
+      if ((await this.store.count("ticket")) >= TICKET_LIMIT) throw new AppCoreError("LIMIT_EXCEEDED");
+      await this.store.put("ticket", record.id, record);
+      return record;
+    });
+  }
+
   /** 본인 기록 삭제(유효 레코드만 — 격리 레코드는 보존). */
   remove(id: string): Promise<void> {
     return this.store.run(async () => {

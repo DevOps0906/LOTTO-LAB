@@ -25,6 +25,13 @@ export class AgeGate {
     );
   }
 
+  /** 확인 시각(ISO). 미확인이거나 읽을 수 없으면 null. */
+  confirmedAt(): Promise<string | null> {
+    return this.store.run(
+      async () => this.sessionConfirmedAt ?? (await this.store.get("settings", SETTINGS_ID, LocalSettingsSchema))?.age_confirmed_at ?? null,
+    );
+  }
+
   /** 사용자가 만 19세 이상임을 확인한 시각을 기록한다. 이미 기록돼 있으면 처음 시각을 유지한다. */
   confirm(): Promise<string> {
     return this.store.run(async () => {
