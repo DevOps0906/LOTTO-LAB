@@ -20,3 +20,8 @@ export function handleBackButton(): void {
     else void App.exitApp();
   });
 }
+
+/** 앱 종료(M-05 미성년·거절 안내). 웹(개발 서버)에서는 종료할 수 없어 아무것도 하지 않는다. */
+export function exitApp(): void {
+  if (Capacitor.isNativePlatform()) void App.exitApp();
+}

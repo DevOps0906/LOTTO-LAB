@@ -1,12 +1,12 @@
 {
  "version": "1",
- "generated": "2026-11-12T09:14:54+00:00",
+ "generated": "2026-11-12T10:51:23+00:00",
  "docs": "docs",
  "tokens": "packages/design-tokens/tokens.css",
  "sources": {
   "docs/03_SCREENS_UX.md": "19f9ca677fb7",
-  "docs/04_API.md": "660ffcb1fdda",
-  "docs/05_DATA_MODEL.md": "0d9fa791674f"
+  "docs/04_API.md": "6dccea03aef9",
+  "docs/05_DATA_MODEL.md": "7073cc181a3d"
  },
  "changed": [
   "M-01",
@@ -14,27 +14,43 @@
   "M-03",
   "M-04",
   "M-05",
+  "M-06",
   "M-07",
   "M-08",
   "M-09",
   "M-10",
+  "M-11",
   "M-12",
+  "M-13",
   "M-14",
   "M-15",
   "M-16",
+  "M-20",
   "M-17",
+  "M-18",
   "M-19",
   "D-01",
   "D-02",
   "D-03",
+  "D-04",
   "D-05",
   "D-06",
   "D-07",
+  "D-08",
+  "D-09",
+  "D-10",
+  "D-11",
   "D-12",
+  "D-13",
+  "D-14",
   "D-15",
+  "D-16",
   "D-17",
-  "W-05",
-  "M-20"
+  "W-01",
+  "W-02",
+  "W-03",
+  "W-04",
+  "W-05"
  ],
  "removed": [],
  "screens": {
@@ -193,7 +209,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "681e26debcc3",
+   "hash": "94acd4464afc",
    "wireframe": "design/wireframes/M-01.html"
   },
   "M-02": {
@@ -320,7 +336,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "d05e805e23fc",
+   "hash": "b65533acb6d3",
    "wireframe": "design/wireframes/M-02.html"
   },
   "M-03": {
@@ -447,7 +463,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "3741d843a3f9",
+   "hash": "2573e2aee7e2",
    "wireframe": "design/wireframes/M-03.html"
   },
   "M-04": {
@@ -591,7 +607,7 @@
     "할 일·알림(지표가 행동으로 이어지게)"
    ],
    "states_missing": [],
-   "hash": "c043cf037b44",
+   "hash": "203007525ed6",
    "wireframe": "design/wireframes/M-04.html"
   },
   "M-05": {
@@ -2527,7 +2543,7 @@
     "세그먼트·담당자 필터"
    ],
    "states_missing": [],
-   "hash": "837c238a2da0",
+   "hash": "e9274ff30aa9",
    "wireframe": "design/wireframes/D-01.html"
   },
   "D-02": {
@@ -2653,7 +2669,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "fa05fd20a10b",
+   "hash": "317b97979e10",
    "wireframe": "design/wireframes/D-02.html"
   },
   "D-03": {
@@ -2779,7 +2795,7 @@
     "임시 저장(긴 폼)"
    ],
    "states_missing": [],
-   "hash": "54a30c21c485",
+   "hash": "5cd46da4977f",
    "wireframe": "design/wireframes/D-03.html"
   },
   "D-04": {
@@ -2922,7 +2938,7 @@
     "할 일·알림(지표가 행동으로 이어지게)"
    ],
    "states_missing": [],
-   "hash": "02eb57e567e4",
+   "hash": "83480c02327b",
    "wireframe": "design/wireframes/D-04.html"
   },
   "D-05": {
@@ -5453,7 +5469,7 @@
     "ID": "A-06",
     "메서드": "GET",
     "경로": "/v1/statistics/{game}",
-    "입력": "game`, `window`, `metric` (허용 값 목록 팀장 결정 필요)",
+    "입력": "game`, `window`(`last10`·`last20`·`last50`·`last100`·`all`), `metric`(`@lotto-lab/types` STAT_METRICS — task-015)",
     "출력": "payload` + `range_from, range_to, updated_at, source, sample_size` (원본 2.3 필수 표기)",
     "권한": "공개(anon SELECT)",
     "오류": "0행 → 미갱신 표시",

@@ -2,6 +2,9 @@
    소비 측 순서: (tailwindcss) → @lotto-lab/design-tokens/tokens.css → @lotto-lab/ui/styles.css
    구간 경계: 48em = 768, 75em = 1200 (DESIGN.md 2장, @lotto-lab/design-tokens BREAKPOINTS). 다크 모드는 .dark 토큰 덮어쓰기로 자동. */
 
+/* 화면 스타일(packages/ui/src/screens) — @import는 다른 규칙보다 앞에 둔다. */
+@import "./screens/screens.css";
+
 .ll-sr-only {
   position: absolute;
   width: calc(var(--spacing) / 4);

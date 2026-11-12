@@ -1,0 +1,623 @@
+/* 화면 스타일(M-05 온보딩·M-01 홈·M-15 추천 선택) — 토큰 CSS 변수만(hex·px 금지). 시각 기준: design/reference/m-home.png·d-home.html.
+   구간: ~767 1열 / 48em(768)~ 홈 2열 / 75em(1200)~ 여백·장식 확대. 내비 배치는 AppShell이 바꾼다. */
+
+/* ── 공통 조각 ── */
+.ll-muted {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption);
+}
+.ll-num {
+  font-variant-numeric: tabular-nums;
+}
+.ll-mono {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+/* 텍스트 링크·버튼도 터치 영역 44 = spacing×11 */
+.ll-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(var(--spacing) * 11);
+  min-width: calc(var(--spacing) * 11);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.ll-shell a.ll-link,
+.ll-summary__note a {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.ll-shell a.ll-button {
+  text-decoration: none;
+}
+.ll-shell a.ll-button[data-variant="primary"] {
+  color: var(--color-primary-fg);
+}
+.ll-shell a.ll-button[data-variant="pension"] {
+  color: var(--color-pension-fg);
+}
+.ll-balls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 1.5);
+}
+.ll-balls--small .ll-ball {
+  width: calc(var(--spacing-ball) * 0.8);
+  height: calc(var(--spacing-ball) * 0.8);
+  font-size: var(--text-caption);
+}
+.ll-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+}
+.ll-chip {
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-fg);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ll-chip[data-game="pension"] {
+  background: var(--color-pension-soft);
+  color: var(--color-pension-soft-fg);
+}
+.ll-skeleton {
+  display: block;
+  border-radius: var(--radius-control);
+  background: var(--color-border);
+  animation: ll-pulse 1.2s ease-in-out infinite alternate;
+}
+.ll-skeleton--ball {
+  width: var(--spacing-ball);
+  height: var(--spacing-ball);
+  border-radius: var(--radius-pill);
+}
+.ll-skeleton--line {
+  width: 60%;
+  height: calc(var(--spacing) * 6);
+}
+.ll-skeleton--row {
+  height: calc(var(--spacing) * 14);
+  margin-bottom: calc(var(--spacing) * 2);
+}
+@keyframes ll-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* ── 마지막 정상본 배너(stale·EMPTY·오프라인) ── */
+.ll-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+  border-radius: var(--radius-control);
+  border: calc(var(--spacing) / 4) solid var(--color-warning);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.ll-banner > .ll-icon {
+  color: var(--color-warning);
+}
+.ll-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+.ll-banner__text p {
+  margin: 0;
+}
+.ll-banner__meta {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+/* ── M-05 온보딩 (셸 밖 전체 화면) ── */
+.ll-onboarding {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-gap);
+  max-width: calc(var(--spacing) * 160);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: calc(var(--spacing-page) + env(safe-area-inset-top, 0)) var(--spacing-page) calc(var(--spacing-page) + env(safe-area-inset-bottom, 0));
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-text);
+}
+.ll-onboarding .ll-header {
+  padding: 0;
+}
+.ll-steps {
+  display: flex;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-steps li {
+  flex: 1;
+  padding-top: calc(var(--spacing) * 1.5);
+  border-top: var(--spacing) solid var(--color-border);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-steps li[data-done="true"] {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+.ll-steps li[aria-current="step"] {
+  font-weight: 700;
+}
+.ll-onboarding__body {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-onboarding__list {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding-left: calc(var(--spacing) * 5);
+}
+.ll-onboarding__fieldset {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.ll-onboarding__fieldset legend {
+  margin-bottom: calc(var(--spacing) * 2);
+}
+.ll-onboarding__text,
+.ll-onboarding__hint {
+  margin: 0;
+}
+.ll-onboarding__hint {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-onboarding__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-weight: 700;
+}
+.ll-onboarding__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-onboarding__actions .ll-button {
+  flex: 1 1 calc(var(--spacing) * 28);
+}
+.ll-onboarding__foot {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-onboarding__foot a {
+  color: var(--color-primary);
+}
+.ll-check {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  min-height: calc(var(--spacing) * 11);
+  padding: 0 calc(var(--spacing) * 3);
+  border: calc(var(--spacing) / 4) solid var(--color-input);
+  border-radius: var(--radius-control);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+.ll-check input {
+  width: calc(var(--spacing) * 5);
+  height: calc(var(--spacing) * 5);
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+/* ── M-01 홈 ── */
+.ll-home {
+  display: grid;
+  gap: var(--spacing-gap);
+}
+.ll-home .ll-header {
+  padding: 0;
+}
+.ll-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 6) calc(var(--spacing) * 5);
+  border-radius: var(--radius-card);
+  color: var(--color-navy-fg);
+  box-shadow: var(--shadow-raised);
+  background:
+    radial-gradient(120% 90% at 85% 20%, color-mix(in oklab, var(--color-navy), var(--color-primary) 55%) 0, transparent 60%),
+    linear-gradient(160deg, var(--color-navy) 0, color-mix(in oklab, var(--color-navy), var(--color-primary) 30%) 100%);
+}
+.ll-hero__tag {
+  display: inline-block;
+  margin-bottom: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 0.5) calc(var(--spacing) * 2.5);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--color-navy-fg), transparent 88%);
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+.ll-hero__title {
+  margin: 0;
+  font-size: var(--text-h1);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.ll-hero__desc {
+  margin: calc(var(--spacing) * 3) 0 0;
+  font-size: var(--text-caption);
+  color: var(--color-navy-muted);
+}
+.ll-hero__art {
+  position: relative;
+  flex: none;
+  width: calc(var(--spacing) * 24);
+  height: calc(var(--spacing) * 20);
+}
+.ll-hero__art .ll-deco {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: calc(var(--spacing) * 15);
+  font-size: var(--text-kpi);
+}
+.ll-hero__art .ll-deco[data-game="pension"] {
+  left: auto;
+  bottom: auto;
+  right: 0;
+  top: 0;
+  width: calc(var(--spacing) * 12);
+  font-size: var(--text-h2);
+}
+/* 장식 공(aria-hidden): 흰 공 + 로또/연금 테두리 */
+.ll-deco {
+  display: inline-grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  color: var(--color-text);
+  background: radial-gradient(
+    circle at 34% 28%,
+    var(--color-navy-fg) 0,
+    var(--color-primary-soft) 55%,
+    color-mix(in oklab, var(--color-primary-soft), var(--color-primary) 35%) 100%
+  );
+  box-shadow:
+    inset 0 0 0 calc(var(--spacing) * 1.5) color-mix(in oklab, var(--color-primary), transparent 40%),
+    var(--shadow-raised);
+}
+.ll-deco[data-game="pension"] {
+  background: radial-gradient(
+    circle at 34% 28%,
+    var(--color-navy-fg) 0,
+    var(--color-pension-soft) 55%,
+    color-mix(in oklab, var(--color-pension-soft), var(--color-pension) 40%) 100%
+  );
+  box-shadow:
+    inset 0 0 0 calc(var(--spacing) * 1.5) color-mix(in oklab, var(--color-pension), transparent 40%),
+    var(--shadow-raised);
+}
+
+.ll-home__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-gap);
+}
+.ll-home__col {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-gap);
+  min-width: 0;
+}
+
+.ll-latest .ll-draw + .ll-draw {
+  margin-top: calc(var(--spacing) * 4);
+  padding-top: calc(var(--spacing) * 4);
+  border-top: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-draw {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-draw__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-draw__head strong {
+  font-size: var(--text-body);
+  font-weight: 800;
+}
+.ll-draw__date {
+  margin-left: auto;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ll-draw__source {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  justify-items: start;
+}
+.ll-pension-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  font-size: var(--text-h2);
+}
+
+.ll-products {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-gap);
+}
+.ll-shell a.ll-product,
+.ll-product {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  min-height: calc(var(--spacing) * 36);
+  padding: calc(var(--spacing) * 4);
+  border-radius: var(--radius-card);
+  color: var(--color-primary-fg);
+  box-shadow: var(--shadow-card);
+  background: linear-gradient(140deg, var(--color-primary) 0, color-mix(in oklab, var(--color-primary), var(--color-primary-soft-fg) 70%) 100%);
+}
+.ll-shell a.ll-product[data-game="pension"],
+.ll-product[data-game="pension"] {
+  color: var(--color-pension-fg);
+  background: linear-gradient(140deg, var(--color-pension) 0, color-mix(in oklab, var(--color-pension), var(--color-pension-soft-fg) 70%) 100%);
+}
+.ll-product__title {
+  font-size: var(--text-h2);
+  font-weight: 800;
+}
+.ll-product__desc {
+  font-size: var(--text-caption);
+}
+.ll-product > .ll-icon {
+  margin-top: auto;
+}
+.ll-product__art {
+  position: absolute;
+  right: calc(var(--spacing) * 3);
+  bottom: calc(var(--spacing) * 3);
+  display: flex;
+  align-items: flex-end;
+}
+.ll-product__art .ll-deco {
+  width: calc(var(--spacing) * 11);
+  font-size: var(--text-h2);
+}
+.ll-product__art .ll-deco[data-size="small"] {
+  width: calc(var(--spacing) * 7);
+  margin-left: calc(var(--spacing) * -3);
+  font-size: var(--text-caption);
+}
+.ll-product__art .ll-icon {
+  width: calc(var(--spacing) * 12);
+  height: calc(var(--spacing) * 12);
+  stroke-width: 1.4;
+  opacity: 0.5;
+}
+
+.ll-summary {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  container-type: inline-size;
+}
+.ll-summary__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  background: var(--color-bg);
+}
+.ll-summary__row strong {
+  display: block;
+  font-weight: 700;
+}
+.ll-summary__row > span:nth-child(2) {
+  word-break: keep-all;
+}
+.ll-summary__row .ll-muted {
+  display: block;
+}
+@container (width < 26em) {
+  .ll-summary__row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .ll-summary__row > :last-child {
+    grid-column: 2;
+  }
+}
+.ll-summary__block {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-summary__tile {
+  display: grid;
+  place-items: center;
+  width: calc(var(--spacing) * 9);
+  height: calc(var(--spacing) * 9);
+  border-radius: var(--radius-control);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-soft-fg);
+}
+.ll-summary__tile[data-game="pension"] {
+  background: var(--color-pension-soft);
+  color: var(--color-pension-soft-fg);
+}
+.ll-summary__note {
+  margin: calc(var(--spacing) * 2) 0 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-summary__note strong {
+  color: var(--color-text);
+}
+
+.ll-shell a.ll-cta,
+.ll-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--spacing) * 2);
+  min-height: calc(var(--spacing-control) + var(--spacing) * 4);
+  border-radius: var(--radius-card);
+  font-size: var(--text-h2);
+  font-weight: 800;
+  color: var(--color-primary-fg);
+  box-shadow: var(--shadow-cta);
+  background: linear-gradient(100deg, var(--color-primary) 0, color-mix(in oklab, var(--color-primary), var(--color-primary-soft-fg) 70%) 100%);
+}
+.ll-cta .ll-icon {
+  width: calc(var(--spacing) * 6);
+  height: calc(var(--spacing) * 6);
+}
+.ll-quick {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+}
+.ll-quick__result {
+  display: grid;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 3);
+  border-radius: var(--radius-control);
+  border: calc(var(--spacing) / 4) solid var(--color-border);
+  background: var(--color-surface);
+}
+.ll-quick__result p {
+  margin: 0;
+}
+.ll-records {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 2);
+  margin-bottom: calc(var(--spacing) * 3);
+}
+.ll-records .ll-stat {
+  background: var(--color-bg);
+  box-shadow: none;
+}
+
+/* ── M-15 추천 선택 ── */
+.ll-select {
+  display: grid;
+  gap: var(--spacing-gap);
+}
+.ll-select .ll-header {
+  padding: 0;
+}
+.ll-breadcrumb ol {
+  display: flex;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+.ll-breadcrumb li + li::before {
+  content: "›";
+  margin-right: calc(var(--spacing) * 2);
+}
+.ll-breadcrumb a {
+  color: var(--color-primary);
+}
+.ll-select__grid {
+  display: grid;
+  gap: var(--spacing-gap);
+}
+.ll-select__desc {
+  margin: 0 0 calc(var(--spacing) * 4);
+  color: var(--color-text-muted);
+}
+.ll-select__reuse {
+  display: grid;
+  gap: calc(var(--spacing) * 3);
+}
+.ll-select__reuse p {
+  margin: 0;
+}
+
+/* ── 768~: 홈 2열 [최신 회차 + 상품 카드 | 요약 + CTA + 내 기록], 추천 선택 2열 ── */
+@media (width >= 48em) {
+  .ll-hero {
+    padding: calc(var(--spacing) * 8);
+  }
+  .ll-hero__title {
+    font-size: var(--text-display);
+  }
+  .ll-hero__desc {
+    font-size: var(--text-body);
+  }
+  .ll-home__grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .ll-select__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* ── 1200~: 히어로·상품 카드 확대 ── */
+@media (width >= 75em) {
+  .ll-hero {
+    padding: calc(var(--spacing) * 10) calc(var(--spacing) * 12);
+  }
+  .ll-hero__art {
+    width: calc(var(--spacing) * 40);
+    height: calc(var(--spacing) * 30);
+  }
+  .ll-hero__art .ll-deco {
+    width: calc(var(--spacing) * 24);
+    font-size: var(--text-display);
+  }
+  .ll-hero__art .ll-deco[data-game="pension"] {
+    width: calc(var(--spacing) * 18);
+    font-size: var(--text-h1);
+  }
+  .ll-shell a.ll-product,
+  .ll-product {
+    min-height: calc(var(--spacing) * 44);
+    padding: calc(var(--spacing) * 6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ll-skeleton {
+    animation: none;
+  }
+}
