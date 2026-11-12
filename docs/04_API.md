@@ -12,7 +12,7 @@
 | A-03 | GET | `/v1/draws/{game}/{round}` | `game`(lotto\|pension), `round`(정수 ≥1, 클라이언트 검증) | A-01 또는 A-02 형식 1건 | 공개(anon SELECT) | 0행 → 없음/미수집 표시 | `draws_lotto` / `draws_pension` | RLS |
 | A-04 | — | ~~`/v1/generate/lotto`~~ | — | — | — | — | — | **미구현(D4)** — 생성은 기기 `lottery-core` |
 | A-05 | — | ~~`/v1/generate/pension`~~ | — | — | — | — | — | **미구현(D4)** — 생성은 기기 `lottery-core` |
-| A-06 | GET | `/v1/statistics/{game}` | `game`, `window`, `metric` (허용 값 목록 팀장 결정 필요) | `payload` + `range_from, range_to, updated_at, source, sample_size` (원본 2.3 필수 표기) | 공개(anon SELECT) | 0행 → 미갱신 표시 | `statistics_cache` | RLS |
+| A-06 | GET | `/v1/statistics/{game}` | `game`, `window`(`last10`·`last20`·`last50`·`last100`·`all`), `metric`(`@lotto-lab/types` STAT_METRICS — task-015) | `payload` + `range_from, range_to, updated_at, source, sample_size` (원본 2.3 필수 표기) | 공개(anon SELECT) | 0행 → 미갱신 표시 | `statistics_cache` | RLS |
 | A-07 | POST | `/v1/tickets` | `game, round, ticket_data, purchase_status`(favorite\|purchased), `purchase_date?`, `amount_won?`, `source_number_id?`, `idempotency_key`(필수) | 생성된 `saved_tickets` 행(201) · 같은 `idempotency_key`+같은 내용이면 기존 행(200, R18), 같은 키+다른 내용이면 409 `IDEMPOTENCY_CONFLICT` | 로그인(본인 행만, RLS) | 400, 401, 429 | `saved_tickets` | RLS |
 | A-08 | GET | `/v1/tickets` | query `game?`, `round?`, `status?`, 커서 페이지 | `saved_tickets[]` + 최신 `draw_checks`(이력은 같은 테이블 누적, R8) | 로그인(본인 행만, RLS) | 401 | `saved_tickets`, `draw_checks` | RLS |
 | A-09 | POST | `/v1/tickets/check` | `ticket_ids[]` 또는 `round` | `[{ticket_id, draw_no, matched_rank, bonus_hit, checked_at}]`(낙첨 = rank NULL·bonus_hit false, 연금은 둘 다 가능) | 로그인 + 본인 티켓, `purchased`만 판정(원본 10장 5) | 400, 401, 404, 429, 503 | `saved_tickets`, `draws_*`, `draw_checks`(서버만 INSERT) | EF |
