@@ -4,57 +4,61 @@
 
 | 배포 대상 | 방식 | 화면 구조 |
 |---|---|---|
-| Android · iOS | Capacitor 8 (Android 먼저) | 하단 탭 4개(홈·추천·통계·내번호) — PDF 시안 기준 |
-| Windows 설치형 | Tauri 2 (MSI/NSIS) | 대시보드형(좌측 사이드바 + KPI 카드 + 생성 조건/결과 좌우 배치) |
-| 웹 | Next.js | 랜딩(사전알림 신청) + 관리자(회차 수집 검토) |
+| Android · iOS | Capacitor 8 (Android 먼저) | 하단 탭 4개(홈·추천·통계·내번호) |
+| Windows 설치형 | Tauri 2 (MSI/NSIS) | 사이드바 + 2열 그리드 — 모바일과 같은 디자인 언어(ADR-0004) |
+| 웹 | Next.js 16 | 랜딩(사전알림 신청·이메일 확인) + 관리자(회차 수집 검토, P1) |
 
-공통: React + Vite + TypeScript, 번호 엔진은 기기에서 실행(오프라인 가능), 백엔드 Supabase(Postgres·RLS·Auth·Edge Functions), 공식 회차 수집은 Python 워커.
+공통: React 19 + Vite + TypeScript 6, 번호 엔진은 기기에서 실행(오프라인 가능), 백엔드 Supabase(Postgres·RLS·Edge Functions), 공식 회차 수집은 Python 워커(W5).
 
 ## 진행 현황 (2026-11-12 기준)
 
-기획·설계 문서와 저해상도 화면 시안까지 마쳤고, 구현은 아직 시작하지 않았습니다. 다음은 W0(데이터 권리 확인·보안 설정·사전알림 랜딩)입니다.
+기반(DB·보안·엔진·앱 공통 로직·두 앱 셸)과 사전알림 웹은 끝났고, **모바일 화면을 만드는 중**(W3)입니다. 작업 브랜치 `dev/fortune-and-w0`(PR #3, PR #1·#2 포함).
 
 | 영역 | 현재 상태 |
 |---|---|
-| 기획 (린 · PRD · 범위) | ✅ 작성 완료 — 린 검증은 **실행 전** |
-| UX (화면 34개 · 흐름 16개) | ✅ 작성 완료, 필수 구조 검사 🔴 0 |
-| UI (디자인 토큰 · DESIGN.md) | ✅ 초안 완료, 대비 WCAG AA 통과 — 고해상도 시안은 미작성 |
-| 기술 설계 (아키텍처 · API 16 · 테이블 12 · ADR 3) | ✅ 작성 완료, 문서 리뷰 1회 반영 |
-| 구현 | ⬜ 0 / 36 작업 |
-| QA · 출시 | ⬜ 미착수 |
+| 기획 · UX · 디자인 | ✅ 문서·화면 41개·PC 시안 확정, 운세·사주 번호(ADR-0005)·광고(ADR-0006) 기획 포함 |
+| DB · 보안 | ✅ 공개·사용자 스키마 RLS·열 권한(pgTAP 548건), 보안 L2 설정·Dependabot |
+| 사전알림 웹 | ✅ 랜딩 + 이메일 이중 확인 서버(Edge Function, Deno 테스트 43건) |
+| 엔진 · 통계 · 앱 공통 로직 | ✅ 로또·연금 생성(고정·제외·자리 고정·조 확장)·당첨 판정·통계 9종·로컬 저장·공개 읽기 캐시 |
+| 앱 셸 | ✅ Android 디버그 APK · Windows 디버그 exe 빌드, 릴리스 점검 스크립트 |
+| 모바일 화면 | 🔄 온보딩·홈·추천·로또 생성·연금 생성 완료 / 통계·회차·내 번호·구매 등록·설정 남음 |
+| Windows 화면 · 회차 수집 워커 · 출시 | ⬜ 미착수 |
 
 **제한**
-- 공식 회차 데이터의 수집·재배포 권리(Q1)를 확인하기 전에는 출시할 수 없습니다.
-- 화면 시안의 회차·번호·통계 숫자는 모두 예시입니다.
+- 공식 회차 데이터의 수집·재배포 권리(task-001)를 확인하기 전에는 출시할 수 없습니다(수집 워커 W5도 그 뒤 착수).
+- 로컬 DB의 회차는 합성(가짜) 데이터이고, 화면 시안의 숫자는 예시입니다.
 - iOS 빌드는 macOS가 필요하고, Windows 배포에는 코드 서명 인증서가 필요합니다.
 
 ### 작업 진행률
 
-전체 완성도 **약 18%**(가중 추정: 기획·설계 비중 20% × 진행 90% + 구현·QA 비중 80% × 0%)
+출시 버전(P0, W0~W6) **21 / 40 완료(약 53%)** · 전체(P1 포함) 21 / 48. 무거운 기반 작업이 끝나 남은 대부분은 만들어 둔 부품을 조립하는 화면 작업입니다.
 
-| 웨이브 | 내용 | 작업 수 | 완료 |
-|---|---|---:|---:|
-| 문서 | 기획·UX·UI 초안·기술 설계 | — | 90% |
-| W0 | 검증·준비 (데이터 권리, 보안 설정, 사전알림 랜딩) | 4 | 0 |
-| W1 | 기반 (모노레포, 토큰, DB 스키마·RLS, Capacitor·Tauri 셸) | 6 | 0 |
-| W2 | 엔진 (로또·연금 생성, 당첨 판정, 통계, app-core) | 6 | 0 |
-| W3 | 모바일 P0 화면 | 7 | 0 |
-| W4 | Windows P0 화면 | 5 | 0 |
-| W5 | 데이터 (수집 워커, 통계 캐시, 관리자) | 5 | 0 |
-| W6 | QA · 배포 빌드 · 출시 점검 | 3 | 0 |
+| 웨이브 | 내용 | 완료 / 작업 |
+|---|---|---:|
+| W0 | 검증·준비 (데이터 권리, 보안, 사전알림 서버·이메일 확인·랜딩) | 4 / 5 |
+| W1 | 기반 (모노레포, UI 블록·오버레이, PC 시안, DB 스키마, 앱 셸) | 8 / 8 |
+| W2 | 엔진 (타입·검증, 판정, 로또·연금 생성, 통계, app-core) | 6 / 6 |
+| W3 | 모바일 P0 화면 | 3 / 7 |
+| W4 | Windows P0 화면 | 0 / 5 |
+| W5 | 데이터 (수집 워커, 통계 캐시, 관리자) | 0 / 5 |
+| W6 | QA · 배포 빌드 · 출시 점검 · 사전알림 발송 | 0 / 4 |
+| W7 (P1) | 운세·사주 번호, 로그인, 광고 | 0 / 8 (기획 완료) |
 
 ### 구현된 주요 항목
-- [x] 기획 문서 체계 `docs/00~05` + ADR 3건
-- [x] 화면 사양 `design/spec.json` + 와이어프레임 34개
-- [x] 디자인 토큰 `packages/design-tokens/tokens.css`(라이트/다크, 반응형 3구간 폰트)
-- [x] 작업 분해 36개 `tasks/`
-- [ ] 앱 코드 (아직 없음)
+- [x] 사전알림: `supabase/functions/waitlist`·`waitlist-confirm`(Turnstile·레이트리밋·이중 확인), `apps/web` 랜딩·확인 화면
+- [x] DB: `supabase/migrations` 4개(사전알림·공개 회차·사용자 데이터), RLS·열 단위 권한·상태 전환 트리거
+- [x] 모노레포: pnpm workspaces + Turborepo, 의존 방향 lint(`lotto-lab/boundaries`), pnpm catalog
+- [x] `packages/types`·`validation`(DB와 판정 동치 벡터) · `lottery-core`(판정·Rng) · `lotto-engine` · `pension-engine` · `statistics`(독립 구현 골든) · `app-core`
+- [x] `packages/ui`: 공유 블록·번호 공·그리드·오버레이(토스트·스낵바·얼럿·시트·메뉴·툴팁)·화면 M-01·M-02·M-03·M-05·M-15
+- [x] `apps/mobile`(Capacitor 8) · `apps/desktop`(Tauri 2) 셸 — app-core 주입·보안 설정·릴리스 점검
+- [ ] 화면: 통계(M-04)·회차(M-16·M-11)·내 번호(M-07·M-08)·구매 등록·설정(M-09·M-12), Windows D-01~D-14
+- [ ] 회차 수집 워커·관리자, 출시 점검
 
 ### 다음 개발 단계
-- [ ] task-001 공식 회차 데이터 권리 확인 (사용자 확인 필요)
-- [ ] task-002 보안 기본 설정 (L2)
-- [ ] task-003~004 사전알림 백엔드 + 랜딩 (린 검증)
-- [ ] W1 기반 구축 → W2 엔진 → W3·W4 화면
+- [ ] task-020·021 통계·회차 화면 — 중단 지점의 일부 코드는 `wip/task-020-021-partial` 브랜치에 보관
+- [ ] task-022·023 내 번호·당첨 확인·구매 등록·설정
+- [ ] W4 Windows 화면 → W5 회차 수집 워커(task-001 확인 후) → W6 출시 점검
+- 사용자 확인 필요: task-001 데이터 권리, 운영 메일 서비스·문의처, GitHub Code security 설정, 연금 등위+보너스 동시 당첨 규정, 정식 앱 아이콘
 
 ## 개발 환경 (모노레포, task-005)
 
@@ -133,17 +137,17 @@ pnpm --filter @lotto-lab/web dev        # http://localhost:3000
 
 > 원본 시안의 "과학적으로 추천" 문구는 과대 표현 금지 원칙에 따라 "데이터로 살펴보는"으로 바꿉니다.
 
-### Windows 대시보드 (와이어프레임 — 구조 확인용 저해상도)
-| D-01 대시보드 | D-02 로또 생성 | D-04 통계 |
-|---|---|---|
-| ![D-01](design/shots/D-01-1440.png) | ![D-02](design/shots/D-02-1440.png) | ![D-04](design/shots/D-04-1440.png) |
+### 구현된 화면 (실제 앱 캡처 — 로컬 DB 없이 찍은 화면은 오류·빈 상태 포함)
+| M-05 온보딩 | M-01 홈 | M-02 로또 생성 | M-03 연금 생성 |
+|---|---|---|---|
+| ![M-05](design/shots/M-05-app-390.png) | ![M-01](design/shots/M-01-app-390.png) | ![M-02](design/shots/M-02-app-390-result.png) | ![M-03](design/shots/M-03-app-390-result.png) |
 
-### 모바일 와이어프레임 · 웹 랜딩
-| M-02 로또 생성 | M-03 연금 생성 | W-01 랜딩 |
+### Windows · 웹
+| Windows 홈 시안 (확정, ADR-0004) | Windows 로또 생성 시안 | 웹 랜딩 W-01 (구현) |
 |---|---|---|
-| ![M-02](design/shots/M-02-390.png) | ![M-03](design/shots/M-03-390.png) | ![W-01](design/shots/W-01-1440.png) |
+| ![d-home](design/shots/d-home-1440.png) | ![d-lotto](design/shots/d-lotto-1440.png) | ![W-01](design/shots/W-01-web-1440.png) |
 
-전체 34개 화면은 `design/wireframes/index.html`을 브라우저로 열어 3구간(모바일·태블릿·데스크톱)으로 볼 수 있습니다.
+Windows 시안 원본은 `design/reference/d-home.html`·`d-lotto.html`(로컬 서버로 열기). 전체 41개 화면 와이어프레임은 `design/wireframes/index.html`을 브라우저로 열어 3구간으로 볼 수 있습니다.
 
 ## 콘텐츠 바로가기
 
@@ -151,9 +155,11 @@ pnpm --filter @lotto-lab/web dev        # http://localhost:3000
 |---|---|---|---|
 | 린 검증 · PRD | — | [00_LEAN](docs/00_LEAN.md) · [01_PRD](docs/01_PRD.md) | — |
 | 아키텍처 · 결정 기록 | — | [02_ARCHITECTURE](docs/02_ARCHITECTURE.md) · [adr/](docs/adr/) | — |
-| 화면 34개 · 흐름 | [wireframes/index.html](design/wireframes/index.html) | [03_SCREENS_UX](docs/03_SCREENS_UX.md) · [benchmark](docs/benchmark.md) | — |
-| API · 데이터 | — | [04_API](docs/04_API.md) · [05_DATA_MODEL](docs/05_DATA_MODEL.md) | — |
+| 화면 41개 · 흐름 | [wireframes/index.html](design/wireframes/index.html) | [03_SCREENS_UX](docs/03_SCREENS_UX.md) · [benchmark](docs/benchmark.md) | [packages/ui/src/screens](packages/ui/src/screens) |
+| API · 데이터 | — | [04_API](docs/04_API.md) · [05_DATA_MODEL](docs/05_DATA_MODEL.md) | [supabase/](supabase/) · [app-core](packages/app-core) |
 | 디자인 시스템 | [preview/index.html](design/preview/index.html) | [DESIGN.md](DESIGN.md) · [DESIGN_TOKENS](docs/DESIGN_TOKENS.md) | [tokens.css](packages/design-tokens/tokens.css) |
+| 번호 엔진 · 통계 | — | [task-013](tasks/task-013.md) · [task-014](tasks/task-014.md) · [task-015](tasks/task-015.md) | [lotto-engine](packages/lotto-engine) · [pension-engine](packages/pension-engine) · [statistics](packages/statistics) |
+| 앱 셸 | — | [02_ARCHITECTURE#5](docs/02_ARCHITECTURE.md) | [apps/mobile](apps/mobile) · [apps/desktop](apps/desktop) · [apps/web](apps/web) |
 | 다이어그램 | — | [docs/diagrams/](docs/diagrams/) | — |
 | 작업 표 | — | [tasks/README.md](tasks/README.md) | — |
 | 원본 v1.0 | — | [LOTTO_LAB_PRD.md](LOTTO_LAB_PRD.md) · [PDF](LOTTO_LAB_Planning_Design.pdf) | — |
