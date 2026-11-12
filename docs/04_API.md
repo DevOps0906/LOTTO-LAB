@@ -13,9 +13,9 @@
 | A-04 | — | ~~`/v1/generate/lotto`~~ | — | — | — | — | — | **미구현(D4)** — 생성은 기기 `lottery-core` |
 | A-05 | — | ~~`/v1/generate/pension`~~ | — | — | — | — | — | **미구현(D4)** — 생성은 기기 `lottery-core` |
 | A-06 | GET | `/v1/statistics/{game}` | `game`, `window`, `metric` (허용 값 목록 팀장 결정 필요) | `payload` + `range_from, range_to, updated_at, source, sample_size` (원본 2.3 필수 표기) | 공개(anon SELECT) | 0행 → 미갱신 표시 | `statistics_cache` | RLS |
-| A-07 | POST | `/v1/tickets` | `game, round, ticket_data, purchase_status`(favorite\|purchased), `purchase_date?`, `amount_won?`, `source_number_id?`, `idempotency_key`(필수) | 생성된 `saved_tickets` 행(201) · 중복 `idempotency_key`면 기존 행(200, R18) | 로그인(본인 행만, RLS) | 400, 401, 429 | `saved_tickets` | RLS |
+| A-07 | POST | `/v1/tickets` | `game, round, ticket_data, purchase_status`(favorite\|purchased), `purchase_date?`, `amount_won?`, `source_number_id?`, `idempotency_key`(필수) | 생성된 `saved_tickets` 행(201) · 같은 `idempotency_key`+같은 내용이면 기존 행(200, R18), 같은 키+다른 내용이면 409 `IDEMPOTENCY_CONFLICT` | 로그인(본인 행만, RLS) | 400, 401, 429 | `saved_tickets` | RLS |
 | A-08 | GET | `/v1/tickets` | query `game?`, `round?`, `status?`, 커서 페이지 | `saved_tickets[]` + 최신 `draw_checks`(이력은 같은 테이블 누적, R8) | 로그인(본인 행만, RLS) | 401 | `saved_tickets`, `draw_checks` | RLS |
-| A-09 | POST | `/v1/tickets/check` | `ticket_ids[]` 또는 `round` | `[{ticket_id, draw_no, matched_rank, checked_at}]` | 로그인 + 본인 티켓, `purchased`만 판정(원본 10장 5) | 400, 401, 404, 429, 503 | `saved_tickets`, `draws_*`, `draw_checks`(서버만 INSERT) | EF |
+| A-09 | POST | `/v1/tickets/check` | `ticket_ids[]` 또는 `round` | `[{ticket_id, draw_no, matched_rank, bonus_hit, checked_at}]`(낙첨 = rank NULL·bonus_hit false, 연금은 둘 다 가능) | 로그인 + 본인 티켓, `purchased`만 판정(원본 10장 5) | 400, 401, 404, 429, 503 | `saved_tickets`, `draws_*`, `draw_checks`(서버만 INSERT) | EF |
 | A-10 | GET | `/v1/subscriptions/me` | — | `store, product_id, state` | 로그인(본인 행만 읽기) | 401 | `subscription_accounts` | RLS (P2, 결제 미결 Q3) |
 | A-11 | GET | `/v1/admin/ingestions` | query `status?`(needs_review 등), `game?`, 커서 | `ingestion_runs[]`(원본 응답 해시·검증 오류·재검증 결과 포함) | 관리자 + MFA | 401, 403 | `ingestion_runs` | EF |
 | A-12 | POST | `/v1/admin/ingestions/{id}/approve` | path `id`, `note?` | 승인된 run + UPSERT된 회차 → 통계 캐시 재계산·알림 재개 | 관리자 + MFA, **A-16 재검증 통과 건만**(R9) | 401, 403, 404, 409(이미 처리·재검증 미통과) | `ingestion_runs`, `draws_*`, `statistics_cache` | EF |
@@ -46,6 +46,7 @@
 | 403 | `FORBIDDEN` | 관리자 아님 | A-11~A-13, A-16 |
 | 403 | `MFA_REQUIRED` | 관리자이나 `aal2` 아님(TOTP 미통과) | A-11~A-13, A-16 |
 | 404 | `NOT_FOUND` | 티켓·run 없음(타인 티켓도 404로 응답) | A-09, A-12~A-14, A-16 |
+| 409 | `IDEMPOTENCY_CONFLICT` | 같은 멱등 키로 다른 내용 요청 | A-07 |
 | 409 | `ALREADY_PROCESSED` | 이미 승인·반려된 run | A-12, A-13, A-16 |
 | 409 | `NOT_REVERIFIED` | 재검증 미실행 또는 미통과 run 승인 시도 | A-12 |
 | 422 | `INVALID_TRANSITION` | 허용되지 않은 구매 상태 전환(purchased→favorite, R19) | A-14 |

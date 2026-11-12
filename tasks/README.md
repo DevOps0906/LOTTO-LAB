@@ -12,7 +12,7 @@
 | task-006 | 디자인 토큰 패키지 + 공유 UI 블록 | W1 | 005 | 낮음 | builder | 완료 |
 | task-006b | 공유 UI 오버레이(토스트·스낵바·얼럿·시트·메뉴·툴팁) | W1 | 006 | 보통 | builder | 완료 |
 | task-007 | 공개·수집 스키마 + RLS | W1 | 003 | 높음 | builder | 완료 |
-| task-008 | 사용자 스키마 + RLS·전환 트리거 | W1 | 007 | 높음 | builder | 대기 |
+| task-008 | 사용자 스키마 + RLS·전환 트리거 | W1 | 007 | 높음 | builder | 완료 |
 | task-009 | 모바일 셸 (Capacitor 8) | W1 | 005, 006 | 높음 | builder | 대기 |
 | task-010 | Windows 셸 (Tauri 2) | W1 | 005, 006 | 높음 | builder | 대기 |
 | task-011 | types + validation (Zod) | W2 | 005 | 높음 | builder | 대기 |

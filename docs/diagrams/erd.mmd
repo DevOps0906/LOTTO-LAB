@@ -63,5 +63,58 @@ erDiagram
     timestamptz updated_at
     timestamptz created_at
   }
+  generator_profiles {
+    uuid id PK
+    uuid user_id FK
+    game_type game
+    text name
+    jsonb config
+    timestamptz updated_at
+    timestamptz created_at
+  }
+  generated_batches {
+    uuid id PK
+    uuid user_id FK
+    game_type game
+    int round
+    text strategy
+    text method
+    text engine_version
+    timestamptz created_at
+  }
+  generated_numbers {
+    uuid id PK
+    uuid batch_id
+    game_type game
+    smallint line_no
+    jsonb numbers
+    smallint group_no
+    timestamptz created_at
+  }
+  saved_tickets {
+    uuid id PK
+    uuid user_id FK
+    uuid source_number_id FK
+    game_type game
+    int round
+    jsonb ticket_data
+    text purchase_status
+    date purchase_date
+    bigint amount_won
+    uuid idempotency_key
+    timestamptz created_at
+  }
+  draw_checks {
+    uuid id PK
+    uuid ticket_id
+    game_type game
+    int draw_no
+    smallint matched_rank
+    boolean bonus_hit
+    timestamptz created_at
+  }
   ingestion_runs ||--o{ draws_lotto : "ingestion_run_id"
   ingestion_runs ||--o{ draws_pension : "ingestion_run_id"
+  generated_batches ||--o{ generated_numbers : "batch_id"
+  generated_numbers ||--o{ saved_tickets : "source_number_id"
+  saved_tickets ||--o{ draw_checks : "ticket_id"
