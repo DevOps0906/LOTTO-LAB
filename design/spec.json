@@ -1,18 +1,15 @@
 {
  "version": "1",
- "generated": "2026-11-12T05:57:18+00:00",
+ "generated": "2026-11-12T06:13:27+00:00",
  "docs": "docs",
  "tokens": "packages/design-tokens/tokens.css",
  "sources": {
-  "docs/03_SCREENS_UX.md": "a6401356760e",
-  "docs/04_API.md": "b0272205bebf",
-  "docs/05_DATA_MODEL.md": "6ce34231d739"
+  "docs/03_SCREENS_UX.md": "0dcc61228e06",
+  "docs/04_API.md": "7f12dc35c68c",
+  "docs/05_DATA_MODEL.md": "bd6ede98e8fc"
  },
  "changed": [
-  "M-17",
-  "M-18",
-  "D-15",
-  "D-17"
+  "W-05"
  ],
  "removed": [],
  "screens": {
@@ -4397,7 +4394,7 @@
     "가격"
    ],
    "states_missing": [],
-   "hash": "03c9953631bb",
+   "hash": "89050d55a856",
    "wireframe": "design/wireframes/W-01.html"
   },
   "W-02": {
@@ -4703,6 +4700,76 @@
    "states_missing": [],
    "hash": "b0723ac48867",
    "wireframe": "design/wireframes/W-04.html"
+  },
+  "W-05": {
+   "id": "W-05",
+   "name": "사전알림 이메일 확인",
+   "type_raw": "상세",
+   "route": "/waitlist/confirm",
+   "purpose": "확인 메일 링크로 들어와 버튼을 눌러 신청 확정",
+   "blocks": [
+    {
+     "type": "header",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "확인할 이메일 안내(주소 비표시)",
+     "items": [
+      "확인할 이메일 안내(주소 비표시)"
+     ]
+    },
+    {
+     "type": "button",
+     "label": "신청 확정하기(POST A-19",
+     "items": [
+      "신청 확정하기(POST A-19"
+     ]
+    },
+    {
+     "type": "자동 확정 금지)",
+     "label": "",
+     "items": []
+    },
+    {
+     "type": "text",
+     "label": "수신 거부·삭제 방법·만 19세 이상",
+     "items": [
+      "수신 거부",
+      "삭제 방법",
+      "만 19세 이상"
+     ]
+    },
+    {
+     "type": "link",
+     "label": "랜딩으로",
+     "items": [
+      "랜딩으로"
+     ]
+    }
+   ],
+   "data": [
+    "waitlist_signups"
+   ],
+   "api": [
+    "A-19"
+   ],
+   "role": "공개(토큰)",
+   "next": [
+    "W-01"
+   ],
+   "states_combined": "",
+   "source": "docs/03_SCREENS_UX.md",
+   "type": "detail",
+   "must_missing": [],
+   "should_missing": [
+    "관련 항목 탭",
+    "활동·변경 이력"
+   ],
+   "states_missing": [],
+   "hash": "bfa507d79a8c",
+   "wireframe": "design/wireframes/W-05.html"
   }
  },
  "states": {
@@ -4945,6 +5012,12 @@
    "로딩": "상세/재검증/처리 중 중복 제출 잠금",
    "오류": "404 목록 복귀·401/403 쓰기 차단·검증 실패는 발송중단 유지·동시 변경은 다시 불러오기",
    "성공": "사유·처리자·시각 이력 저장·승인은 재검증 통과 때만·발송 재개 상태 재조회"
+  },
+  "W-05": {
+   "빈": "토큰 없음은 링크 다시 받기 안내",
+   "로딩": "확정 중 버튼 진행 표시·중복 제출 잠금",
+   "오류": "400은 \"링크가 만료되었거나 이미 사용됨 — 랜딩에서 다시 신청\" 안내·429 잠시 후 재시도·503 재시도",
+   "성공": "신청 확정 완료 안내·출시 알림 1회 후 파기 안내"
   }
  },
  "flows": {
@@ -5439,6 +5512,23 @@
     "구현": "EF"
    },
    "source": "docs/04_API.md"
+  },
+  "A-19": {
+   "id": "A-19",
+   "method": "POST",
+   "path": "/v1/waitlist/confirm",
+   "row": {
+    "ID": "A-19",
+    "메서드": "POST",
+    "경로": "/v1/waitlist/confirm",
+    "입력": "token`(확인 메일 링크의 1회용 토큰, 웹 확인 화면 W-05가 버튼 클릭 시 전송 — 메일 보안 스캐너의 GET 자동 확인 방지)",
+    "출력": "200`(확정, 이미 확정도 동일)",
+    "권한": "공개(토큰)",
+    "오류": "400 `INVALID_INPUT`(없음·만료·사용됨 구분 없이 동일), 429, 503",
+    "사용 테이블": "waitlist_signups`(UPDATE confirmed_at)",
+    "구현": "EF"
+   },
+   "source": "docs/04_API.md"
   }
  },
  "tables": {
@@ -5521,9 +5611,9 @@
    "name": "waitlist_signups",
    "row": {
     "테이블": "waitlist_signups",
-    "anon": "INSERT만 `WITH CHECK (consent_marketing AND age_confirmed)`, SELECT/UPDATE/DELETE 없음",
+    "anon": "없음(정책 없음 + `REVOKE ALL`, 직접 INSERT 우회 차단)",
     "authenticated": "없음",
-    "쓰기 주체": "anon INSERT(A-15) · 열람·삭제는 service_role만"
+    "쓰기 주체": "service_role만 — A-15 EF가 Turnstile·레이트리밋 뒤 INSERT. 동의 강제는 테이블 CHECK"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5574,6 +5664,16 @@
     "anon": "SELECT 전체(A-01~A-03 직접 읽기, R6)",
     "authenticated": "SELECT 전체",
     "쓰기 주체": "service_role만(워커·A-12)"
+   },
+   "source": "docs/05_DATA_MODEL.md"
+  },
+  "private.rate_limits": {
+   "name": "private.rate_limits",
+   "row": {
+    "테이블": "private.rate_limits",
+    "anon": "없음(스키마 사용 권한 없음)",
+    "authenticated": "없음",
+    "쓰기 주체": "service_role만 — `public.waitlist_rate_hit()`(INVOKER, `search_path=''`, service_role만 EXECUTE), pg_cron `rate_limits_purge`(UTC 03:27)"
    },
    "source": "docs/05_DATA_MODEL.md"
   },
@@ -5765,6 +5865,16 @@
    "관리자 수집 검토 상세(P1) 권장: 관련 항목 탭"
   ],
   [
+   "🟡",
+   "W-05",
+   "사전알림 이메일 확인 권장: 관련 항목 탭, 활동·변경 이력"
+  ],
+  [
+   "ℹ️",
+   "W-05",
+   "모르는 블록(회색 상자로 표시): 자동 확정 금지)"
+  ],
+  [
    "ℹ️",
    "M-05",
    "온보딩·19세 확인 — 들어오는 경로 없음(메뉴에서만 진입이면 무시)"
@@ -5773,6 +5883,11 @@
    "ℹ️",
    "D-11",
    "Windows 온보딩·19세 확인 — 들어오는 경로 없음(메뉴에서만 진입이면 무시)"
+  ],
+  [
+   "ℹ️",
+   "W-05",
+   "사전알림 이메일 확인 — 들어오는 경로 없음(메뉴에서만 진입이면 무시)"
   ]
  ]
 }

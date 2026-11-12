@@ -40,6 +40,7 @@ flowchart LR
     n_W_02["W-02 관리자 로그인(P1)"]
     n_W_03["W-03 관리자 수집 검토 목록(P1)"]
     n_W_04["W-04 관리자 수집 검토 상세(P1)"]
+    n_W_05["W-05 사전알림 이메일 확인"]
   end
   subgraph AP["API"]
     n_api_A_01["A-01 GET /v1/draws/lotto/latest"]
@@ -56,6 +57,7 @@ flowchart LR
     n_api_A_15["A-15 POST /v1/waitlist"]
     n_api_A_16["A-16 POST /v1/admin/ingestions/{id}/reverify"]
     n_api_A_17["A-17 GET · PUT · DELETE /v1/fortune-profile"]
+    n_api_A_19["A-19 POST /v1/waitlist/confirm"]
   end
   subgraph DB["데이터"]
     n_t_draw_checks[("draw_checks")]
@@ -210,3 +212,5 @@ flowchart LR
   n_W_04 -.-> n_t_draws_lotto
   n_W_04 -.-> n_t_draws_pension
   n_W_04 -.-> n_t_statistics_cache
+  n_W_05 --> n_api_A_19
+  n_W_05 -.-> n_t_waitlist_signups

@@ -63,6 +63,9 @@ flowchart LR
   subgraph g11["서버에서 관리자 역할 확인·쓰기 재검사"]
     n_W_04["W-04 관리자 수집 검토 상세(P1)<br/>/admin/collections/:id"]
   end
+  subgraph g12["공개(토큰)"]
+    n_W_05["W-05 사전알림 이메일 확인<br/>/waitlist/confirm"]
+  end
   n_M_01 --> n_M_02
   n_M_01 --> n_M_03
   n_M_01 --> n_M_04
@@ -201,3 +204,4 @@ flowchart LR
   n_W_03 --> n_W_02
   n_W_04 --> n_W_03
   n_W_04 --> n_W_02
+  n_W_05 --> n_W_01

@@ -1,0 +1,61 @@
+@import "tailwindcss";
+/* 정답 토큰(값 수정 금지) — 복사하지 않고 저장소 공용 파일을 그대로 참조한다. */
+@import "../../../../packages/design-tokens/tokens.css";
+
+/* 반응형 3구간: md = 768~, lg = 1200~ (DESIGN.md 2장) */
+@theme {
+  --breakpoint-lg: 75rem;
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+  }
+  body {
+    min-height: 100dvh;
+    line-height: 1.6;
+  }
+  :focus-visible {
+    outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+    outline-offset: calc(var(--spacing) * 0.5);
+  }
+}
+
+@layer components {
+  /* 히어로: design/reference/d-home.html 과 같은 네이비→프라이머리 그라데이션 */
+  .hero-surface {
+    color: var(--color-navy-fg);
+    background:
+      radial-gradient(120% 90% at 85% 20%, color-mix(in oklab, var(--color-navy), var(--color-primary) 55%) 0, transparent 60%),
+      linear-gradient(160deg, var(--color-navy) 0, color-mix(in oklab, var(--color-navy), var(--color-primary) 30%) 100%);
+  }
+  .hero-tag {
+    background: color-mix(in oklab, var(--color-navy-fg), transparent 88%);
+  }
+  .ball-deco {
+    background: radial-gradient(circle at 34% 28%, var(--color-navy-fg) 0, var(--color-primary-soft) 55%, color-mix(in oklab, var(--color-primary-soft), var(--color-primary) 35%) 100%);
+    box-shadow: var(--shadow-raised);
+  }
+  .ball-deco-pension {
+    background: radial-gradient(circle at 34% 28%, var(--color-navy-fg) 0, var(--color-pension-soft) 55%, color-mix(in oklab, var(--color-pension-soft), var(--color-pension) 40%) 100%);
+    box-shadow: var(--shadow-raised);
+  }
+  .cta-primary {
+    color: var(--color-primary-fg);
+    background: linear-gradient(100deg, var(--color-primary) 0, color-mix(in oklab, var(--color-primary), var(--color-primary-soft-fg) 70%) 100%);
+    box-shadow: var(--shadow-cta);
+  }
+  .backdrop {
+    background: color-mix(in oklab, var(--color-navy), transparent 40%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
