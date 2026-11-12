@@ -17,9 +17,12 @@ export { LastConfigStore } from "./last-config.ts";
 export { GENERATED_HISTORY_LIMIT, GenerateService, type GenerateRequest, type GenerateResult } from "./generate-service.ts";
 export {
   DRAW_CACHE_TTL_MS,
+  DRAW_PAGE_DEFAULT,
+  DRAW_PAGE_MAX,
   PublicReader,
   STAT_CACHE_TTL_MS,
   assertAppConfig,
+  type ListDrawsOptions,
   type ReadError,
   type ReadOptions,
   type ReadResult,

@@ -10,6 +10,9 @@ import { CACHE_VERSION, type LocalStore, type Parser } from "./storage.ts";
 /** 초기 TTL(결정 ⑦). R22 수치 확정은 출시 점검(task-036)에서 측정 후 04#4에 기록. */
 export const DRAW_CACHE_TTL_MS = 10 * 60 * 1000;
 export const STAT_CACHE_TTL_MS = 60 * 60 * 1000;
+/** 회차 목록 한 페이지 기본·최대 행 수. */
+export const DRAW_PAGE_DEFAULT = 20;
+export const DRAW_PAGE_MAX = 50;
 
 /** EMPTY: 최신 회차가 0행으로 왔지만 이전 정상본이 있어 그것을 유지함(stale). */
 export type ReadError = "NETWORK" | "HTTP" | "INVALID_RESPONSE" | "EMPTY";
@@ -31,7 +34,8 @@ export type ReadResult<T> = {
 type CacheEnvelope = { v: typeof CACHE_VERSION; origin: string; fetched_at: string; data: unknown };
 
 type ReadSpec<T> = {
-  cacheId: string;
+  /** null이면 캐시를 쓰지 않는다(목록의 다음 페이지 등). */
+  cacheId: string | null;
   path: string;
   parser: Parser<T>;
   ttlMs: number;
@@ -39,6 +43,8 @@ type ReadSpec<T> = {
   matches?: (data: T) => boolean;
   /** 0행이면 이전 정상본을 유지(최신 회차용). */
   keepOnEmpty?: boolean;
+  /** 응답 배열 전체를 parser에 넘긴다(목록). 0행도 빈 배열 data. */
+  list?: boolean;
 };
 
 const DRAW_COLUMNS = {
@@ -164,16 +170,45 @@ export class PublicReader {
     );
   }
 
+  /**
+   * 회차 목록(A-01·A-02와 같은 열) — draw_no 내림차순 한 페이지. before가 있으면 그 회차 미만(키셋 페이지).
+   * 캐시는 최신 페이지(before 없음)만. 0행은 data [] (미수집).
+   */
+  listDraws(game: "lotto", options?: ListDrawsOptions): Promise<ReadResult<DrawLotto[]>>;
+  listDraws(game: "pension", options?: ListDrawsOptions): Promise<ReadResult<DrawPension[]>>;
+  listDraws(game: GameType, options?: ListDrawsOptions): Promise<ReadResult<(DrawLotto | DrawPension)[]>>;
+  listDraws(game: GameType, options: ListDrawsOptions = {}): Promise<ReadResult<(DrawLotto | DrawPension)[]>> {
+    const { before, limit = DRAW_PAGE_DEFAULT, force } = options;
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > DRAW_PAGE_MAX) {
+      return Promise.reject(new AppCoreError("INVALID_INPUT", "limit"));
+    }
+    if (before !== undefined && (!Number.isSafeInteger(before) || before < 1)) {
+      return Promise.reject(new AppCoreError("INVALID_INPUT", "before"));
+    }
+    const query =
+      `select=${DRAW_COLUMNS[game]}` + (before === undefined ? "" : `&draw_no=lt.${before}`) + `&order=draw_no.desc&limit=${limit}`;
+    return this.read(
+      {
+        cacheId: before === undefined ? `draws:${game}:page:${limit}` : null,
+        path: `draws_${game}?${query}`,
+        parser: drawListParser(drawParser(game), limit, before),
+        ttlMs: DRAW_CACHE_TTL_MS,
+        list: true,
+      },
+      { force },
+    );
+  }
+
   private async read<T>(spec: ReadSpec<T>, options: ReadOptions): Promise<ReadResult<T>> {
     const { cacheId, parser, ttlMs } = spec;
-    const cached = await this.store.run(() => this.loadCache(cacheId, parser));
+    const cached = cacheId === null ? null : await this.store.run(() => this.loadCache(cacheId, parser));
     const now = this.clock.now();
     if (cached && !options.force) {
       const age = now.getTime() - Date.parse(cached.fetched_at);
       if (age >= 0 && age < ttlMs) return { data: cached.data, fetched_at: cached.fetched_at, stale: false };
     }
 
-    let fetched = await this.request(spec.path, parser);
+    let fetched = await this.request(spec.path, parser, spec.list ?? false);
     if ("data" in fetched && fetched.data !== null && spec.matches && !spec.matches(fetched.data)) {
       fetched = { error: "INVALID_RESPONSE" };
     }
@@ -184,11 +219,11 @@ export class PublicReader {
     const fetchedAt = now.toISOString();
     const envelope: CacheEnvelope = { v: CACHE_VERSION, origin: this.base, fetched_at: fetchedAt, data: fetched.data };
     // 캐시 쓰기 실패는 화면 표시를 막지 않는다 — 다음 요청이 다시 받는다.
-    await this.store.run(() => this.store.put("cache", cacheId, envelope)).catch(() => undefined);
+    if (cacheId !== null) await this.store.run(() => this.store.put("cache", cacheId, envelope)).catch(() => undefined);
     return { data: fetched.data, fetched_at: fetchedAt, stale: false };
   }
 
-  private async request<T>(path: string, parser: Parser<T>): Promise<{ data: T | null } | { error: ReadError }> {
+  private async request<T>(path: string, parser: Parser<T>, list: boolean): Promise<{ data: T | null } | { error: ReadError }> {
     let body: unknown;
     try {
       // 메서드로 부르면 this가 바뀌어 브라우저 전역 fetch가 Illegal invocation을 던진다 — 분리해 호출한다.
@@ -203,7 +238,12 @@ export class PublicReader {
     } catch {
       return { error: "NETWORK" };
     }
-    if (!Array.isArray(body) || body.length > 1) return { error: "INVALID_RESPONSE" };
+    if (!Array.isArray(body)) return { error: "INVALID_RESPONSE" };
+    if (list) {
+      const all = parser.safeParse(body);
+      return all.success ? { data: all.data } : { error: "INVALID_RESPONSE" };
+    }
+    if (body.length > 1) return { error: "INVALID_RESPONSE" };
     if (body.length === 0) return { data: null };
     const parsed = parser.safeParse(body[0]);
     return parsed.success ? { data: parsed.data } : { error: "INVALID_RESPONSE" };
@@ -223,8 +263,35 @@ export type ReadOptions = {
   force?: boolean;
 };
 
+export type ListDrawsOptions = ReadOptions & {
+  /** 이 회차 미만만(다음 페이지). 정수 ≥1 */
+  before?: number;
+  /** 1~DRAW_PAGE_MAX, 기본 DRAW_PAGE_DEFAULT */
+  limit?: number;
+};
+
 function drawParser(game: GameType): Parser<DrawLotto | DrawPension> {
   return game === "lotto" ? DrawLottoSchema : DrawPensionSchema;
+}
+
+/** 목록 응답: 행마다 검증, limit 이하·draw_no 엄격 내림차순·before 미만이 아니면 전체 실패(요청과 다른 응답). */
+function drawListParser<T extends { draw_no: number }>(row: Parser<T>, limit: number, before: number | undefined): Parser<T[]> {
+  return {
+    safeParse(input: unknown) {
+      if (!Array.isArray(input) || input.length > limit) return { success: false };
+      const rows: T[] = [];
+      for (const item of input) {
+        const parsed = row.safeParse(item);
+        if (!parsed.success) return { success: false };
+        const prev = rows[rows.length - 1];
+        if ((prev && parsed.data.draw_no >= prev.draw_no) || (before !== undefined && parsed.data.draw_no >= before)) {
+          return { success: false };
+        }
+        rows.push(parsed.data);
+      }
+      return { success: true, data: rows };
+    },
+  };
 }
 
 const envelopeParser: Parser<CacheEnvelope> = {
