@@ -13,3 +13,55 @@ erDiagram
     timestamptz window_start PK
     int hits
   }
+  ingestion_runs {
+    uuid id PK
+    uuid reviewed_by FK
+    game_type game
+    int draw_no
+    text source_url
+    timestamptz fetched_at
+    text payload_sha256
+    jsonb raw_payload
+    text status
+    jsonb validation_errors
+    timestamptz reverified_at
+    jsonb reverify_errors
+    string more_3_cols
+  }
+  draws_lotto {
+    int draw_no PK
+    uuid ingestion_run_id FK
+    date draw_date
+    smallint__ nums
+    smallint bonus
+    jsonb prizes
+    text source_url
+    timestamptz source_verified_at
+    timestamptz created_at
+  }
+  draws_pension {
+    int draw_no PK
+    uuid ingestion_run_id FK
+    date draw_date
+    smallint group_no
+    char digits
+    char bonus_digits
+    jsonb prizes
+    text source_url
+    timestamptz source_verified_at
+    timestamptz created_at
+  }
+  statistics_cache {
+    game_type game PK
+    text window_key PK
+    text metric PK
+    jsonb payload
+    int range_from
+    int range_to
+    int sample_size
+    text source
+    timestamptz updated_at
+    timestamptz created_at
+  }
+  ingestion_runs ||--o{ draws_lotto : "ingestion_run_id"
+  ingestion_runs ||--o{ draws_pension : "ingestion_run_id"

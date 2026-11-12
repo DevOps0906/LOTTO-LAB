@@ -21,6 +21,21 @@
 | EF 로컬 실행 | `npx supabase@3.1.0 functions serve --env-file <로컬 env 파일>` |
 | 정지 | `npx supabase@3.1.0 stop` |
 
+## 시드 (`seed.sql`)
+- `db reset`(로컬) 때만 실행된다. 내용은 **합성 데이터만**(실제 회차 아님) — `source_url`은 `https://synthetic.invalid/…` 표식.
+- 원격 프로젝트에 `db reset --linked`·`db push --include-seed` **금지**(원격 데이터 삭제·합성 회차 적재). 실제 회차 적재는 워커(task-029)만.
+- 원격 배포 전·후 합성 표식 검사 — 행이 하나라도 있으면 예외로 중단한다:
+  ```sql
+  do $$ begin
+    if exists (select 1 from public.ingestion_runs where source_url like 'https://synthetic.invalid/%')
+       or exists (select 1 from public.draws_lotto where source_url like 'https://synthetic.invalid/%')
+       or exists (select 1 from public.draws_pension where source_url like 'https://synthetic.invalid/%') then
+      raise exception '합성 시드 행 발견(synthetic.invalid) — 배포 중단';
+    end if;
+  end $$;
+  ```
+- pgTAP(`tests/`)은 시드에 기대지 않고 트랜잭션 안에서 자체 데이터를 넣고 rollback 한다.
+
 ## waitlist (A-15) 환경변수
 값은 저장소에 두지 않는다(로컬은 저장소 밖 env 파일, 운영은 `supabase secrets set`).
 - 필수: `TURNSTILE_SECRET` · `TURNSTILE_HOSTNAMES`(쉼표 구분) · `RATE_SALT` · `ALLOWED_ORIGIN` — `SUPABASE_URL`·`SUPABASE_SERVICE_ROLE_KEY`는 런타임이 주입.
