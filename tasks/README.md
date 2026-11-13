@@ -50,7 +50,7 @@
 | task-043a | 인증 서버 설정·`user_consents`·계정 삭제 EF (P1) | W7(P1) | 008, 040 | 높음 | builder → codex-reviewer+reviewer(security) | 완료 |
 | task-043 | 모바일 로그인·가입·재설정 M-06·계정 삭제 (Supabase Auth, P1) | W7(P1) | 008, 017, 043a | 높음 | builder → reviewer(security) | 완료 |
 | task-043b | Windows 로그인 대응 (Tauri keyring, P1) | W7(P1) | 043 | 높음 | builder → reviewer(security) | 대기 |
-| task-046 | 사주 만세력 간지·오행 표시(P1, 표시 전용) | W7(P1) | 037, 041 | 높음 | builder+tester | 대기 |
+| task-046 | 사주 만세력 간지·오행 표시(P1, 표시 전용) | W7(P1) | 037, 041 | 높음 | builder+tester | 완료(KASI 픽스처·dist 검사 보류) |
 | task-044 | 사전알림 메일 발송·수신 거부 링크 A-18·발송 후 파기 | W6 | 003 | 높음 | builder | 대기 |
 | task-045 | Android 광고(AdMob) — 배너·보상형·UMP 동의 (ADR-0006) | W7(P1) | 009, 020, 021 | 높음 | builder → reviewer(security) | 대기 |
 

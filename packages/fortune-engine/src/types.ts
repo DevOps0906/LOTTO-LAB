@@ -30,6 +30,21 @@ export type SajuBirthInput = {
   hour: SajuHourId | null;
 };
 
+/** 사주 표시용 한 기둥(task-046). 한글 천간·지지와 각 오행(목·화·토·금·수). */
+export type SajuPillar = { stem: string; branch: string; stemElement: string; branchElement: string };
+/** 오행 분포 = 천간·지지 본기 글자 수(지장간 제외). 시진 모름은 합 6, 아니면 8. */
+export type SajuElementCounts = { 목: number; 화: number; 토: number; 금: number; 수: number };
+/** 변환할 수 없는 날짜(윤달 없는 해의 윤달·29일 달의 30일·1900 이전·오늘 이후)는 ok:false — 번호 생성은 그대로 가능. */
+export type SajuChartResult =
+  | {
+      ok: true;
+      pillars: { year: SajuPillar; month: SajuPillar; day: SajuPillar; hour: SajuPillar | null };
+      elements: SajuElementCounts;
+      /** 절입이 출생 구간(±60분) 안이라 년주·월주가 출생 시각에 따라 다를 수 있음 */
+      boundary: boolean;
+    }
+  | { ok: false; reason: "UNCONVERTIBLE_DATE" };
+
 export type FortuneTheme =
   | { kind: "zodiac_sign"; sign: ZodiacSignId }
   | { kind: "zodiac_animal"; animal: ZodiacAnimalId }

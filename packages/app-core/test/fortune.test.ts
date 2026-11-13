@@ -103,4 +103,13 @@ describe("FortuneService", () => {
     await expect(setup(broken).core.fortune.generate(DREAM)).rejects.toMatchObject({ code: "STORAGE_FAILED" });
     expect(broken.keysOf(`${KEY_PREFIX}generated:`)).toHaveLength(0);
   });
+
+  it("사주 표시 계산(sajuChart): 오늘(KST) 기준 변환·실패, 저장·비밀값 사용 없음", () => {
+    const { core, kv, fill } = setup(); // 시계 = 2026-11-12 12:00 KST
+    expect(core.fortune.sajuChart({ date: "2024-02-10", calendar: "solar", leap: false, hour: null })).toMatchObject({ ok: true, boundary: false });
+    expect(core.fortune.sajuChart({ date: "2026-11-12", calendar: "solar", leap: false, hour: "ja" }).ok).toBe(true);
+    expect(core.fortune.sajuChart({ date: "2026-11-13", calendar: "solar", leap: false, hour: null })).toEqual({ ok: false, reason: "UNCONVERTIBLE_DATE" });
+    expect(kv.keysOf(KEY_PREFIX)).toHaveLength(0);
+    expect(fill).not.toHaveBeenCalled();
+  });
 });

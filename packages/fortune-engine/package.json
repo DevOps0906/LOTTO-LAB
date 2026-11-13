@@ -10,7 +10,8 @@
     "@lotto-lab/lottery-core": "workspace:*",
     "@lotto-lab/lotto-engine": "workspace:*",
     "@lotto-lab/pension-engine": "workspace:*",
-    "@lotto-lab/types": "workspace:*"
+    "@lotto-lab/types": "workspace:*",
+    "manseryeok": "2.0.0"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",

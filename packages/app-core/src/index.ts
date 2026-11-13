@@ -77,6 +77,8 @@ export {
   type FortuneMethod,
   type FortuneRequest,
   type FortuneTheme,
+  type SajuBirthInput,
+  type SajuChartResult,
   type ZodiacAnimalId,
   type ZodiacSignId,
 } from "@lotto-lab/fortune-engine";

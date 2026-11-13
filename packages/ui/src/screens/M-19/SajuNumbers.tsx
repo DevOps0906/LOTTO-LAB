@@ -1,7 +1,8 @@
 // M-19 사주 번호(P1): 저장된 사주 프로필(M-18)을 읽어 기기에서 오늘의 번호를 만든다(fortune-engine saju, 같은 날 같은 결과).
 // 프로필 읽기는 온라인 필요(로컬 캐시 없음, ADR-0005). 결과는 생성 이력(method = saju)이고 저장하면 즐겨찾기(구매 아님).
-// 천간지지·오행 카드는 task-046. 회원 전용(SajuGate) — 계정이 바뀌거나 로그아웃하면 프로필·결과가 즉시 사라진다.
-import { useEffect, useRef, useState } from "react";
+// 천간지지·오행 카드(SajuChartCard, task-046)는 표시 전용 — 번호 결정과 무관. 회원 전용(SajuGate) — 계정이 바뀌거나 로그아웃하면 프로필·결과가 즉시 사라진다.
+import { useEffect, useMemo, useRef, useState } from "react";
+import { SajuChartCard, type SajuChart } from "./SajuChartCard";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { Header } from "../../components/Header";
@@ -17,6 +18,8 @@ export type SajuNumbersCore = Pick<GeneratorCore, "tickets" | "adapters"> &
     fortuneProfile: { load: FortuneProfileCore["fortuneProfile"]["load"] };
     fortune: {
       generate(request: FortuneRequestInput): Promise<{ batch_id: string; records: FortuneBatch["records"]; saved: boolean; method: string }>;
+      /** 사주 4주·오행 표시 계산(동기, 저장·전송 없음) */
+      sajuChart(birth: { date: string; calendar: "solar" | "lunar"; leap: boolean; hour: string | null }): SajuChart;
     };
   };
 
@@ -101,6 +104,10 @@ function Body({ core, links, hours, onLogin, navigate }: SajuNumbersProps) {
     setBusy(false);
   }
 
+  const chart = useMemo(
+    () => (profile ? core.fortune.sajuChart({ date: profile.birth_date, calendar: profile.calendar, leap: profile.is_leap_month, hour: profile.birth_hour }) : null),
+    [profile, core],
+  );
   const hourLabel = profile?.birth_hour ? (hours.find((h) => h.id === profile.birth_hour)?.label ?? "알 수 없음") : "모름";
 
   return (
@@ -190,6 +197,7 @@ function Body({ core, links, hours, onLogin, navigate }: SajuNumbersProps) {
           </Card>
 
           <div className="ll-gen__col">
+            {chart && <SajuChartCard chart={chart} hourIsJa={profile.birth_hour === "ja"} onEditProfile={() => navigate(links.profile)} />}
             {busy && <StateView kind="loading" title="번호를 만드는 중입니다" />}
             {failed && (
               <StateView

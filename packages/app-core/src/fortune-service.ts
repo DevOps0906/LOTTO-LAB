@@ -3,7 +3,7 @@
 // 기기 비밀값은 처음 쓸 때 RandomBytes(CSPRNG) 32바이트로 만들어 전용 키에 둔다. 내보내기(LocalData.export)는 레코드 종류
 // (ticket·generated·settings)만 읽으므로 이 키는 들어가지 않는다. 모두 삭제하면 지워지고 다음 생성 때 새로 만든다.
 import { kstToday } from "@lotto-lab/lottery-core";
-import { generateFortune, type FortuneRequest, type FortuneResult } from "@lotto-lab/fortune-engine";
+import { calculateSaju, generateFortune, type FortuneRequest, type FortuneResult, type SajuBirthInput, type SajuChartResult } from "@lotto-lab/fortune-engine";
 import type { Clock, KeyValueStore, RandomBytes } from "./adapters.ts";
 import { AppCoreError } from "./errors.ts";
 import type { GenerateResult, GenerateService, GeneratedLine } from "./generate-service.ts";
@@ -44,6 +44,14 @@ export class FortuneService {
         ? result.games.map((nums) => ({ game: "lotto", numbers: { nums }, group_no: null, engine_version: result.engine_version }))
         : result.tickets.map((t) => ({ game: "pension", numbers: { digits: t.digits }, group_no: t.group_no, engine_version: result.engine_version }));
     return { ...(await this.generator.saveBatch(result.method, lines)), method: result.method };
+  }
+
+  /**
+   * 사주 4주·오행 표시용 계산(task-046). 번호 결정·저장과 무관하며 오늘(KST)은 시계에서 얻는다.
+   * 입력·간지는 저장·전송·로그하지 않는다. 변환할 수 없는 날짜는 `{ ok: false }`(번호 생성은 그대로 가능).
+   */
+  sajuChart(birth: SajuBirthInput): SajuChartResult {
+    return calculateSaju(birth, kstToday(this.clock.now()));
   }
 
   /** 저장된 비밀값(형식이 맞을 때만) 또는 새로 만든 값. 만든 값은 한 번 저장해 계속 쓴다. */
