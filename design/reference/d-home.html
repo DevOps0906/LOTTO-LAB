@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>D-01 홈 — PC hi-fi 시안 (LOTTO LAB, 숫자는 예시)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>
+/* 토큰 로더: 정답 소스 tokens.css(@theme)를 그대로 읽어 :root 로 적용한다. 이 파일에는 색·크기 값을 쓰지 않는다.
+   file:// 로 열 때는 Chrome --allow-file-access-from-files(shot 사용) 또는 저장소 루트 로컬 서버가 필요하다. ?dark 로 다크 모드. */
+(function () {
+  var css = '';
+  try { var x = new XMLHttpRequest(); x.open('GET', '../../packages/design-tokens/tokens.css', false); x.send(); css = x.responseText || ''; } catch (e) {}
+  if (location.search.indexOf('dark') > -1) document.documentElement.classList.add('dark');
+  if (!css) { document.documentElement.setAttribute('data-tokens', 'missing'); return; }
+  css = css.replace(/@custom-variant[^;]*;/g, '').replace(/@theme\s*\{/, ':root{');
+  var s = document.createElement('style'); s.id = 'tokens'; s.textContent = css; document.head.appendChild(s);
+})();
+</script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:calc(var(--spacing)*0.75) solid var(--color-focus);outline-offset:calc(var(--spacing)*0.5)}
+/* 토큰 로드 실패 전용 예외: 토큰이 없으므로 CSS 시스템 색(Mark/MarkText)을 쓴다 */
+.tokens-missing{display:none;position:fixed;top:0;left:0;right:0;z-index:100;margin:0;padding:1.25em 1.5em;font-size:1.25em;font-weight:700;line-height:1.5;background:Mark;color:MarkText;border-bottom:0.2em solid MarkText}
+.tokens-missing code{font-size:0.9em}
+.measure{position:fixed;top:0;right:0;z-index:101;padding:calc(var(--spacing)*2) calc(var(--spacing)*3);background:var(--color-navy);color:var(--color-navy-fg);font-family:var(--font-mono);font-size:var(--text-caption)}
+[data-tokens=missing] .tokens-missing{display:block}
+.ic{width:calc(var(--spacing)*5);height:calc(var(--spacing)*5);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.muted{color:var(--color-text-muted)}
+.cap{font-size:var(--text-caption)}
+.mono{font-family:var(--font-mono)}
+
+/* ── 셸: ~767 1열+하단 탭 / 768~1199 아이콘 레일 / 1200~ 사이드바 ── */
+.app{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr)}
+.side{display:none}
+.tabbar{position:fixed;left:0;right:0;bottom:0;height:calc(var(--spacing-tabbar) + env(safe-area-inset-bottom, calc(var(--spacing)*0)));padding-bottom:env(safe-area-inset-bottom, calc(var(--spacing)*0));display:grid;grid-template-columns:repeat(4,1fr);background:var(--color-surface);border-top:calc(var(--spacing)/4) solid var(--color-border);z-index:10}
+.tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--spacing)*0.5);font-size:var(--text-caption);color:var(--color-text-muted)}
+.tabbar a[aria-current]{color:var(--color-primary);font-weight:700}
+.main{min-width:0;padding-bottom:calc(var(--spacing-tabbar) + var(--spacing-gap)*2 + env(safe-area-inset-bottom, calc(var(--spacing)*0)))}
+.wrap{padding:0 var(--spacing-page)}
+
+.brand{display:flex;align-items:center;gap:calc(var(--spacing)*2);font-weight:800;font-size:var(--text-h2)}
+.brand .logo{width:calc(var(--spacing)*7);height:calc(var(--spacing)*7);fill:currentColor;stroke:none}
+.brand small{font-size:var(--text-caption);font-weight:600;letter-spacing:0.04em;color:var(--color-navy-muted)}
+
+.side nav{display:flex;flex-direction:column;gap:calc(var(--spacing)*1)}
+/* 사이드바·레일 = 모바일 하단 탭과 같은 톤: surface + border, 비활성 text-muted, 활성 primary */
+.side nav a{display:flex;align-items:center;gap:calc(var(--spacing)*3);height:var(--spacing-control);padding:0 calc(var(--spacing)*3.5);border-radius:var(--radius-control);color:var(--color-text-muted);font-weight:600}
+.side nav a:hover{color:var(--color-text);background:var(--color-bg)}
+.side nav a[aria-current]{color:var(--color-primary);font-weight:800;box-shadow:inset calc(var(--spacing)*0.75) 0 0 var(--color-primary)}
+.side .brand .logo{color:var(--color-primary)}
+.side .brand small{color:var(--color-text-muted)}
+.side .foot{margin-top:auto;font-size:var(--text-caption);color:var(--color-text-muted)}
+
+.topbar{position:absolute;width:calc(var(--spacing)/4);height:calc(var(--spacing)/4);overflow:hidden;clip:rect(0 0 0 0)}
+.topbar .tools,.topbar span{display:none}
+.iconbtn{position:relative;display:inline-grid;place-items:center;width:calc(var(--spacing)*10);height:calc(var(--spacing)*10);border-radius:var(--radius-pill);border:0;background:transparent;cursor:pointer}
+.iconbtn .dot{position:absolute;top:calc(var(--spacing)*1.5);right:calc(var(--spacing)*1.5);min-width:calc(var(--spacing)*4);height:calc(var(--spacing)*4);border-radius:var(--radius-pill);background:var(--color-danger);color:var(--color-danger-fg);font-size:var(--text-caption);line-height:calc(var(--spacing)*4);text-align:center;font-weight:700;transform:scale(0.8)}
+.avatar{display:inline-grid;place-items:center;width:calc(var(--spacing)*9);height:calc(var(--spacing)*9);border-radius:var(--radius-pill);background:var(--color-navy-muted);color:var(--color-navy)}
+
+/* ── 번호공 ── */
+.ball{--b:var(--color-ball-31);--bf:var(--color-ball-31-fg);display:grid;place-items:center;width:100%;max-width:var(--spacing-ball);aspect-ratio:1;border-radius:var(--radius-pill);font-weight:800;font-size:var(--text-ball);line-height:1;color:var(--bf);
+  background:radial-gradient(circle at 34% 28%,color-mix(in oklab,var(--b),var(--color-navy-fg) 28%) 0,var(--b) 55%,color-mix(in oklab,var(--b),var(--color-navy) 18%) 100%);
+  box-shadow:inset 0 calc(var(--spacing)*-0.5) var(--spacing) color-mix(in oklab,var(--b),var(--color-navy) 30%),0 calc(var(--spacing)*0.5) var(--spacing) color-mix(in oklab,var(--color-navy),transparent 82%)}
+.b1{--b:var(--color-ball-1);--bf:var(--color-ball-1-fg)}
+.b11{--b:var(--color-ball-11);--bf:var(--color-ball-11-fg)}
+.b21{--b:var(--color-ball-21);--bf:var(--color-ball-21-fg)}
+.b31{--b:var(--color-ball-31);--bf:var(--color-ball-31-fg)}
+.b41{--b:var(--color-ball-41);--bf:var(--color-ball-41-fg)}
+.balls{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,var(--spacing-ball));gap:calc(var(--spacing)*1.5);align-items:center;justify-content:start}
+.balls .plus{text-align:center;font-weight:700;color:var(--color-text-muted)}
+.balls.sm{grid-auto-columns:minmax(0,calc(var(--spacing-ball)*0.72));gap:calc(var(--spacing)*1)}
+.balls.sm .ball{font-size:var(--text-caption);font-weight:700}
+.deco{--b:var(--color-surface);display:grid;place-items:center;aspect-ratio:1;border-radius:var(--radius-pill);font-weight:800;color:var(--color-navy);
+  background:radial-gradient(circle at 34% 28%,var(--color-navy-fg) 0,var(--color-primary-soft) 55%,color-mix(in oklab,var(--color-primary-soft),var(--color-primary) 35%) 100%);
+  box-shadow:inset 0 0 0 calc(var(--spacing)*1.5) color-mix(in oklab,var(--color-primary),transparent 40%),var(--shadow-raised)}
+
+/* ── 카드 ── */
+.card{background:var(--color-surface);border:calc(var(--spacing)/4) solid var(--color-border);border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:calc(var(--spacing)*5)}
+.card-h{display:flex;align-items:baseline;justify-content:space-between;gap:calc(var(--spacing)*2);flex-wrap:wrap;margin-bottom:calc(var(--spacing)*3)}
+.card-h h2,.card-h h3{font-size:var(--text-h2);font-weight:800}
+
+/* ── 히어로 ── */
+.hero{position:relative;overflow:hidden;color:var(--color-navy-fg);padding:calc(var(--spacing)*5) var(--spacing-page) calc(var(--spacing)*14);
+  background:radial-gradient(120% 90% at 85% 20%,color-mix(in oklab,var(--color-navy),var(--color-primary) 55%) 0,transparent 60%),
+             linear-gradient(160deg,var(--color-navy) 0,color-mix(in oklab,var(--color-navy),var(--color-primary) 30%) 100%)}
+.hero .bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:calc(var(--spacing)*6)}
+.hero .bar .tools{display:flex;align-items:center;gap:calc(var(--spacing)*1)}
+.hero-body{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--spacing)*3)}
+.hero h2{font-size:var(--text-h1);font-weight:800;line-height:1.3;letter-spacing:-0.01em}
+.hero p{margin-top:calc(var(--spacing)*3);color:var(--color-navy-muted);font-size:var(--text-caption)}
+.hero .tag{display:inline-block;margin-bottom:calc(var(--spacing)*2);padding:calc(var(--spacing)*0.5) calc(var(--spacing)*2.5);border-radius:var(--radius-pill);background:color-mix(in oklab,var(--color-navy-fg),transparent 88%);font-size:var(--text-caption);font-weight:700}
+.hero-art{position:relative;flex:none;width:calc(var(--spacing)*30);height:calc(var(--spacing)*22)}
+.hero-art .deco{position:absolute}
+.hero-art .d1{width:calc(var(--spacing)*18);left:0;bottom:0;font-size:var(--text-kpi)}
+.hero-art .d2{width:calc(var(--spacing)*14);right:0;top:0;font-size:var(--text-h2);background:radial-gradient(circle at 34% 28%,var(--color-navy-fg) 0,var(--color-pension-soft) 55%,color-mix(in oklab,var(--color-pension-soft),var(--color-pension) 40%) 100%);box-shadow:inset 0 0 0 calc(var(--spacing)*1.5) color-mix(in oklab,var(--color-pension),transparent 40%),var(--shadow-raised)}
+
+/* ── 본문 그리드 ── */
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--spacing-gap)}
+.col{display:grid;gap:var(--spacing-gap);align-content:start;min-width:0}
+.recent{margin-top:calc(var(--spacing)*-9);position:relative}
+.recent .head{display:flex;align-items:baseline;gap:calc(var(--spacing)*2);flex-wrap:wrap}
+.recent .head b{font-size:var(--text-h2);font-weight:800}
+.recent .head .date{margin-left:auto}
+.recent .row{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--spacing)*2);margin-top:calc(var(--spacing)*3)}
+.recent .row .balls{flex:1;min-width:0}
+.src{display:flex;flex-wrap:wrap;gap:0 calc(var(--spacing)*3);margin-top:calc(var(--spacing)*3);padding-top:calc(var(--spacing)*3);border-top:calc(var(--spacing)/4) dashed var(--color-border)}
+
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--spacing-gap)}
+.prod{position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:calc(var(--spacing)*36);padding:calc(var(--spacing)*4);border-radius:var(--radius-card);color:var(--color-primary-fg);box-shadow:var(--shadow-card);
+  background:linear-gradient(140deg,var(--color-primary) 0,color-mix(in oklab,var(--color-primary),var(--color-primary-soft-fg) 70%) 100%)}
+.prod.pen{color:var(--color-pension-fg);background:linear-gradient(140deg,var(--color-pension) 0,color-mix(in oklab,var(--color-pension),var(--color-pension-soft-fg) 70%) 100%)}
+.prod h3{font-size:var(--text-h2);font-weight:800}
+.prod p{margin-top:calc(var(--spacing)*1);font-size:var(--text-caption);opacity:0.92}
+.prod .go{margin-top:auto;position:relative;z-index:1}
+.prod .art{position:absolute;right:calc(var(--spacing)*3);bottom:calc(var(--spacing)*3);display:flex;align-items:flex-end}
+.prod .art .deco{width:calc(var(--spacing)*12);font-size:var(--text-h2)}
+.prod .art .deco + .deco{width:calc(var(--spacing)*8);margin-left:calc(var(--spacing)*-3);font-size:var(--text-caption)}
+.prod.pen .art .ic{width:calc(var(--spacing)*14);height:calc(var(--spacing)*14);stroke-width:1.4;opacity:0.5}
+
+.sum-list{display:grid;gap:calc(var(--spacing)*2);container-type:inline-size}
+.sum > span:nth-child(2){word-break:keep-all}
+@container (width < 22em){
+  .sum{grid-template-columns:auto minmax(0,1fr)}
+  .sum > :last-child{grid-column:2;justify-content:start}
+}
+.sum{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:calc(var(--spacing)*3);padding:calc(var(--spacing)*3);border-radius:var(--radius-control);background:var(--color-bg);border:calc(var(--spacing)/4) solid var(--color-border)}
+.sum .tile{display:grid;place-items:center;width:calc(var(--spacing)*9);height:calc(var(--spacing)*9);border-radius:var(--radius-control);background:var(--color-primary-soft);color:var(--color-primary-soft-fg)}
+.sum .tile.pen{background:var(--color-pension-soft);color:var(--color-pension-soft-fg)}
+.sum b{display:block;font-weight:700}
+.sum span.cap{display:block}
+.chips{display:flex;gap:calc(var(--spacing)*1);flex-wrap:wrap;justify-content:flex-end}
+.chip{padding:calc(var(--spacing)*0.5) calc(var(--spacing)*2);border-radius:var(--radius-pill);font-size:var(--text-caption);font-weight:700;background:var(--color-pension-soft);color:var(--color-pension-soft-fg);white-space:nowrap}
+.chip.p{background:var(--color-primary-soft);color:var(--color-primary-soft-fg)}
+.note{margin-top:calc(var(--spacing)*3);font-size:var(--text-caption);color:var(--color-text-muted)}
+.note strong{color:var(--color-text)}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing)*2);width:100%;min-height:calc(var(--spacing-control) + var(--spacing)*4);border:0;border-radius:var(--radius-card);cursor:pointer;font-size:var(--text-h2);font-weight:800;color:var(--color-primary-fg);box-shadow:var(--shadow-cta);
+  background:linear-gradient(100deg,var(--color-primary) 0,color-mix(in oklab,var(--color-primary),var(--color-primary-soft-fg) 70%) 100%)}
+.cta .ic{width:calc(var(--spacing)*6);height:calc(var(--spacing)*6)}
+.ghost{display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing)*2);width:100%;min-height:var(--spacing-control);border-radius:var(--radius-control);border:calc(var(--spacing)/4) solid var(--color-input);background:var(--color-surface);font-weight:700;cursor:pointer}
+
+.mine,.history{display:none}
+.num{font-variant-numeric:tabular-nums}
+.history ol{list-style:none;margin:0;padding:0;display:grid}
+.history li{display:grid;grid-template-columns:calc(var(--spacing)*20) minmax(0,1fr) auto;align-items:center;gap:calc(var(--spacing)*3);padding:calc(var(--spacing)*2.5) 0;border-top:calc(var(--spacing)/4) solid var(--color-border)}
+.history li:first-child{border-top:0}
+.history .chk{font-size:var(--text-caption);font-weight:700;padding:calc(var(--spacing)*0.5) calc(var(--spacing)*2);border-radius:var(--radius-pill);background:var(--color-primary-soft);color:var(--color-primary-soft-fg);white-space:nowrap}
+.history .chk.wait{background:var(--color-bg);color:var(--color-text-muted);border:calc(var(--spacing)/4) solid var(--color-border)}
+.mine dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(var(--spacing)*2);margin:0}
+.mine dl div{padding:calc(var(--spacing)*3);border-radius:var(--radius-control);background:var(--color-bg)}
+.mine dt{font-size:var(--text-caption);color:var(--color-text-muted)}
+.mine dd{margin:0;font-family:var(--font-mono);font-size:var(--text-h1);font-weight:700}
+
+/* ── 768~1199: 아이콘 레일 72 + 2열 ── */
+@media (width >= 48em){ /* DESIGN.md 2장 768 */
+  .app{grid-template-columns:var(--spacing-sidebar-rail) minmax(0,1fr)}
+  .tabbar{display:none}
+  .side{display:flex;flex-direction:column;gap:calc(var(--spacing)*6);position:sticky;top:0;height:100vh;padding:calc(var(--spacing)*5) calc(var(--spacing)*3);background:var(--color-surface);color:var(--color-text);border-right:calc(var(--spacing)/4) solid var(--color-border)}
+  .side .brand{justify-content:center}
+  .side .brand .txt,.side .lbl,.side .foot{position:absolute;width:calc(var(--spacing)/4);height:calc(var(--spacing)/4);overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .side nav a{justify-content:center;padding:0}
+  .main{padding:var(--spacing-page);padding-bottom:calc(var(--spacing)*10)}
+  .wrap{padding:0}
+  .inner{max-width:calc(var(--spacing)*300);margin:0 auto;display:grid;gap:var(--spacing-gap)}
+  .topbar{position:static;width:auto;height:auto;overflow:visible;clip:auto;display:flex;align-items:center;gap:calc(var(--spacing)*3)}
+  .topbar .tools{display:flex}.topbar span{display:inline}.topbar .tools span{display:inline-grid}
+  .topbar h1{font-size:var(--text-h1);font-weight:800}
+  .topbar .tools{margin-left:auto;display:flex;align-items:center;gap:calc(var(--spacing)*1)}
+  .hero{border-radius:var(--radius-card);padding:calc(var(--spacing)*8);box-shadow:var(--shadow-raised)}
+  .hero .bar{display:none}
+  .hero h2{font-size:var(--text-display)}
+  .hero p{font-size:var(--text-body)}
+  .grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start}
+  .recent{margin-top:0}
+  .mine,.history{display:block}
+}
+/* ── 1200~: 사이드바 240 + 2열 ── */
+@media (width >= 75em){ /* DESIGN.md 2장 1200 */
+  .app{grid-template-columns:var(--spacing-sidebar) minmax(0,1fr)}
+  .side{padding:calc(var(--spacing)*6) calc(var(--spacing)*4)}
+  .side .brand{justify-content:flex-start;padding:0 calc(var(--spacing)*2)}
+  .side .brand .txt,.side .lbl,.side .foot{position:static;width:auto;height:auto;overflow:visible;clip:auto;white-space:normal}
+  .side nav a{justify-content:flex-start;padding:0 calc(var(--spacing)*3.5)}
+  .side .foot{padding:0 calc(var(--spacing)*2)}
+  .hero{padding:calc(var(--spacing)*10) calc(var(--spacing)*12)}
+  .hero-art{width:calc(var(--spacing)*44);height:calc(var(--spacing)*34)}
+  .hero-art .d1{width:calc(var(--spacing)*26);font-size:var(--text-display)}
+  .hero-art .d2{width:calc(var(--spacing)*20);font-size:var(--text-h1)}
+  .prod{min-height:calc(var(--spacing)*44);padding:calc(var(--spacing)*6)}
+  .prod .art .deco{width:calc(var(--spacing)*16);font-size:var(--text-h1)}
+  .prod .art .deco + .deco{width:calc(var(--spacing)*10);font-size:var(--text-body)}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="13" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10"/></symbol>
+  <symbol id="i-stats" viewBox="0 0 24 24"><path d="M5 20V12M11 20V5M17 20v-9M3 20h18"/></symbol>
+  <symbol id="i-mine" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></symbol>
+</svg>
+<p class="tokens-missing" role="alert">디자인 토큰(<code>packages/design-tokens/tokens.css</code>)을 읽지 못해 색·크기가 빠진 화면입니다.<br>로컬 서버로 여세요: 저장소 루트에서 <code>npx serve .</code> 실행 후 <code>/design/reference/d-home.html</code> 접속 (또는 <code>design/shots</code> 캡처 확인)</p>
+
+<div class="app">
+  <!-- 768~: 사이드바(레일 72 / 1200~ 240) -->
+  <aside class="side" aria-label="주 메뉴">
+    <div class="brand"><svg class="ic logo"><use href="#i-logo"/></svg><span class="txt">로또랩 <small>LOTTO LAB</small></span></div>
+    <nav>
+      <a href="d-home.html" aria-current="page" title="대시보드"><svg class="ic"><use href="#i-dash"/></svg><span class="lbl">대시보드</span></a>
+      <a href="d-lotto.html" title="로또 생성"><svg class="ic"><use href="#i-ball"/></svg><span class="lbl">로또 생성</span></a>
+      <a href="#" title="연금 생성"><svg class="ic"><use href="#i-ticket"/></svg><span class="lbl">연금 생성</span></a>
+      <a href="#" title="통계"><svg class="ic"><use href="#i-stats"/></svg><span class="lbl">통계</span></a>
+      <a href="#" title="내 번호"><svg class="ic"><use href="#i-mine"/></svg><span class="lbl">내 번호</span></a>
+      <a href="#" title="회차"><svg class="ic"><use href="#i-cal"/></svg><span class="lbl">회차</span></a>
+      <a href="#" title="알림"><svg class="ic"><use href="#i-bell"/></svg><span class="lbl">알림</span></a>
+      <a href="#" title="설정"><svg class="ic"><use href="#i-gear"/></svg><span class="lbl">설정</span></a>
+    </nav>
+    <p class="foot">만 19세 이상 이용 · 복권 판매·구매 대행 아님</p>
+  </aside>
+
+  <main class="main">
+    <div class="inner">
+      <header class="topbar">
+        <h1>대시보드</h1>
+        <span class="cap muted">2025.01.27 (월) 기준 · 예시 데이터</span>
+        <div class="tools">
+          <button class="iconbtn" aria-label="알림 1건"><svg class="ic"><use href="#i-bell"/></svg><span class="dot">1</span></button>
+          <span class="avatar" aria-label="내 계정"><svg class="ic"><use href="#i-user"/></svg></span>
+        </div>
+      </header>
+
+      <!-- 히어로: 3구간 모두 같은 그라데이션·번호공. 1200~ 한 줄 전체 -->
+      <section class="hero" aria-labelledby="hero-t">
+        <div class="bar">
+          <div class="brand"><svg class="ic logo"><use href="#i-logo"/></svg><span>로또랩 <small>LOTTO LAB</small></span></div>
+          <div class="tools">
+            <button class="iconbtn" aria-label="알림 1건"><svg class="ic"><use href="#i-bell"/></svg><span class="dot">1</span></button>
+            <span class="avatar" aria-label="내 계정"><svg class="ic"><use href="#i-user"/></svg></span>
+          </div>
+        </div>
+        <div class="hero-body">
+          <div>
+            <span class="tag">제 1,133회 · 이번 주</span>
+            <h2 id="hero-t">오늘도<br>나만의 번호를 찾아보세요!</h2>
+            <p>지난 회차 데이터를 살펴보고, 원하는 조건으로 로또와 연금복권 번호 조합을 만들어 보세요.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <span class="deco d2">45</span>
+            <span class="deco d1">6</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid wrap">
+        <!-- 좌: 최근 회차 + 상품 카드 2개 -->
+        <div class="col">
+          <section class="card recent" aria-labelledby="recent-t">
+            <div class="head">
+              <b id="recent-t">로또 6/45</b><span class="num">제 1,132회</span><span class="cap muted">(최근 추첨)</span>
+              <span class="date cap muted num">2025.01.25 (토)</span>
+            </div>
+            <div class="row">
+              <div class="balls" role="list" aria-label="당첨 번호 7, 12, 18, 27, 34, 40, 보너스 41">
+                <span class="ball b1" role="listitem">7</span><span class="ball b11" role="listitem">12</span><span class="ball b11" role="listitem">18</span><span class="ball b21" role="listitem">27</span><span class="ball b31" role="listitem">34</span><span class="ball b31" role="listitem">40</span><span class="plus" aria-hidden="true">+</span><span class="ball b41" role="listitem">41</span>
+              </div>
+              <a href="#" aria-label="제 1,132회 상세 보기" class="muted"><svg class="ic"><use href="#i-chev"/></svg></a>
+            </div>
+            <p class="src cap muted"><span>출처: 동행복권 당첨번호 공개 자료</span><span>갱신 2025.01.25 21:05</span></p>
+          </section>
+
+          <div class="products">
+            <a class="prod" href="d-lotto.html">
+              <h3>로또 6/45</h3>
+              <p>번호 생성 · 통계 · 분석</p>
+              <svg class="ic go"><use href="#i-arrow"/></svg>
+              <span class="art" aria-hidden="true"><span class="deco">6</span><span class="deco">45</span></span>
+            </a>
+            <a class="prod pen" href="#">
+              <h3>연금복권 720+</h3>
+              <p>매월 700만원 × 20년</p>
+              <svg class="ic go"><use href="#i-arrow"/></svg>
+              <span class="art" aria-hidden="true"><svg class="ic"><use href="#i-cal"/></svg></span>
+            </a>
+          </div>
+
+          <!-- 768~: 최근 공식 결과 · 내 번호 대조 상태 (모바일 시안에는 없음) -->
+          <section class="card history" aria-labelledby="hist-t">
+            <div class="card-h"><h3 id="hist-t">지난 회차 결과</h3><a href="#" class="cap muted">회차 목록 ›</a></div>
+            <ol>
+              <li><span class="num">제 1,132회<br><span class="cap muted">01.25</span></span>
+                <span class="balls sm" aria-label="7, 12, 18, 27, 34, 40, 보너스 41"><span class="ball b1">7</span><span class="ball b11">12</span><span class="ball b11">18</span><span class="ball b21">27</span><span class="ball b31">34</span><span class="ball b31">40</span><span class="plus" aria-hidden="true">+</span><span class="ball b41">41</span></span>
+                <span class="chk wait">확인 대기 1</span></li>
+              <li><span class="num">제 1,131회<br><span class="cap muted">01.18</span></span>
+                <span class="balls sm" aria-label="3, 9, 14, 25, 33, 42, 보너스 17"><span class="ball b1">3</span><span class="ball b1">9</span><span class="ball b11">14</span><span class="ball b21">25</span><span class="ball b31">33</span><span class="ball b41">42</span><span class="plus" aria-hidden="true">+</span><span class="ball b11">17</span></span>
+                <span class="chk">대조 완료</span></li>
+              <li><span class="num">제 1,130회<br><span class="cap muted">01.11</span></span>
+                <span class="balls sm" aria-label="5, 11, 20, 28, 36, 44, 보너스 2"><span class="ball b1">5</span><span class="ball b11">11</span><span class="ball b11">20</span><span class="ball b21">28</span><span class="ball b31">36</span><span class="ball b41">44</span><span class="plus" aria-hidden="true">+</span><span class="ball b1">2</span></span>
+                <span class="chk">대조 완료</span></li>
+            </ol>
+            <p class="note">출처: 동행복권 당첨번호 공개 자료 · 갱신 2025.01.25 21:05 · 대조는 구매 등록한 번호만 대상</p>
+          </section>
+        </div>
+
+        <!-- 우: 이번 주 요약 + CTA + 기록 카드 -->
+        <div class="col">
+          <section class="card" aria-labelledby="sum-t">
+            <div class="card-h"><h2 id="sum-t">이번 주 통계 요약</h2><span class="cap muted num">(1.20 ~ 1.26)</span></div>
+            <div class="sum-list">
+              <div class="sum">
+                <span class="tile"><svg class="ic"><use href="#i-stats"/></svg></span>
+                <span><b>로또 출현 빈도</b><span class="cap muted">최근 10회차 기준, 자주 나온 번호 5개</span></span>
+                <span class="balls sm" aria-label="12, 18, 27, 34, 40"><span class="ball b11">12</span><span class="ball b11">18</span><span class="ball b21">27</span><span class="ball b31">34</span><span class="ball b31">40</span></span>
+              </div>
+              <div class="sum">
+                <span class="tile pen"><svg class="ic"><use href="#i-layers"/></svg></span>
+                <span><b>연금복권 출현 빈도</b><span class="cap muted">최근 20회차 기준, 자주 나온 조·끝자리</span></span>
+                <span class="chips"><span class="chip">3조</span><span class="chip">5조</span><span class="chip p">7 · 9</span></span>
+              </div>
+            </div>
+            <p class="note"><strong>미래 예측 아님</strong> · 지난 회차 출현 횟수 요약입니다. 표본 로또 10회 · 연금 20회, 기준선은 균등 출현 기대값. 갱신 2025.01.25 21:05</p>
+          </section>
+
+          <button class="cta" type="button"><svg class="ic"><use href="#i-spark"/></svg>번호 생성하기</button>
+
+          <section class="card mine" aria-labelledby="mine-t">
+            <div class="card-h"><h3 id="mine-t">내 기록</h3><a href="#" class="cap muted">내 번호 보기 ›</a></div>
+            <dl>
+              <div><dt>저장한 번호</dt><dd>12</dd></div>
+              <div><dt>구매 등록</dt><dd>3</dd></div>
+              <div><dt>확인 대기</dt><dd>1</dd></div>
+            </dl>
+            <button class="ghost" type="button" style="margin-top:var(--spacing-gap)"><svg class="ic"><use href="#i-redo"/></svg>지난 설정으로 다시 생성</button>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ~767: 하단 탭 4개 -->
+  <nav class="tabbar" aria-label="하단 탭">
+    <a href="d-home.html" aria-current="page"><svg class="ic"><use href="#i-home"/></svg>홈</a>
+    <a href="d-lotto.html"><svg class="ic"><use href="#i-star"/></svg>추천</a>
+    <a href="#"><svg class="ic"><use href="#i-stats"/></svg>통계</a>
+    <a href="#"><svg class="ic"><use href="#i-mine"/></svg>내번호</a>
+  </nav>
+</div>
+<script>
+/* 검증용: 주소 끝에 #measure → 가로 넘침 실측값을 우상단에 표시 (shot 캡처로 확인) */
+if (location.hash === '#measure') addEventListener('load', function () { setTimeout(function () {
+  var d = document.documentElement, p = document.createElement('p');
+  p.className = 'measure'; p.textContent = 'scrollWidth ' + d.scrollWidth + ' / clientWidth ' + d.clientWidth + (d.scrollWidth <= d.clientWidth ? ' OK' : ' OVERFLOW');
+  document.body.appendChild(p);
+}, 300); });
+</script>
+</body>
+</html>

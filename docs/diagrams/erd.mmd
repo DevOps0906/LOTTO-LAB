@@ -1,0 +1,137 @@
+erDiagram
+  waitlist_signups {
+    uuid id PK
+    text email
+    text email_norm
+    boolean consent_marketing
+    boolean age_confirmed
+    timestamptz consented_at
+    timestamptz created_at
+  }
+  rate_limits {
+    text key PK
+    timestamptz window_start PK
+    int hits
+  }
+  ingestion_runs {
+    uuid id PK
+    uuid reviewed_by FK
+    game_type game
+    int draw_no
+    text source_url
+    timestamptz fetched_at
+    text payload_sha256
+    jsonb raw_payload
+    text status
+    jsonb validation_errors
+    timestamptz reverified_at
+    jsonb reverify_errors
+    string more_3_cols
+  }
+  draws_lotto {
+    int draw_no PK
+    uuid ingestion_run_id FK
+    date draw_date
+    smallint__ nums
+    smallint bonus
+    jsonb prizes
+    text source_url
+    timestamptz source_verified_at
+    timestamptz created_at
+  }
+  draws_pension {
+    int draw_no PK
+    uuid ingestion_run_id FK
+    date draw_date
+    smallint group_no
+    char digits
+    char bonus_digits
+    jsonb prizes
+    text source_url
+    timestamptz source_verified_at
+    timestamptz created_at
+  }
+  statistics_cache {
+    game_type game PK
+    text window_key PK
+    text metric PK
+    jsonb payload
+    int range_from
+    int range_to
+    int sample_size
+    text source
+    timestamptz updated_at
+    timestamptz created_at
+  }
+  generator_profiles {
+    uuid id PK
+    uuid user_id FK
+    game_type game
+    text name
+    jsonb config
+    timestamptz updated_at
+    timestamptz created_at
+  }
+  generated_batches {
+    uuid id PK
+    uuid user_id FK
+    game_type game
+    int round
+    text strategy
+    text method
+    text engine_version
+    timestamptz created_at
+  }
+  generated_numbers {
+    uuid id PK
+    uuid batch_id
+    game_type game
+    smallint line_no
+    jsonb numbers
+    smallint group_no
+    timestamptz created_at
+  }
+  saved_tickets {
+    uuid id PK
+    uuid user_id FK
+    uuid source_number_id FK
+    game_type game
+    int round
+    jsonb ticket_data
+    text purchase_status
+    date purchase_date
+    bigint amount_won
+    uuid idempotency_key
+    timestamptz created_at
+  }
+  draw_checks {
+    uuid id PK
+    uuid ticket_id
+    game_type game
+    int draw_no
+    smallint matched_rank
+    boolean bonus_hit
+    timestamptz created_at
+  }
+  fortune_profiles {
+    uuid user_id PK,FK
+    text birth_date
+    text calendar
+    boolean is_leap_month
+    text birth_hour
+    timestamptz consented_at
+    timestamptz updated_at
+  }
+  user_consents {
+    uuid id PK
+    uuid user_id FK
+    text terms_version
+    text privacy_version
+    boolean adult_confirmed
+    timestamptz consented_at
+  }
+  ingestion_runs ||--o{ draws_lotto : "ingestion_run_id"
+  ingestion_runs ||--o{ draws_pension : "ingestion_run_id"
+  generated_batches ||--o{ generated_numbers : "batch_id"
+  generated_numbers ||--o{ saved_tickets : "source_number_id"
+  saved_tickets ||--o{ draw_checks : "ticket_id"

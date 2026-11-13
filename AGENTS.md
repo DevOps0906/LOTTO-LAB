@@ -24,8 +24,8 @@
 | 개발 서버 | `pnpm dev` |
 | 린트 · 타입 | `pnpm lint` · `pnpm typecheck` |
 | 테스트 | `pnpm test` · `cd services/analytics-worker && pytest -q` |
-| Android 동기화 | `pnpm --filter mobile build && npx cap sync android` |
-| DB 초기화 · 타입 | `supabase db reset` · `supabase gen types typescript --local > apps/web/src/types/db.ts` |
+| Android 동기화 | `pnpm --filter @lotto-lab/mobile build && npx cap sync android` |
+| DB 초기화 · 타입 (Docker Desktop 필요) | `supabase start` · `supabase db reset` · `supabase gen types typescript --local > apps/web/src/types/db.ts` |
 | ERD 갱신 | `~/.claude/nomad/bin/sql2erd supabase/migrations -o docs/diagrams/erd.mmd` |
 명령은 1단계(기반) 구축 후 실제 스크립트에 맞춰 확정한다. 긴 출력 명령은 `~/.claude/nomad/bin/q <명령>`으로 실행한다.
 
@@ -62,8 +62,11 @@
 | 작업 경로 | 규칙 파일 |
 |---|---|
 | `apps/web/**` | `.claude/rules/web.md` |
-| `apps/api/**` | `.claude/rules/api.md` |
+| `supabase/functions/**` (Edge Function) | `.claude/rules/api.md` |
 | `supabase/**` | `.claude/rules/db.md` |
+| `apps/mobile/**` (Capacitor) | `.claude/rules/mobile.md` |
+| `apps/desktop/**` (Tauri) | `.claude/rules/desktop.md` |
+| `services/analytics-worker/**` | `.claude/rules/worker.md` |
 | `docs/**` · `DESIGN.md` | `.claude/rules/docs.md` |
 - 읽지 않는 파일: `.env*` · lock 파일 · `node_modules/` · `.next/` · `dist/` · `build/` · `coverage/` (Claude는 `.claude/settings.json`, Gemini는 `.geminiignore`가 강제, ChatGPT Codex는 이 줄로 지킨다).
 - 도구별 설정: Claude Code `CLAUDE.md`·`.claude/` · ChatGPT Codex `.codex/config.toml` · Gemini CLI `.gemini/settings.json`·`.geminiignore`.

@@ -10,3 +10,15 @@ node_modules/
 *.pfx
 id_rsa*
 id_ed25519*
+.turbo/
+coverage/
+
+# 셸 생성물(task-009·010 결정 ⑤)
+dist/
+apps/mobile/android/.gradle/
+apps/mobile/android/build/
+apps/mobile/android/app/build/
+apps/mobile/android/app/src/main/assets/public/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+apps/desktop/src-tauri/tauri.release.conf.json

@@ -16,6 +16,10 @@ flowchart LR
     n_M_14["M-14 로컬·클라우드 병합(P1)"]
     n_M_15["M-15 추천 복권 선택"]
     n_M_16["M-16 회차 목록"]
+    n_M_20["M-20 광고 동의(P1, Android)"]
+    n_M_17["M-17 테마 번호(P1)"]
+    n_M_18["M-18 사주 프로필(P1)"]
+    n_M_19["M-19 사주 번호(P1)"]
     n_D_01["D-01 Windows 대시보드"]
     n_D_02["D-02 Windows 로또 생성"]
     n_D_03["D-03 Windows 연금 생성"]
@@ -30,10 +34,14 @@ flowchart LR
     n_D_12["D-12 Windows 동기화(P1)"]
     n_D_13["D-13 Windows 알림함(P1)"]
     n_D_14["D-14 Windows 회차 목록"]
+    n_D_15["D-15 Windows 테마 번호(P1)"]
+    n_D_16["D-16 Windows 사주 프로필(P1)"]
+    n_D_17["D-17 Windows 사주 번호(P1)"]
     n_W_01["W-01 웹 랜딩(P1 가정)"]
     n_W_02["W-02 관리자 로그인(P1)"]
     n_W_03["W-03 관리자 수집 검토 목록(P1)"]
     n_W_04["W-04 관리자 수집 검토 상세(P1)"]
+    n_W_05["W-05 사전알림 이메일 확인"]
   end
   subgraph AP["API"]
     n_api_A_01["A-01 GET /v1/draws/lotto/latest"]
@@ -49,11 +57,14 @@ flowchart LR
     n_api_A_14["A-14 PATCH /v1/tickets/{id}"]
     n_api_A_15["A-15 POST /v1/waitlist"]
     n_api_A_16["A-16 POST /v1/admin/ingestions/{id}/reverify"]
+    n_api_A_17["A-17 GET · PUT · DELETE /v1/fortune-profile"]
+    n_api_A_19["A-19 POST /v1/waitlist-confirm`(별도 EF, verify_jwt=false)"]
   end
   subgraph DB["데이터"]
     n_t_draw_checks[("draw_checks")]
     n_t_draws_lotto[("draws_lotto")]
     n_t_draws_pension[("draws_pension")]
+    n_t_fortune_profiles[("fortune_profiles")]
     n_t_generated_batches[("generated_batches")]
     n_t_generated_numbers[("generated_numbers")]
     n_t_generator_profiles[("generator_profiles")]
@@ -65,11 +76,13 @@ flowchart LR
   end
   n_M_01 --> n_api_A_01
   n_M_01 --> n_api_A_02
+  n_M_01 --> n_api_A_06
   n_M_01 --> n_api_A_08
   n_M_01 -.-> n_t_draws_lotto
   n_M_01 -.-> n_t_draws_pension
   n_M_01 -.-> n_t_saved_tickets
   n_M_01 -.-> n_t_draw_checks
+  n_M_01 -.-> n_t_statistics_cache
   n_M_02 --> n_api_A_06
   n_M_02 --> n_api_A_07
   n_M_02 -.-> n_t_generator_profiles
@@ -116,13 +129,25 @@ flowchart LR
   n_M_15 -.-> n_t_generator_profiles
   n_M_16 -.-> n_t_draws_lotto
   n_M_16 -.-> n_t_draws_pension
+  n_M_17 -.-> n_t_generated_batches
+  n_M_17 -.-> n_t_generated_numbers
+  n_M_17 -.-> n_t_saved_tickets
+  n_M_18 --> n_api_A_17
+  n_M_18 -.-> n_t_fortune_profiles
+  n_M_19 --> n_api_A_17
+  n_M_19 -.-> n_t_fortune_profiles
+  n_M_19 -.-> n_t_generated_batches
+  n_M_19 -.-> n_t_generated_numbers
+  n_M_19 -.-> n_t_saved_tickets
   n_D_01 --> n_api_A_01
   n_D_01 --> n_api_A_02
+  n_D_01 --> n_api_A_06
   n_D_01 --> n_api_A_08
   n_D_01 -.-> n_t_saved_tickets
   n_D_01 -.-> n_t_draw_checks
   n_D_01 -.-> n_t_draws_lotto
   n_D_01 -.-> n_t_draws_pension
+  n_D_01 -.-> n_t_statistics_cache
   n_D_02 --> n_api_A_06
   n_D_02 --> n_api_A_07
   n_D_02 -.-> n_t_generator_profiles
@@ -166,6 +191,16 @@ flowchart LR
   n_D_12 -.-> n_t_generated_numbers
   n_D_14 -.-> n_t_draws_lotto
   n_D_14 -.-> n_t_draws_pension
+  n_D_15 -.-> n_t_generated_batches
+  n_D_15 -.-> n_t_generated_numbers
+  n_D_15 -.-> n_t_saved_tickets
+  n_D_16 --> n_api_A_17
+  n_D_16 -.-> n_t_fortune_profiles
+  n_D_17 --> n_api_A_17
+  n_D_17 -.-> n_t_fortune_profiles
+  n_D_17 -.-> n_t_generated_batches
+  n_D_17 -.-> n_t_generated_numbers
+  n_D_17 -.-> n_t_saved_tickets
   n_W_01 --> n_api_A_15
   n_W_01 -.-> n_t_waitlist_signups
   n_W_03 --> n_api_A_11
@@ -178,3 +213,5 @@ flowchart LR
   n_W_04 -.-> n_t_draws_lotto
   n_W_04 -.-> n_t_draws_pension
   n_W_04 -.-> n_t_statistics_cache
+  n_W_05 --> n_api_A_19
+  n_W_05 -.-> n_t_waitlist_signups

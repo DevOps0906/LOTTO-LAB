@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider 공유 범위: 앱 캐시 폴더만(P0는 파일 공유 없음 — 외부 저장소 경로를 열지 않는다). -->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="cache" path="." />
+</paths>

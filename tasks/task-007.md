@@ -19,5 +19,5 @@
 - 사용자 테이블(task-008), 실제 회차 적재(task-029)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `supabase db reset` 성공
-- [ ] `supabase test db` 통과: anon INSERT/UPDATE 거부, `ingestion_runs` anon SELECT 0행, `digits='719'`·중복 번호 INSERT 거부
+- [x] `supabase db reset` 성공
+- [x] `supabase test db` 통과: anon INSERT/UPDATE 거부, `ingestion_runs` anon·authenticated SELECT 42501(REVOKE ALL), `digits='719'`·중복 번호 INSERT 거부

@@ -1,0 +1,27 @@
+{
+  "name": "@lotto-lab/app-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@lotto-lab/fortune-engine": "workspace:*",
+    "@lotto-lab/lottery-core": "workspace:*",
+    "@lotto-lab/lotto-engine": "workspace:*",
+    "@lotto-lab/pension-engine": "workspace:*",
+    "@lotto-lab/statistics": "workspace:*",
+    "@lotto-lab/validation": "workspace:*",
+    "@lotto-lab/types": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "5.1.0",
+    "vitest": "5.1.0"
+  }
+}

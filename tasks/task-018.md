@@ -19,5 +19,5 @@
 - 서버 생성 호출(D4), 통계 기반 추천 문구
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-02` 통과(불가능 조건 → 오류·해결 방안 표시, 저장 후 상태 "추천/즐겨찾기"이며 구매 아님)
-- [ ] `pnpm --filter ./apps/mobile build` 성공
+- [x] `pnpm --filter ./packages/ui test -- M-02` 통과(불가능 조건 → 오류·해결 방안 표시, 저장 후 상태 "추천/즐겨찾기"이며 구매 아님)
+- [x] `pnpm --filter ./apps/mobile build` 성공

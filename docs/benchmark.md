@@ -12,3 +12,18 @@
 채택 범위는 정보 구조와 진입/복귀 흐름이다. 각 제품의 시각 자산·로고·문구는 복제하지 않는다. 외부 자료는 제품 자체 설명을 관찰한 근거이며 제공 수치의 정합성이나 결과를 독립 검증한 것은 아니다.
 
 팀장 확인: 동행복권 결과 화면의 실제 배치·입력 동작은 접근 가능한 환경에서 후속 확인한다. QR 등록의 제품 내 구매기록화·기존 기록과의 중복 처리·관리자 검토는 자체 요구이므로 경쟁 제품에서 확인했다고 해석하지 않는다. Figma/FigJam MCP는 현재 제공 도구에 없어 링크 산출물은 없다.
+
+## 운세·테마 번호
+> 조사일: 2026-11-12. 웹 검색·스토어/사이트 설명 기준이며 실사용·가입 조건은 대부분 `미확인`(근거 필요). 결정은 [ADR-0005](adr/0005-fortune-numbers.md), 화면은 [03_SCREENS_UX.md](03_SCREENS_UX.md) M-17~M-19·D-15~D-17.
+
+| 제품 | 화면 | 반드시 있는 것 | 우리에게 없는 것 | 채택 여부 | 근거(URL·스크린샷 경로) |
+|---|---|---|---|---|---|
+| 645사주넘버 (웹) | 사주 번호 | 생년월일(+시간)·이니셜을 시드로 1~45 중 6개 중복 없이 | 입력 기반 결정적 생성 | 채택: 입력+날짜 결정적 시드(M-19·D-17). 과거 1등 조합 제외는 미채택 | [사이트](https://www.645sajunumber.com/lotto-number-recommendation) 설명만 확인 |
+| 오늘의 운 (웹) | 행운 번호 | 고정 번호 최대 5개 + 나머지 채워 5세트 | 고정 번호와 운세 번호 조합 | 채택: 기존 고정 번호 연결(M-17·M-19) | [사이트](https://mylucky.kr/) 설명만 확인 |
+| AILotto 띠별 (웹) | 띠·별자리·꿈 | 12지 띠별·별자리·꿈해몽 참고 번호, "전통적 상징 해석, 실제 결과와 무관" 고지 | 테마 선택형 번호·고지 문구 | 채택: 테마 탭·고정 고지(M-17·D-15) | [사이트](https://ailottoai.com/zodiac) 설명만 확인 |
+| 해몽로또 (Android) | 꿈 해몽 | 꿈 텍스트 → LLM 해몽 → 상징 번호 6개 | AI 해몽 | 미채택(P2): 꿈은 사전 키워드 매핑만 | [Play](https://play.google.com/store/apps/details?id=com.koko.dreamlotto) 설명만 확인 |
+| LuckyPulse (iOS) | 생일·별자리 | "데이터 수집 없음" 표방, 도박 상담 번호 안내 | 무수집 고지 | 채택: 테마 입력 서버 미전송·미저장 고지. 도박 상담 안내 문구는 팀장 결정 필요 | [App Store](https://apps.apple.com/app/id6760877409) 설명만 확인 |
+
+- 그 밖 참고(채택 근거 아님): [사주로또](https://sajulotto.com/) · [xvivi](https://xvivi.mycafe24.com/)(1일 1회) · [사주 로또 번호 생성기](https://jindodog.shop/)("재미·참고용" 고지) · [로또 될 운세](https://play.google.com/store/apps/details?id=com.quantiscode.lottofortune) · [LAG](https://apps.apple.com/us/app/-/id6739546039) · [Lucky Lotto](https://apps.apple.com/app/id292078400) · [NumeroLuck](https://apps.apple.com/us/app/numeroluck/id6759871749).
+- 공통 패턴: 결정적 시드(같은 날 같은 입력 = 같은 번호) · 고정 번호 조합 · 책임 고지. 일일 횟수 제한(xvivi 1일 1회)은 채택 여부 팀장 결정 필요.
+- 수학적 사실: 어떤 방식이든 각 번호 확률은 같다. 우리 화면은 이를 숨기지 않는다([01_PRD.md#6](01_PRD.md)).

@@ -1,0 +1,26 @@
+/* 소비 순서(packages/ui/styles.css 머리말): tailwindcss → 디자인 토큰 → ui 블록. 색·크기는 토큰만 쓴다. */
+@import "tailwindcss";
+@import "@lotto-lab/design-tokens/tokens.css";
+@import "@lotto-lab/ui/styles.css";
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app-page {
+  display: grid;
+  gap: var(--spacing-gap);
+  padding: var(--spacing-page);
+}
+
+/* D-11 온보딩: 셸 밖, 창 가운데 카드(최소 창 1024×700) */
+.app-center {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--spacing-page);
+}
+.app-center > * {
+  width: min(100%, calc(var(--spacing) * 160));
+}

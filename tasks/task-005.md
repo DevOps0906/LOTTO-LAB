@@ -19,5 +19,5 @@
 - 셸 앱(task-009·010)·패키지 구현
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm install --frozen-lockfile` 후 `pnpm typecheck && pnpm lint` 통과
-- [ ] 역방향 import 샘플이 `pnpm lint`에서 실패함을 확인 후 샘플 삭제
+- [x] `pnpm install --frozen-lockfile` 후 `pnpm typecheck && pnpm lint` 통과
+- [x] 역방향 import 샘플이 `pnpm lint`에서 실패함을 확인 후 샘플 삭제

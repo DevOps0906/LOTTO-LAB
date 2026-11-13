@@ -19,5 +19,10 @@
 - 서버 판정 A-09·푸시(P1)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-07 M-08` 통과(즐겨찾기 행 대조 버튼 없음, 구매 행만 checked)
-- [ ] `pnpm --filter ./apps/mobile build` 성공
+- [x] `pnpm --filter ./packages/ui test -- M-07 M-08` 통과(즐겨찾기 행 대조 버튼 없음, 구매 행만 checked)
+- [x] `pnpm --filter ./apps/mobile build` 성공
+
+## 결과 (2026-11-13)
+- M-07 `packages/ui/src/screens/M-07/MyTickets.tsx`(탭 즐겨찾기·구매 기록·생성 이력, 검색·복권 필터·정렬·더 보기, 제거 스낵바 실행 취소, 생성 이력 → 즐겨찾기 저장), M-08 `M-08/TicketCheck.tsx`(구매 기록 회차별 판정·회차 입력)·`M-08/TicketDetail.tsx`(상세). 라우트 `#/tickets`·`#/tickets/check`·`#/tickets/<id>`.
+- app-core 추가(기존 API 유지): `tickets.get`·`setRound`·`restore`, `checker.checkTicket`.
+- 확인: ui·mobile 테스트, 캡처 `design/shots/M-07-app-*`·`M-08-app-*`(합성 기록·합성 회차 응답).

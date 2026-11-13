@@ -20,5 +20,5 @@
 - 알림함 M-13·로그인 M-06(P1)
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] `pnpm --filter ./packages/ui test -- M-05 M-01 M-15` 통과(19세 미확인 시 홈 진입 불가, 회차 0행 → 미갱신 안내)
-- [ ] `pnpm --filter ./apps/mobile build` 성공
+- [x] `pnpm --filter ./packages/ui test -- M-05 M-01 M-15` 통과(19세 미확인 시 홈 진입 불가, 회차 0행 → 미갱신 안내)
+- [x] `pnpm --filter ./apps/mobile build` 성공

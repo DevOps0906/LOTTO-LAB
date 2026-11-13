@@ -1,0 +1,28 @@
+{
+  "description": "saved_tickets 구매 상태-열 판정 벡터(A-07) — Zod TicketCreateInputSchema({...base, ...fields, idempotency_key})와 DB INSERT(saved_tickets_status_chk·status_cols_chk·amount_chk·date 형)가 같은 valid를 내야 한다. fields의 키가 없거나 null이면 DB에는 NULL(fields.round는 base.round를 덮어씀). 앱(Zod)과 DB 판정이 의도적으로 다른 사례는 valid 대신 app·db를 따로 적는다(앱이 null 키를 거부하는 등 더 엄격한 경우만). sqlstate는 DB 거부 시 기대 오류 코드(없으면 23514 CHECK 위반). 바꾸면 node scripts/gen-parity-sql.mjs 재실행.",
+  "base": { "game": "lotto", "round": 1200, "ticket_data": { "nums": [1, 2, 3, 4, 5, 6] } },
+  "cases": [
+    { "name": "즐겨찾기 날짜·금액 없음", "fields": { "purchase_status": "favorite" }, "valid": true },
+    { "name": "즐겨찾기 날짜 있음", "fields": { "purchase_status": "favorite", "purchase_date": "2026-11-07" }, "valid": false },
+    { "name": "즐겨찾기 금액 있음", "fields": { "purchase_status": "favorite", "amount_won": 1000 }, "valid": false },
+    { "name": "즐겨찾기 금액 0", "fields": { "purchase_status": "favorite", "amount_won": 0 }, "valid": false },
+    { "name": "구매 날짜만", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07" }, "valid": true },
+    { "name": "구매 날짜·금액", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07", "amount_won": 5000 }, "valid": true },
+    { "name": "구매 금액 0", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07", "amount_won": 0 }, "valid": true },
+    { "name": "구매 금액 음수", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07", "amount_won": -1 }, "valid": false },
+    { "name": "구매 날짜 없음", "fields": { "purchase_status": "purchased" }, "valid": false },
+    { "name": "구매 날짜 없이 금액만", "fields": { "purchase_status": "purchased", "amount_won": 1000 }, "valid": false },
+    { "name": "구매 윤년 2월 29일", "fields": { "purchase_status": "purchased", "purchase_date": "2024-02-29" }, "valid": true },
+    { "name": "구매 평년 2월 29일", "fields": { "purchase_status": "purchased", "purchase_date": "2023-02-29" }, "valid": false, "sqlstate": "22008" },
+    { "name": "구매 2월 30일", "fields": { "purchase_status": "purchased", "purchase_date": "2026-02-30" }, "valid": false, "sqlstate": "22008" },
+    { "name": "구매 13월", "fields": { "purchase_status": "purchased", "purchase_date": "2026-13-01" }, "valid": false, "sqlstate": "22008" },
+    { "name": "상태 generated(추천은 저장 상태 아님)", "fields": { "purchase_status": "generated" }, "valid": false },
+    { "name": "상태 대문자", "fields": { "purchase_status": "Purchased", "purchase_date": "2026-11-07" }, "valid": false },
+    { "name": "상태에 인용 부호·$$ 포함", "fields": { "purchase_status": "favorite$$'); drop table public.saved_tickets; --" }, "valid": false },
+    { "name": "회차 int4 최대 2147483647", "fields": { "round": 2147483647, "purchase_status": "favorite" }, "valid": true },
+    { "name": "회차 int4 초과 2147483648", "fields": { "round": 2147483648, "purchase_status": "favorite" }, "valid": false, "sqlstate": "22003" },
+    { "name": "구매 금액 null(앱은 키 생략만 허용)", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07", "amount_won": null }, "app": false, "db": true },
+    { "name": "즐겨찾기 날짜 null(앱은 키 생략만 허용)", "fields": { "purchase_status": "favorite", "purchase_date": null }, "app": false, "db": true },
+    { "name": "구매 날짜 null", "fields": { "purchase_status": "purchased", "purchase_date": null }, "valid": false }
+  ]
+}

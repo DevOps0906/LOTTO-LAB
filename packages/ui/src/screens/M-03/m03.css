@@ -1,0 +1,322 @@
+/* M-03 모바일 시안 정합(task-047) — 토큰만, ~767 전용 규칙은 @media (width < 48em) 안에 */
+
+/* 768~ 배치 보존: 머리글·생성 방식 감싸개는 상자를 만들지 않는다(기존 그리드 간격 그대로) */
+.ll-gen__wide-head,
+.ll-gen__kind {
+  display: contents;
+}
+
+@media (width < 48em) {
+  /* P1 탭: 번호 생성 · 당첨 구조 · 분석 통계(링크) — 선택 = 채움 + 굵게 */
+  .ll-m03__top {
+    display: grid;
+    gap: calc(var(--spacing) * 3);
+  }
+  .ll-m03__tabs,
+  .ll-m03__tablist {
+    display: flex;
+    gap: var(--spacing);
+  }
+  .ll-m03__tabs {
+    padding: var(--spacing);
+    border-radius: var(--radius-control);
+    background: var(--color-primary-soft);
+  }
+  .ll-m03__tablist {
+    flex: 2 1 0;
+  }
+  .ll-m03__tab {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(var(--spacing) * 10);
+    padding: 0 calc(var(--spacing) * 2);
+    border: 0;
+    border-radius: calc(var(--radius-control) - var(--spacing));
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .ll-m03__tab[aria-selected="true"] {
+    background: var(--color-primary);
+    color: var(--color-primary-fg);
+    font-weight: 800;
+  }
+  .ll-m03__tab:focus-visible {
+    outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+    outline-offset: calc(var(--spacing) * 0.5);
+  }
+
+  /* P2 상금 배너(트로피) */
+  .ll-m03__banner {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    width: 100%;
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    border: calc(var(--spacing) / 4) solid var(--color-pension-soft);
+    border-radius: var(--radius-card);
+    background: var(--color-pension-soft);
+    color: var(--color-pension-soft-fg);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .ll-m03__banner:focus-visible {
+    outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+    outline-offset: calc(var(--spacing) * 0.5);
+  }
+  .ll-m03__banner-text {
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--color-text);
+    font-size: var(--text-caption);
+  }
+  .ll-m03__banner-text strong {
+    color: var(--color-pension);
+    font-size: var(--text-h2);
+    font-weight: 800;
+  }
+  .ll-m03__trophy {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    flex: none;
+    fill: var(--color-pension);
+    stroke: var(--color-pension-soft);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+  }
+
+  /* 당첨 구조 탭: 생성 화면을 숨기고 표만 */
+  .ll-gen[data-tab="prize"] .ll-gen__layout {
+    display: none;
+  }
+  .ll-m03__prize-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-caption);
+  }
+  .ll-m03__prize-table th,
+  .ll-m03__prize-table td {
+    padding: calc(var(--spacing) * 2) var(--spacing);
+    border-top: calc(var(--spacing) / 4) solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+  }
+  .ll-m03__prize-table thead th {
+    border-top: 0;
+    color: var(--color-text-muted);
+    font-weight: 700;
+  }
+  .ll-m03__prize-table tbody th {
+    color: var(--color-pension);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .ll-m03__prize-table td:last-child {
+    font-weight: 700;
+  }
+  .ll-m03__caption {
+    margin: calc(var(--spacing) * 2) 0 0;
+    font-size: var(--text-caption);
+  }
+
+  /* 조건 카드를 화면 바탕으로 펼친다(시안: 카드 없이 구역만) */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-gen__cond {
+    gap: calc(var(--spacing) * 3);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-gen__cond > .ll-card__head,
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-gen__cond .ll-field__hint {
+    display: none;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-gen__cond .ll-field__legend {
+    margin-bottom: var(--spacing);
+  }
+  .ll-m03__sub {
+    color: var(--color-text-muted);
+    font-size: var(--text-caption);
+    font-weight: 600;
+  }
+
+  /* 조 선택: 낱개 테두리 버튼, 선택 = 보라 채움 */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-groups {
+    padding: 0;
+    background: transparent;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-groups .ll-seg__button {
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-groups .ll-seg__button[aria-pressed="true"] {
+    border-color: var(--color-pension);
+    background: var(--color-pension);
+    color: var(--color-pension-fg);
+  }
+
+  /* P3 자리별 스테퍼: [라벨] · 카드(▲ 숫자 ▼). 빈 값 = "자동" 표시 유지 */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit {
+    isolation: isolate;
+    gap: 0;
+    grid-template-rows: auto auto auto auto;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit::before {
+    content: "";
+    grid-row: 2 / 5;
+    grid-column: 1;
+    z-index: -1;
+    margin-top: var(--spacing);
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+  /* 가상 카드가 2~4행을 차지하므로 자식 행을 명시(자동 배치가 빈 칸을 찾아 밀리지 않게) */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit > * {
+    grid-column: 1;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit__label {
+    grid-row: 1;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit__step[data-dir="up"] {
+    grid-row: 2;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit .ll-input {
+    grid-row: 3;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit__step[data-dir="down"] {
+    grid-row: 4;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digit .ll-input {
+    position: relative;
+    z-index: 1;
+    min-height: calc(var(--spacing) * 7);
+    border: 0;
+    background: transparent;
+    font-weight: 800;
+  }
+  .ll-digit__step {
+    display: grid;
+    place-items: center;
+    min-height: calc(var(--spacing) * 11);
+    margin-top: var(--spacing);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  /* 시안 비율: 화살표 터치 영역 44는 유지하고 숫자 칸과 겹친다(숫자 칸이 위) */
+  .ll-digit__step[data-dir="up"] {
+    margin-bottom: calc(var(--spacing) * -3.5);
+  }
+  .ll-digit__step[data-dir="up"] .ll-icon {
+    transform: rotate(-90deg);
+  }
+  .ll-digit__step[data-dir="down"] {
+    margin-top: calc(var(--spacing) * -3.5);
+  }
+  .ll-digit__step[data-dir="down"] .ll-icon {
+    transform: rotate(90deg);
+  }
+  .ll-digit__step:focus-visible {
+    outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+    outline-offset: calc(var(--spacing) * -0.5);
+  }
+
+  /* "모든 자리 자동으로": 터치 영역은 두고 구역 간격만 시안 밀도로 */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-digits + .ll-link {
+    justify-self: start;
+    margin-block: calc(var(--spacing) * -2.5);
+  }
+
+  /* P4 생성 방식 라디오 카드 2개 */
+  .ll-m03__kinds {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(var(--spacing) * 2);
+  }
+  .ll-m03__kind {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+    min-height: calc(var(--spacing) * 12);
+    padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    cursor: pointer;
+  }
+  .ll-m03__kind:has(input:checked) {
+    border-color: var(--color-pension);
+    background: var(--color-pension-soft);
+    color: var(--color-pension-soft-fg);
+  }
+  .ll-m03__kind input {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+    flex: none;
+    margin: 0;
+    accent-color: var(--color-pension);
+  }
+  .ll-m03__kind span {
+    display: grid;
+    font-size: var(--text-caption);
+  }
+  .ll-m03__kind strong {
+    font-size: var(--text-body);
+    font-weight: 800;
+  }
+  .ll-m03__kind input:focus-visible {
+    outline: calc(var(--spacing) * 0.5) solid var(--color-focus);
+    outline-offset: calc(var(--spacing) * 0.5);
+  }
+
+  /* P5 결과: 1~5조 표처럼 한 줄씩, 선택 조 강조 */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__row {
+    grid-template-columns: auto calc(var(--spacing) * 10) minmax(0, 1fr) auto auto;
+    grid-template-areas: "check label content status menu";
+    column-gap: calc(var(--spacing) * 2);
+    padding: var(--spacing) 0;
+  }
+  /* 시안: "1조 | 4 8 7 2 3 9" — 조 칸 오른쪽 구분선, 숫자는 한 칸씩 띄워 가운데 */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__label {
+    align-self: stretch;
+    display: grid;
+    place-items: center start;
+    border-right: calc(var(--spacing) / 4) solid var(--color-border);
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__content {
+    text-align: center;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__digits {
+    font-size: var(--text-body);
+    font-weight: 800;
+    letter-spacing: 0.75em;
+    margin-right: -0.75em;
+  }
+  /* 결과 아래 긴 고지는 한 줄 캡션으로(전문은 앱바 정보 시트) */
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-gen__note {
+    display: none;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__status:not([data-saved]) {
+    display: none;
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__row:has([data-focus]) {
+    background: var(--color-pension-soft);
+  }
+  .ll-gen[data-game="pension"]:not([data-layout="split"]) .ll-result__row:has([data-focus]) .ll-result__label {
+    color: var(--color-pension-soft-fg);
+  }
+}

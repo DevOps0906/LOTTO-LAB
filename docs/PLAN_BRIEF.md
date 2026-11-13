@@ -6,7 +6,7 @@
 | # | 결정 |
 |---|---|
 | D1 | 배포 3면: **모바일 앱** Capacitor 8(Android 먼저, iOS는 macOS 필요) · **Windows 설치형** Tauri 2(MSI/NSIS) · **웹** Next.js(랜딩 + 관리자, P1 — 사용자 미확인 가정) |
-| D2 | 모바일 디자인 = PDF 시안(하단 탭 4개: 홈·추천·통계·내번호). Windows = **대시보드형**(좌측 사이드바 + KPI 카드 + 넓은 표·차트, 생성 조건과 결과를 한 화면 좌우 배치) |
+| D2 | 모바일 디자인 = PDF 시안(하단 탭 4개: 홈·추천·통계·내번호). Windows = **모바일 디자인 + 사이드바·그리드 배치**(시각 언어는 모바일 시안과 동일, 좌측 사이드바 + 2~3열 그리드, 생성 조건과 결과를 한 화면 좌우 배치) — [ADR-0004](adr/0004-pc-uses-mobile-visual-language.md) |
 | D3 | 코드 공유: `packages/ui`(컴포넌트) · `packages/app-core`(상태·API 클라이언트·화면 로직) · 엔진/통계/검증/타입 패키지. 레이아웃 셸만 앱별(`apps/mobile` 탭바, `apps/desktop` 사이드바) |
 | D4 | 번호 생성은 TS 엔진을 **기기에서 실행**(즉시·오프라인). 서버는 저장·결과 조회·당첨 판정·통계 캐시 |
 | D5 | 백엔드: Supabase(Auth·Postgres·RLS). 사용자 CRUD는 RLS 직접, 회차/통계/판정은 Edge Function(`/v1/*` 계약 유지) |
