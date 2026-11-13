@@ -37,6 +37,7 @@ const HOME_LINKS = {
   settings: href("/settings"),
 };
 const SELECT_LINKS = {
+  draws: drawsHref("lotto"),
   home: href("/"),
   lotto: href("/generate/lotto"),
   pension: href("/generate/pension"),

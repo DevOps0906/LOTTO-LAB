@@ -1,7 +1,10 @@
 // M-03 연금복권 생성: 생성 방식(낱장·선택 조·5조 세트)과 조 1~5, 십만~일 자리별 숫자(비우면 자동), 기본 번호 수 1~50.
 // 기본 번호 1개를 고른 조마다 발급한다 — 총 장수 = 기본 번호 수 × 조 수(task-014 결정 ②③). "조 자동"은 P1.
 // 번호는 처음부터 끝까지 문자열(앞자리 0 보존, `1조 000719`) — 숫자 입력 필드(type=number)를 쓰지 않는다.
-import { useState } from "react";
+// ~767(task-047 P1~P5, 시안 m-pension.png): 앱바 · 탭(번호 생성 · 당첨 구조 · 분석 통계) · 상금 배너 · 자리별 위·아래 스테퍼 ·
+// 조 선택 → 번호 설정 → 생성 방식 카드(낱장/5조 세트) 순서. 768~(layout "split" 포함)은 기존 배치 그대로(.ll-only-wide / .ll-only-narrow).
+import { useState, type KeyboardEvent } from "react";
+import { AppBar } from "../../components/AppBar";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { Header } from "../../components/Header";
@@ -45,6 +48,11 @@ export type PensionGeneratorProps = {
 };
 
 type Kind = "single" | "select" | "set";
+type Tab = "generate" | "prize";
+const TABS: { value: Tab; label: string }[] = [
+  { value: "generate", label: "번호 생성" },
+  { value: "prize", label: "당첨 구조" },
+];
 const AUTO: (string | null)[] = [null, null, null, null, null, null];
 
 function kindOf(groups: readonly number[]): Kind {
@@ -57,7 +65,12 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
   const [groups, setGroups] = useState<number[]>([1]);
   const [positions, setPositions] = useState<(string | null)[]>(AUTO);
   const [count, setCount] = useState<CountValue>({ preset: 1 });
+  /** 5조 세트 결과에서 강조할 조(마지막으로 직접 고른 조, P5) */
+  const [focusGroup, setFocusGroup] = useState(1);
+  const [tab, setTab] = useState<Tab>("generate");
   const gen = useGeneration(core);
+  /** ~767 시안 요소(앱바·탭·배너·스테퍼·생성 방식 카드)는 기본 배치에서만 — Windows split은 그대로 */
+  const narrow = layout !== "split";
 
   const restore = useRestore<PensionConfig>(
     restoreLast,
@@ -65,6 +78,7 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
     (c) => {
       setKind(kindOf(c.groups));
       setGroups([...c.groups].sort((a, b) => a - b));
+      setFocusGroup(Math.min(...c.groups));
       setPositions([...c.positions]);
       setCount(countValue(c.games, BASE_PRESETS));
     },
@@ -79,12 +93,14 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
     setKind(next);
     gen.clearProblem();
     if (next === "set") setGroups([...GROUPS]);
-    else if (next === "single") setGroups([groups[0] ?? 1]);
-    else if (groups.length === GROUPS.length) setGroups([groups[0] ?? 1]);
+    // 5조 세트에서 돌아오면 마지막으로 직접 고른 조로(세트 전 선택 복귀)
+    else if (next === "single") setGroups([kind === "set" ? focusGroup : (groups[0] ?? 1)]);
+    else if (groups.length === GROUPS.length) setGroups([focusGroup]);
   }
 
   function toggleGroup(g: number) {
     gen.clearProblem();
+    if (kind !== "set") setFocusGroup(g);
     if (kind === "single") setGroups([g]);
     else if (kind === "select") setGroups(groups.includes(g) ? groups.filter((x) => x !== g) : [...groups, g].sort((a, b) => a - b));
   }
@@ -93,6 +109,27 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
     gen.clearProblem();
     const digit = raw.replace(/[^0-9]/g, "").slice(-1);
     setPositions(positions.map((p, j) => (j === i ? digit || null : p)));
+  }
+
+  /** 스테퍼: 자동 → 0 → 1 … 9 → 자동 순환(내리기는 반대). 값은 한 글자 문자열 그대로. */
+  function stepDigit(i: number, delta: 1 | -1) {
+    gen.clearProblem();
+    setPositions(positions.map((p, j) => (j === i ? stepped(p, delta) : p)));
+  }
+
+  /** WAI-ARIA 탭: 좌우 방향키(순환)·Home·End로 이동하며 바로 선택, 포커스도 옮긴다(roving tabindex). */
+  function tabKey(e: KeyboardEvent<HTMLDivElement>) {
+    const i = TABS.findIndex((t) => t.value === tab);
+    const next =
+      e.key === "ArrowRight" ? (i + 1) % TABS.length
+      : e.key === "ArrowLeft" ? (i - 1 + TABS.length) % TABS.length
+      : e.key === "Home" ? 0
+      : e.key === "End" ? TABS.length - 1
+      : null;
+    if (next === null) return;
+    e.preventDefault();
+    setTab(TABS[next]!.value);
+    e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
   }
 
   function generate() {
@@ -105,27 +142,91 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
   const batch = gen.batch;
   const batchGroups = batch?.request.game === "pension" ? batch.request.config.groups.length : 0;
   const cta = kind === "set" ? "세트 생성" : "번호 생성";
+  const highlight = batchGroups === GROUPS.length ? focusGroup : null;
 
   return (
-    <div className="ll-gen" data-game="pension" data-layout={layout === "split" ? "split" : undefined}>
-      {layout !== "split" && (
-        <nav className="ll-breadcrumb" aria-label="현재 위치">
-          <ol>
-            <li>
-              <a href={links.home}>홈</a>
-            </li>
-            <li>
-              <a href={links.generate}>추천</a>
-            </li>
-            <li aria-current="page">연금복권 720+</li>
-          </ol>
-        </nav>
+    <div className="ll-gen" data-game="pension" data-layout={layout === "split" ? "split" : undefined} data-tab={narrow ? tab : undefined}>
+      {narrow && (
+        <AppBar
+          title="연금복권 720+"
+          backHref={links.generate}
+          info={{
+            title: "연금복권 번호 생성",
+            content: (
+              <>
+                <p>번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다.</p>
+                <p>같은 여섯 자리 번호를 고른 조마다 1장씩 만듭니다. 자리마다 0~9를 정하거나 비워 두면 자동(무작위)입니다.</p>
+                <p>
+                  <strong>미래 예측 아님</strong> · 추천 번호는 기기에서 만든 무작위 조합이며 당첨과 무관합니다. 저장은 즐겨찾기로만 기록되고
+                  구매 기록이 아닙니다. 구매 등록은 내 번호에서 따로 합니다.
+                </p>
+              </>
+            ),
+          }}
+        />
       )}
-      <Header title="연금복권 번호 생성" subtitle="번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다." />
+      {narrow ? (
+        <div className="ll-only-wide ll-gen__wide-head">
+          <nav className="ll-breadcrumb" aria-label="현재 위치">
+            <ol>
+              <li>
+                <a href={links.home}>홈</a>
+              </li>
+              <li>
+                <a href={links.generate}>추천</a>
+              </li>
+              <li aria-current="page">연금복권 720+</li>
+            </ol>
+          </nav>
+          <Header title="연금복권 번호 생성" subtitle="번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다." />
+        </div>
+      ) : (
+        <Header title="연금복권 번호 생성" subtitle="번호는 이 기기에서 만들어집니다. 오프라인에서도 생성할 수 있습니다." />
+      )}
+
+      {narrow && (
+        <div className="ll-only-narrow ll-m03__top">
+          <div className="ll-m03__tabs">
+            <div role="tablist" aria-label="연금복권 보기" className="ll-m03__tablist" onKeyDown={tabKey}>
+              {TABS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="tab"
+                  className="ll-m03__tab"
+                  aria-selected={tab === t.value}
+                  tabIndex={tab === t.value ? 0 : -1}
+                  onClick={() => setTab(t.value)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            {links.stats && (
+              <a className="ll-m03__tab" href={links.stats}>
+                분석 통계
+              </a>
+            )}
+          </div>
+          {tab === "generate" ? (
+            <button type="button" className="ll-m03__banner" onClick={() => setTab("prize")}>
+              <Trophy />
+              <span className="ll-m03__banner-text">
+                <strong>연금복권 720+</strong>
+                <span>1등: 매월 700만원 × 20년 (총 16.8억원)</span>
+              </span>
+              <Icon name="chevron" />
+            </button>
+          ) : (
+            <PrizeStructure />
+          )}
+        </div>
+      )}
 
       <div className="ll-gen__layout">
         <Card title="생성 조건" className="ll-gen__cond">
           <RestoreNote state={restore} />
+          <div className={narrow ? "ll-only-wide ll-gen__kind" : "ll-gen__kind"}>
           <Segment<Kind>
             legend="생성 방식"
             name="pension-kind"
@@ -138,9 +239,12 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
             ]}
             hint="같은 여섯 자리 번호를 고른 조마다 1장씩 만듭니다."
           />
+          </div>
 
           <fieldset className="ll-field">
-            <legend className="ll-field__legend">조 선택</legend>
+            <legend className="ll-field__legend">
+              조 선택{narrow && <span className="ll-only-narrow ll-m03__sub"> (5조 중 선택)</span>}
+            </legend>
             <p className="ll-muted ll-field__hint">
               {kind === "single" ? "1개를 고르세요." : kind === "select" ? "여러 조를 고를 수 있어요." : "5조 세트는 1~5조를 모두 씁니다."}
             </p>
@@ -170,8 +274,15 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
             <p className="ll-muted ll-field__hint">자리마다 0~9를 넣거나 비워 두면 자동(무작위)입니다.</p>
             <div className="ll-digits">
               {DIGIT_LABELS.map((label, i) => (
-                <label key={label} className="ll-digit">
-                  <span className="ll-digit__label">{label}</span>
+                <div key={label} className="ll-digit">
+                  <span className="ll-digit__label" aria-hidden="true">
+                    {label}
+                  </span>
+                  {narrow && (
+                    <button type="button" className="ll-only-narrow ll-digit__step" data-dir="up" aria-label={`${label} 자리 올리기`} onClick={() => stepDigit(i, 1)}>
+                      <Icon name="chevron" />
+                    </button>
+                  )}
                   <input
                     className="ll-input ll-mono"
                     type="text"
@@ -184,13 +295,39 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
                     onChange={(e) => setDigit(i, e.target.value)}
                     onFocus={(e) => e.target.select()}
                   />
-                </label>
+                  {narrow && (
+                    <button type="button" className="ll-only-narrow ll-digit__step" data-dir="down" aria-label={`${label} 자리 내리기`} onClick={() => stepDigit(i, -1)}>
+                      <Icon name="chevron" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
             <button type="button" className="ll-link" disabled={autoCount === positions.length} onClick={() => setPositions(AUTO)}>
               모든 자리 자동으로
             </button>
           </fieldset>
+
+          {narrow && (
+            <fieldset className="ll-field ll-only-narrow">
+              <legend className="ll-field__legend">생성 방식</legend>
+              <div className="ll-m03__kinds" role="radiogroup" aria-label="생성 방식">
+                <label className="ll-m03__kind">
+                  <input type="radio" name="pension-kind-narrow" checked={kind !== "set"} onChange={() => changeKind("single")} />
+                  <span>
+                    <strong>낱장 (1조)</strong>
+                  </span>
+                </label>
+                <label className="ll-m03__kind">
+                  <input type="radio" name="pension-kind-narrow" checked={kind === "set"} onChange={() => changeKind("set")} />
+                  <span>
+                    <strong>5조 세트</strong>
+                    <small>(1~5조 같은 번호)</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+          )}
 
           <CountField
             legend="기본 번호 수"
@@ -245,7 +382,7 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
               key={batch.batch_id}
               core={core}
               title={batchGroups === GROUPS.length ? `추천 번호 (5조 세트 · 총 ${batch.records.length}장)` : `추천 번호 (총 ${batch.records.length}장)`}
-              rows={pensionRows(batch.records)}
+              rows={pensionRows(batch.records, highlight)}
               savable={batch.saved}
               variant="pension"
               onRegenerate={generate}
@@ -259,6 +396,11 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
               </Card>
             )
           )}
+          {narrow && batch && (
+            <p className="ll-only-narrow ll-gen__caption">
+              <strong>미래 예측 아님</strong> · 당첨과 무관한 무작위 조합 · 저장 = 즐겨찾기(구매 아님)
+            </p>
+          )}
           {links.stats && (
             <a className="ll-link" href={links.stats}>
               <Icon name="stats" />
@@ -271,8 +413,63 @@ export function PensionGenerator({ core, links, restoreLast = false, layout = "s
   );
 }
 
-/** 결과 줄: 조 + 여섯 자리 문자열 그대로. 같은 기본 번호 묶음을 data-group(1부터)으로 구분한다. */
-function pensionRows(records: GeneratedRecord[]): ResultRow[] {
+/** 자동(null) → "0" → … → "9" → 자동 순환. */
+const STEP_ORDER: (string | null)[] = [null, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+function stepped(p: string | null, delta: 1 | -1): string | null {
+  const next = (STEP_ORDER.indexOf(p) + delta + STEP_ORDER.length) % STEP_ORDER.length;
+  return STEP_ORDER[next] ?? null;
+}
+
+/** 시안 트로피(장식, 이미지 파일 없이 인라인 SVG). */
+function Trophy() {
+  return (
+    <svg className="ll-m03__trophy" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 14v3M8 21h8l-1-4H9z" />
+    </svg>
+  );
+}
+
+/** 연금복권720+ 등위별 일치 기준·당첨금(공식 구조, 세금 공제 전). 회차별 실제 당첨자 수·금액은 회차 상세(M-11). */
+const PRIZE_ROWS = [
+  { rank: "1등", rule: "조 + 6자리 모두 일치", amount: "월 700만원 × 20년" },
+  { rank: "2등", rule: "6자리 일치(조 무관)", amount: "월 100만원 × 10년" },
+  { rank: "3등", rule: "끝 5자리 일치", amount: "100만원" },
+  { rank: "4등", rule: "끝 4자리 일치", amount: "10만원" },
+  { rank: "5등", rule: "끝 3자리 일치", amount: "5만원" },
+  { rank: "6등", rule: "끝 2자리 일치", amount: "5천원" },
+  { rank: "7등", rule: "끝 1자리 일치", amount: "1천원" },
+  { rank: "보너스", rule: "보너스 6자리 일치(조 무관)", amount: "월 100만원 × 10년" },
+] as const;
+
+function PrizeStructure() {
+  return (
+    <Card title="당첨 구조" className="ll-m03__prize">
+      <table className="ll-m03__prize-table">
+        <caption className="ll-sr-only">연금복권720+ 등위·일치 기준·당첨금</caption>
+        <thead>
+          <tr>
+            <th scope="col">등위</th>
+            <th scope="col">일치 기준</th>
+            <th scope="col">당첨금</th>
+          </tr>
+        </thead>
+        <tbody>
+          {PRIZE_ROWS.map((r) => (
+            <tr key={r.rank}>
+              <th scope="row">{r.rank}</th>
+              <td>{r.rule}</td>
+              <td>{r.amount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="ll-muted ll-m03__caption">출처: 동행복권 연금복권720+ 게임 안내 · 세금 공제 전 금액 · 추천 번호는 당첨과 무관합니다.</p>
+    </Card>
+  );
+}
+
+/** 결과 줄: 조 + 여섯 자리 문자열 그대로. 같은 기본 번호 묶음을 data-group(1부터)으로 구분한다. highlight 조는 data-focus로 강조(P5). */
+function pensionRows(records: GeneratedRecord[], highlight: number | null = null): ResultRow[] {
   const baseIndex = new Map<string, number>();
   return records.flatMap((r) => {
     if (r.game !== "pension") return [];
@@ -287,7 +484,7 @@ function pensionRows(records: GeneratedRecord[]): ResultRow[] {
         group: baseIndex.get(digits),
         text: `${label} ${digits}`,
         content: (
-          <span className="ll-mono ll-result__digits" aria-label={`${label} ${digits.split("").join(" ")}`}>
+          <span className="ll-mono ll-result__digits" data-focus={r.group_no === highlight || undefined} aria-label={`${label} ${digits.split("").join(" ")}`}>
             {digits}
           </span>
         ),

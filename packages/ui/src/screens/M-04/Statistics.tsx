@@ -3,7 +3,10 @@
 // 값은 statistics_cache를 그대로 보인다(앱에서 계산하지 않음, task-015 결정 ①). 결과는 번호·자리·구간 순서로만 —
 // 정렬·순위·많이/적게 나온 번호 강조는 하지 않는다(결정 ⑦). 표본 < 50이면 "표본 적음"(결정 ⑦).
 // 모든 통계에 기간·표본·기준선(무작위 기대 횟수)·출처·갱신 시각·"미래 예측 아님"을 함께 둔다(AGENTS.md 4장).
+// ~767(task-047 S1~S6): 앱바 · 복권 세그먼트 · 보기 탭 4개 · 상위 10개 막대 · 끝자리 히트맵 · 최근 10회 표(mobile.tsx).
+// 768~ 배치는 그대로 — 모바일 전용 요소는 .ll-only-narrow, 기존 머리는 .ll-only-wide, 순서·숨김은 m04.css(@media width < 48em).
 import { useCallback, useEffect, useId, useState, type CSSProperties } from "react";
+import { AppBar } from "../../components/AppBar";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
 import { Header } from "../../components/Header";
@@ -27,6 +30,7 @@ import {
 import { DrawNumbers, DrawUpdated, type AnyDraw } from "../common/draw";
 import { Segment } from "../common/generator";
 import { statChart, type BarDatum, type StatChart } from "./chart-data";
+import { EndDigitCard, NumberBarsCard, RecentDrawsCard } from "./mobile";
 
 /** draws = 회차 목록 주소(현재 복권을 넘긴다) */
 export type StatisticsLinks = { home: string; draws: (game: Game) => string };
@@ -71,6 +75,29 @@ export const METRICS: Record<Game, MetricInfo[]> = {
 const DEFAULT_WINDOW: StatWindow = "last50";
 
 /**
+ * ~767 보기 탭(S1). 출현 빈도 = 번호 순서 막대 + 끝자리 카드, 기간별 추이 = 기간 선택 + 전체 차트,
+ * 구간별 출현(연금은 조별) = 구간·조 순서 차트, 패턴 분석 = 지표 선택 + 차트. 모두 번호 순서(task-015 결정 ⑦).
+ */
+export type StatView = "freq" | "trend" | "range" | "pattern";
+export function viewOptions(game: Game): { value: StatView; label: string }[] {
+  return [
+    { value: "freq", label: "출현 빈도" },
+    { value: "trend", label: "기간별 추이" },
+    { value: "range", label: game === "lotto" ? "구간별 출현" : "조별 출현" },
+    { value: "pattern", label: "패턴 분석" },
+  ];
+}
+/** 최근 추첨 결과 표 행 수(S4) */
+export const RECENT_DRAW_ROWS = 10;
+
+/** 보기 탭에 맞는 지표(패턴 분석은 지금 지표 유지, 구간별 = 로또 구간·연금 조). */
+function metricFor(view: StatView, game: Game, current: StatMetric): StatMetric {
+  if (view === "pattern") return METRICS[game].some((m) => m.metric === current) ? current : METRICS[game][0]!.metric;
+  if (view === "range") return game === "lotto" ? "lotto.range_dist" : "pension.group_freq";
+  return METRICS[game][0]!.metric;
+}
+
+/**
  * key가 바뀌면 다시 읽는 비동기 읽기(조건 칩을 바꿔도 화면을 다시 만들지 않아 포커스가 유지된다).
  * reload(true)는 같은 key에서만 force. 늦게 온 이전 응답은 버린다.
  */
@@ -101,6 +128,7 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
   const [game, setGame] = useState<Game>(initialGame);
   const [statWindow, setStatWindow] = useState<StatWindow>(DEFAULT_WINDOW);
   const [metric, setMetric] = useState<StatMetric>(METRICS[initialGame][0]!.metric);
+  const [view, setView] = useState<StatView>("freq");
   const info = METRICS[game].find((m) => m.metric === metric) ?? METRICS[game][0]!;
 
   const [stat, reloadStat] = useKeyedRead<ReadResult<StatRow>>(`${game}:${statWindow}:${info.metric}`, (force) =>
@@ -110,14 +138,46 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
     game === "lotto" ? core.reader.latestDraw("lotto", { force }) : core.reader.latestDraw("pension", { force }),
   );
 
+  const [recent] = useKeyedRead<ReadResult<AnyDraw[]>>(`draws:${game}`, (force) =>
+    game === "lotto"
+      ? core.reader.listDraws("lotto", { limit: RECENT_DRAW_ROWS, force })
+      : core.reader.listDraws("pension", { limit: RECENT_DRAW_ROWS, force }),
+  );
+
   const changeGame = (next: Game) => {
     setGame(next);
-    setMetric(METRICS[next][0]!.metric);
+    setMetric(metricFor(view, next, metric));
+  };
+  const changeView = (next: StatView) => {
+    setView(next);
+    setMetric(metricFor(next, game, metric));
   };
 
+  // ~767 전용 카드: 공통 기준선 막대형 지표가 성공하면 카드로, 아니면 기존 패널(로딩·오류·빈 상태 포함)을 보인다(m04.css).
+  const sv = readView(stat.status === "done" ? stat.value : undefined);
+  const row = sv.kind === "success" && sv.data.sample_size > 0 ? sv.data : null;
+  const chart = row ? statChart(info.metric, row) : null;
+  const bars = chart?.kind === "bars" && chart.single !== null && !chart.gap ? { list: chart.bars, single: chart.single } : null;
+  const periodLabel = `${windowLabel(statWindow)}차`;
+  const narrowCards = row && bars && view === "freq" && info.metric === "lotto.number_freq" ? "freq" : null;
+
   return (
-    <div className="ll-stats" data-game={game}>
-      <nav className="ll-breadcrumb" aria-label="현재 위치">
+    <div className="ll-stats" data-game={game} data-view={view} data-narrow-cards={narrowCards ?? undefined}>
+      <AppBar
+        title="통계 분석"
+        backHref={links.home}
+        backLabel="홈으로"
+        info={{
+          title: "통계 안내",
+          content: (
+            <p>
+              지난 회차 결과를 기간별로 집계해 무작위 기준선과 함께 보여 줍니다. 과거 회차를 센 결과이며 미래 예측이 아닙니다. 어떤 번호도 다음
+              회차에 더 잘 나오지 않으며, 기준선은 번호가 무작위로 고르게 나올 때 기대되는 횟수입니다.
+            </p>
+          ),
+        }}
+      />
+      <nav className="ll-breadcrumb ll-only-wide" aria-label="현재 위치">
         <ol>
           <li>
             <a href={links.home}>홈</a>
@@ -125,8 +185,10 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
           <li aria-current="page">통계</li>
         </ol>
       </nav>
-      <Header title="통계" subtitle="지난 회차 결과를 기간별로 집계해 무작위 기준선과 함께 보여 줍니다." />
-      <p className="ll-stats__notice">
+      <div className="ll-only-wide">
+        <Header title="통계" subtitle="지난 회차 결과를 기간별로 집계해 무작위 기준선과 함께 보여 줍니다." />
+      </div>
+      <p className="ll-stats__notice ll-only-wide">
         <strong>미래 예측 아님</strong> · 과거 회차를 센 결과입니다. 어떤 번호도 다음 회차에 더 잘 나오지 않으며, 기준선은 번호가 무작위로
         고르게 나올 때 기대되는 횟수입니다.
       </p>
@@ -135,36 +197,52 @@ export function Statistics({ core, links, initialGame = "lotto" }: StatisticsPro
 
       <div className="ll-stats__layout">
         <Card title="보기 조건" className="ll-stats__controls">
-          <Segment
-            legend="복권"
-            name="stat-game"
-            value={game}
-            options={[
-              { value: "lotto", label: GAME_NAME.lotto },
-              { value: "pension", label: GAME_NAME.pension },
-            ]}
-            onChange={changeGame}
-          />
-          <Segment
-            legend="기간(최근 회차 수)"
-            name="stat-window"
-            value={statWindow}
-            options={WINDOW_OPTIONS.map((w) => ({ value: w.value, label: w.short }))}
-            onChange={setStatWindow}
-          />
-          <Segment
-            legend="지표"
-            name="stat-metric"
-            value={info.metric}
-            options={METRICS[game].map((m) => ({ value: m.metric, label: m.label }))}
-            onChange={setMetric}
-          />
-          <a className="ll-button" data-variant="secondary" data-block="true" href={links.draws(game)}>
+          <div className="ll-stats__ctl" data-ctl="game">
+            <Segment
+              legend="복권"
+              name="stat-game"
+              value={game}
+              options={[
+                { value: "lotto", label: GAME_NAME.lotto },
+                { value: "pension", label: GAME_NAME.pension },
+              ]}
+              onChange={changeGame}
+            />
+          </div>
+          <div className="ll-stats__ctl ll-only-narrow" data-ctl="view">
+            <Segment legend="분석 보기" name="stat-view" value={view} options={viewOptions(game)} onChange={changeView} />
+          </div>
+          <div className="ll-stats__ctl" data-ctl="window">
+            <Segment
+              legend="기간(최근 회차 수)"
+              name="stat-window"
+              value={statWindow}
+              options={WINDOW_OPTIONS.map((w) => ({ value: w.value, label: w.short }))}
+              onChange={setStatWindow}
+            />
+          </div>
+          <div className="ll-stats__ctl" data-ctl="metric">
+            <Segment
+              legend="지표"
+              name="stat-metric"
+              value={info.metric}
+              options={METRICS[game].map((m) => ({ value: m.metric, label: m.label }))}
+              onChange={setMetric}
+            />
+          </div>
+          <a className="ll-button ll-stats__draws-link" data-variant="secondary" data-block="true" href={links.draws(game)}>
             지난 회차 결과 보기
           </a>
         </Card>
 
+        {row && bars && narrowCards === "freq" && (
+          <>
+            <NumberBarsCard row={row} bars={bars.list} baseline={bars.single} periodLabel={periodLabel} onMore={() => changeView("trend")} />
+            <EndDigitCard row={row} bars={bars.list} baseline={bars.single} periodLabel={periodLabel} />
+          </>
+        )}
         <StatPanel state={stat} game={game} window={statWindow} info={info} onRetry={() => reloadStat(true)} onWindow={setStatWindow} />
+        <RecentDrawsCard state={recent} game={game} href={links.draws(game)} />
       </div>
     </div>
   );

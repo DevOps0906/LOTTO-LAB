@@ -53,6 +53,7 @@
 | task-046 | 사주 만세력 간지·오행 표시(P1, 표시 전용) | W7(P1) | 037, 041 | 높음 | builder+tester | 완료(KASI 픽스처·dist 검사 보류) |
 | task-044 | 사전알림 메일 발송·수신 거부 링크 A-18·발송 후 파기 | W6 | 003 | 높음 | builder | 대기 |
 | task-045 | Android 광고(AdMob) — 배너·보상형·UMP 동의 (ADR-0006) | W7(P1) | 009, 020, 021 | 높음 | builder → reviewer(security) | 대기 |
+| task-047 | 모바일 M-01~M-04 시안 정합(사용자 요청) | W7 | 017~020 | 보통 | builder → codex-reviewer(design) | 완료(사용자 확인 대기 2건) |
 
 상태: 대기 / 진행 / 완료 / 보류
 

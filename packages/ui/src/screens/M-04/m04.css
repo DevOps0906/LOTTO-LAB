@@ -1,0 +1,237 @@
+/* M-04 모바일 시안 정합(task-047) — 토큰만, ~767 전용 규칙은 @media (width < 48em) 안에 */
+/* 시각 기준 design/reference/m-stats.png. 768~ 배치는 screens.css 그대로(모바일 전용 카드는 .ll-only-narrow로 숨음). */
+
+@media (width < 48em) {
+  .ll-stats {
+    gap: calc(var(--spacing) * 3);
+  }
+  /* 보기 조건 카드·레이아웃 상자를 풀어 조각을 화면 순서(앱바 → 복권 → 탭 → 카드 → 최근 회차)로 바로 놓는다 */
+  .ll-stats .ll-stats__layout,
+  .ll-stats .ll-stats__controls {
+    display: contents;
+  }
+  .ll-stats .ll-stats__controls > .ll-card__head,
+  .ll-stats .ll-stats__summary,
+  .ll-stats .ll-stats__draws-link {
+    display: none;
+  }
+  .ll-stats:not([data-view="trend"]) .ll-stats__ctl[data-ctl="window"],
+  .ll-stats:not([data-view="pattern"]) .ll-stats__ctl[data-ctl="metric"],
+  .ll-stats[data-narrow-cards] .ll-stats__panel {
+    display: none;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="window"],
+  .ll-stats .ll-stats__ctl[data-ctl="metric"] {
+    padding: calc(var(--spacing) * 3);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="game"] .ll-field__legend,
+  .ll-stats .ll-stats__ctl[data-ctl="view"] .ll-field__legend {
+    position: absolute;
+    width: calc(var(--spacing) / 4);
+    height: calc(var(--spacing) / 4);
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* S1 복권 큰 세그먼트 */
+  .ll-stats .ll-stats__ctl[data-ctl="game"] .ll-seg {
+    flex-wrap: nowrap;
+    background: var(--color-surface);
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+    border-radius: var(--radius-card);
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="game"] .ll-seg__item {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="game"] .ll-seg__item span {
+    min-height: calc(var(--spacing) * 12);
+    font-size: var(--text-body);
+    font-weight: 700;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="game"] .ll-seg__item input:checked + span {
+    font-weight: 800;
+  }
+
+  /* S1 하위 칩 탭 4개 */
+  .ll-stats .ll-stats__ctl[data-ctl="view"] .ll-seg {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: calc(var(--spacing) * 1.5);
+    padding: 0;
+    background: transparent;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="view"] .ll-seg__item {
+    min-width: 0;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="view"] .ll-seg__item span {
+    height: 100%;
+    padding: var(--spacing);
+    border: calc(var(--spacing) / 4) solid var(--color-border);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-text);
+    line-height: 1.25;
+    white-space: normal;
+    word-break: keep-all;
+  }
+  .ll-stats .ll-stats__ctl[data-ctl="view"] .ll-seg__item input:checked + span {
+    border-color: var(--gen-accent);
+    background: var(--gen-accent);
+    color: var(--color-primary-fg);
+  }
+  .ll-stats[data-game="pension"] .ll-stats__ctl[data-ctl="view"] .ll-seg__item input:checked + span {
+    color: var(--color-pension-fg);
+  }
+}
+
+/* ── 모바일 전용 카드(.ll-only-narrow) ── */
+.ll-stats .ll-stats__m-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 4);
+}
+.ll-stats .ll-stats__m-card > .ll-card__head {
+  align-items: center;
+  flex-wrap: nowrap;
+  margin: 0;
+}
+.ll-stats .ll-stats__m-card .ll-card__title {
+  font-size: var(--text-body);
+}
+.ll-stats .ll-stats__m-card .ll-card__head .ll-icon-button {
+  margin: calc(var(--spacing) * -2) calc(var(--spacing) * -2) calc(var(--spacing) * -2) 0;
+  color: var(--color-text-muted);
+}
+.ll-stats__title-sub {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.ll-stats__caption {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+/* S6 번호 순서 막대(1~45, 카드 안 가로 스크롤) */
+.ll-stats__numbars {
+  display: block;
+  width: calc(var(--spacing) * var(--chart-slot) * var(--chart-slots));
+  height: calc(var(--spacing) * 37.5);
+  overflow: visible;
+}
+.ll-stats__numbar {
+  fill: var(--color-chart-1);
+}
+/* y축 눈금(고정) + 가로 스크롤 차트 */
+.ll-stats__plot {
+  display: flex;
+  min-width: 0;
+}
+.ll-stats__plot > .ll-chart {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ll-stats__yaxis {
+  display: block;
+  flex: none;
+  width: calc(var(--spacing) * 6);
+  height: calc(var(--spacing) * 37.5);
+  overflow: visible;
+}
+.ll-stats__tick {
+  fill: var(--color-text-muted);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.ll-stats__grid {
+  stroke: var(--color-chart-grid);
+  stroke-width: 1;
+}
+/* 막대 위 "n회": 기준선·눈금선이 글자를 지나가도 읽히게 바탕색 테두리 */
+.ll-stats__numbars .ll-chart__value {
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+/* S3 끝자리 히트맵 */
+.ll-stats__digits {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: calc(var(--spacing) * 0.5);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.ll-stats__digits th,
+.ll-stats__digits td {
+  padding: var(--spacing) 0;
+}
+.ll-stats__digits thead th {
+  font-weight: 800;
+}
+.ll-stats__digits tbody th {
+  width: calc(var(--spacing) * 12);
+  border-radius: calc(var(--radius-control) / 2);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+.ll-stats__digits thead th:first-child {
+  width: calc(var(--spacing) * 12);
+  color: var(--color-text-muted);
+}
+.ll-stats__digits tbody td {
+  font-weight: 700;
+}
+.ll-stats__digits .ll-stats__digit-heat {
+  display: block;
+  min-height: calc(var(--spacing) * 6);
+}
+
+/* S4 최근 10회 표 */
+.ll-stats__recent-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+.ll-stats__recent {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-caption);
+}
+.ll-stats__recent th,
+.ll-stats__recent td {
+  padding: calc(var(--spacing) * 2) var(--spacing);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: calc(var(--spacing) / 4) solid var(--color-border);
+}
+.ll-stats__recent thead th {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+.ll-stats__recent tbody th {
+  font-weight: 800;
+}
+.ll-stats__recent .ll-balls {
+  flex-wrap: nowrap;
+  gap: var(--spacing);
+}
+.ll-stats__recent .ll-ball-bonus {
+  gap: calc(var(--spacing) * 0.5);
+}
+.ll-stats__recent .ll-balls--small .ll-ball {
+  width: calc(var(--spacing-ball) * 0.62);
+  height: calc(var(--spacing-ball) * 0.62);
+  font-size: var(--text-caption);
+}

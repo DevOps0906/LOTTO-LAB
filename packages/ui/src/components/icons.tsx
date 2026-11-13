@@ -1,6 +1,7 @@
 // 내부 아이콘(장식용, aria-hidden). 크기는 .ll-icon 토큰 계산값.
 export type IconName = "check" | "pin" | "ban" | "up" | "down" | "flat" | "inbox" | "alert" | "info" | "more" | "close"
-  | "arrow" | "stats" | "layers" | "spark" | "bell" | "gear" | "redo" | "calendar";
+  | "arrow" | "stats" | "layers" | "spark" | "bell" | "gear" | "redo" | "calendar"
+  | "back" | "chevron" | "user" | "crown" | "bars";
 
 const PATHS: Record<IconName, string> = {
   check: "M5 12.5l4.5 4.5L19 7",
@@ -22,6 +23,11 @@ const PATHS: Record<IconName, string> = {
   gear: "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1",
   redo: "M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7",
   calendar: "M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3 10h18M8 3v4M16 3v4",
+  back: "M15 5l-7 7 7 7",
+  chevron: "M9 5l7 7-7 7",
+  user: "M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM4 21a8 8 0 0 1 16 0",
+  crown: "M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z",
+  bars: "M6 20v-6M12 20V9M18 20V4",
 };
 
 export function Icon({ name }: { name: IconName }) {

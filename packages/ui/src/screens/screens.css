@@ -1,6 +1,10 @@
 /* 화면 스타일(M-05 온보딩·M-01 홈·M-15 추천 선택) — 토큰 CSS 변수만(hex·px 금지). 시각 기준: design/reference/m-home.png·d-home.html.
    구간: ~767 1열 / 48em(768)~ 홈 2열 / 75em(1200)~ 여백·장식 확대. 내비 배치는 AppShell이 바꾼다. */
 
+@import "./M-02/m02.css";
+@import "./M-03/m03.css";
+@import "./M-04/m04.css";
+
 /* ── 공통 조각 ── */
 .ll-muted {
   color: var(--color-text-muted);
@@ -535,6 +539,274 @@
 .ll-records .ll-stat {
   background: var(--color-bg);
   box-shadow: none;
+}
+
+/* ── M-01 ~767 시안 정합(task-047 C1·C2·H1~H6, 기준 design/reference/m-home.png) ──
+   ~767 전용 조각은 기본 숨김, 768~ 배치는 위 규칙 그대로(.ll-draw__line = display:contents). */
+.ll-home__brand,
+.ll-home__avatar,
+.ll-hero__crown,
+.ll-coins,
+.ll-latest .ll-draw__more,
+.ll-latest__source,
+.ll-summary__caption {
+  display: none;
+}
+.ll-draw__line {
+  display: contents;
+}
+@media (width < 48em) {
+  /* H1 머리글: 남색 배너 위 워드마크 + 알림 · 프로필(설정) */
+  .ll-home > .ll-header {
+    position: relative;
+    z-index: 1;
+    flex-wrap: nowrap;
+    height: calc(var(--spacing) * 12);
+    margin-right: calc(var(--spacing) * -2);
+    color: var(--color-navy-fg);
+  }
+  .ll-home__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+    white-space: nowrap;
+  }
+  .ll-home__brand .ll-icon {
+    width: calc(var(--spacing) * 7);
+    height: calc(var(--spacing) * 7);
+    stroke-width: 3.2;
+  }
+  .ll-home__brand-ko {
+    font-size: var(--text-h1);
+    font-weight: 800;
+  }
+  .ll-home__brand-en {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .ll-home__title {
+    position: absolute;
+    width: calc(var(--spacing) / 4);
+    height: calc(var(--spacing) / 4);
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .ll-home > .ll-header .ll-header__actions .ll-icon-button {
+    color: var(--color-navy-fg);
+  }
+  .ll-home > .ll-header .ll-header__actions .ll-icon-button:hover {
+    background: color-mix(in oklab, var(--color-navy-fg), transparent 88%);
+  }
+  .ll-home__settings > .ll-icon {
+    display: none;
+  }
+  .ll-home__avatar {
+    display: grid;
+    place-items: center;
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--color-navy-fg), transparent 78%);
+  }
+  .ll-home__avatar .ll-icon {
+    fill: currentColor;
+  }
+
+  /* H2 남색 그라데이션 배너: 머리글 뒤까지 화면 폭 전체(셸 페이지 여백·상단 안전 영역만큼 끌어올림), 다음 카드가 아래를 겹친다 */
+  .ll-hero {
+    --hero-lift: calc(var(--spacing-page) + env(safe-area-inset-top, 0rem) + var(--spacing) * 12 + var(--spacing-gap));
+    margin: calc(var(--hero-lift) * -1) calc(var(--spacing-page) * -1) 0;
+    padding: calc(var(--hero-lift) + var(--spacing) * 2) var(--spacing-page) calc(var(--spacing) * 14);
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .ll-hero + * {
+    position: relative;
+    z-index: 1;
+    margin-top: calc(var(--spacing) * -10);
+  }
+  .ll-hero__tag {
+    display: none;
+  }
+  .ll-hero__title {
+    font-size: var(--text-h2);
+  }
+  .ll-hero__desc {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  .ll-hero__art {
+    width: calc(var(--spacing) * 26);
+    height: calc(var(--spacing) * 22);
+  }
+  .ll-hero__art .ll-deco {
+    width: calc(var(--spacing) * 15);
+  }
+  .ll-hero__art .ll-deco[data-game="pension"] {
+    top: calc(var(--spacing) * 3);
+    width: calc(var(--spacing) * 13);
+  }
+  /* C2 왕관: 인라인 SVG + 금색(번호공 1구간 토큰) 면 */
+  .ll-hero__crown {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: calc(var(--spacing) * -2);
+    right: calc(var(--spacing) * -1);
+    transform: rotate(18deg);
+    color: color-mix(in oklab, var(--color-ball-1), var(--color-navy) 25%);
+    filter: drop-shadow(0 calc(var(--spacing) * 0.5) var(--spacing) color-mix(in oklab, var(--color-navy), transparent 60%));
+  }
+  .ll-hero__crown .ll-icon {
+    width: calc(var(--spacing) * 9);
+    height: calc(var(--spacing) * 9);
+    fill: var(--color-ball-1);
+    stroke-width: 1.4;
+  }
+
+  /* C1 밀도: 홈 카드 여백·제목 간격 */
+  .ll-home .ll-card__head {
+    margin-bottom: calc(var(--spacing) * 2);
+  }
+
+  /* H3 최신 회차: 제목 줄 숨김(구역 이름은 유지) · 로또 공 한 줄 + › · 출처 한 줄 캡션 · 연금 별도 줄 */
+  .ll-latest > .ll-card__head {
+    position: absolute;
+    width: calc(var(--spacing) / 4);
+    height: calc(var(--spacing) / 4);
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .ll-latest .ll-draw {
+    gap: calc(var(--spacing) * 2);
+  }
+  .ll-latest .ll-draw + .ll-draw {
+    margin-top: calc(var(--spacing) * 3);
+    padding-top: calc(var(--spacing) * 3);
+  }
+  .ll-draw__line {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+  }
+  .ll-draw__line .ll-balls {
+    flex: 1;
+    gap: var(--spacing);
+  }
+  .ll-latest .ll-balls .ll-ball {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+  }
+  .ll-latest .ll-draw__more {
+    display: inline-grid;
+    margin-right: calc(var(--spacing) * -3);
+    color: var(--color-text-muted);
+  }
+  /* 출처는 카드 맨 아래 합친 한 줄(.ll-latest__source)만 — 회차별 출처·링크는 숨김 */
+  .ll-latest .ll-draw .ll-draw__source {
+    display: none;
+  }
+  .ll-latest__source {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+    margin: calc(var(--spacing) * 3) 0 0;
+    padding-top: calc(var(--spacing) * 2);
+    border-top: calc(var(--spacing) / 4) dashed var(--color-border);
+    font-size: var(--text-caption);
+    color: var(--color-text-muted);
+  }
+  .ll-latest__source > span {
+    flex: 1;
+    min-width: 0;
+  }
+  /* 터치 영역 44는 유지하고 줄 높이만 캡션에 맞춘다 */
+  .ll-latest__source .ll-link {
+    flex: none;
+    margin-block: calc(var(--spacing) * -3);
+  }
+  /* 연금: "연금복권 720+ 제n회 · 4조 381204 · 보너스 …" 한 줄 */
+  .ll-draw--pension {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing) calc(var(--spacing) * 2);
+    font-size: var(--text-caption);
+  }
+  .ll-draw--pension .ll-draw__head {
+    gap: var(--spacing);
+  }
+  .ll-draw--pension .ll-draw__date {
+    display: none;
+  }
+  .ll-latest .ll-pension-line {
+    gap: calc(var(--spacing) * 1.5);
+    font-size: var(--text-caption);
+  }
+  .ll-latest .ll-pension-line .ll-mono {
+    letter-spacing: 0.04em;
+  }
+
+  /* H4 바로가기 카드 2열(로또 파랑 / 연금 보라) + 그림 */
+  .ll-shell a.ll-product,
+  .ll-product {
+    min-height: calc(var(--spacing) * 30);
+    padding: calc(var(--spacing) * 4);
+  }
+  .ll-product__art .ll-deco {
+    width: calc(var(--spacing) * 12);
+  }
+  .ll-product__art .ll-icon {
+    width: calc(var(--spacing) * 10);
+    height: calc(var(--spacing) * 10);
+    opacity: 0.85;
+  }
+  .ll-coins {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    margin-right: calc(var(--spacing) * -4);
+  }
+  .ll-coins i {
+    display: block;
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 2.5);
+    margin-top: calc(var(--spacing) * -0.5);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(180deg, var(--color-ball-1) 0, color-mix(in oklab, var(--color-ball-1), var(--color-navy) 25%) 100%);
+    box-shadow: 0 calc(var(--spacing) / 4) 0 color-mix(in oklab, var(--color-ball-1), var(--color-navy) 45%);
+  }
+
+  /* H5 이번 주 요약: 2행 압축, 긴 설명은 각 행 캡션(출처·기준·미래 예측 아님)으로 대신한다 */
+  .ll-summary__row {
+    padding: calc(var(--spacing) * 2.5);
+    gap: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  }
+  .ll-summary__tile {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+  }
+  .ll-summary__block .ll-updated {
+    padding-top: calc(var(--spacing) * 1.5);
+  }
+  .ll-summary__note {
+    display: none;
+  }
+  .ll-summary__caption {
+    display: block;
+    margin: 0;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  /* H6 아래 영역(빠른 생성·내 기록) 축소 */
+  .ll-home .ll-state {
+    padding-block: calc(var(--spacing) * 3);
+  }
 }
 
 /* ── M-15 추천 선택 ── */

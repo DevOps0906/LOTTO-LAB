@@ -1,5 +1,6 @@
 // 지난 설정(task-018·019): 복권별로 마지막으로 생성에 성공한 조건을 설정 레코드(`ll:v1:settings:app`)의 last_config에 둔다.
 // 19세 확인 시각(age_confirmed_at)은 그대로 유지한다. 설정 레코드가 격리 대상이면 덮어쓰지 않는다(결정 ③).
+import type { LottoGenerateConfig } from "@lotto-lab/lotto-engine";
 import type { LottoGeneratorConfig, PensionGeneratorConfig } from "@lotto-lab/types";
 import { LottoGeneratorConfigSchema, LocalSettingsSchema, PensionGeneratorConfigSchema, type LocalSettings } from "@lotto-lab/validation";
 import type { GenerateRequest } from "./generate-service.ts";
@@ -28,7 +29,7 @@ export class LastConfigStore {
    */
   save(request: GenerateRequest): Promise<boolean> {
     const parsed =
-      request.game === "lotto" ? LottoGeneratorConfigSchema.safeParse(request.config) : PensionGeneratorConfigSchema.safeParse(request.config);
+      request.game === "lotto" ? LottoGeneratorConfigSchema.safeParse(withoutOdd(request.config)) : PensionGeneratorConfigSchema.safeParse(request.config);
     if (!parsed.success) return Promise.reject(new AppCoreError("INVALID_INPUT", "last_config"));
     return this.store.run(async () => {
       const current = await this.store.get("settings", SETTINGS_ID, LocalSettingsSchema);
@@ -43,4 +44,11 @@ export class LastConfigStore {
       return true;
     });
   }
+}
+
+/** 홀짝(odd)은 저장 형식에 없다(task-047) — 지난 설정에는 고정·제외·게임 수만 남긴다. */
+function withoutOdd(config: LottoGenerateConfig): LottoGeneratorConfig {
+  const rest = { ...config };
+  delete rest.odd;
+  return rest;
 }

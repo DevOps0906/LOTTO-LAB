@@ -2,9 +2,9 @@
 // 생성 이력은 추천 기록일 뿐 저장 번호·구매가 아니다 — ticket 레코드를 만들지 않는다(AGENTS 4장).
 // 이력은 최근 200개만 유지하되 저장 번호가 참조하는 항목은 지우지 않는다(결정 ⑩).
 import { createCryptoRng } from "@lotto-lab/lottery-core";
-import { generateLotto } from "@lotto-lab/lotto-engine";
+import { generateLotto, type LottoGenerateConfig } from "@lotto-lab/lotto-engine";
 import { generatePension } from "@lotto-lab/pension-engine";
-import { PENSION_GROUP_MAX, type LottoGeneratorConfig, type PensionGeneratorConfig } from "@lotto-lab/types";
+import { PENSION_GROUP_MAX, type PensionGeneratorConfig } from "@lotto-lab/types";
 import { LocalGeneratedSchema, type GenerationMethod, type LocalGenerated } from "@lotto-lab/validation";
 import type { Clock, RandomBytes } from "./adapters.ts";
 import type { LocalStore } from "./storage.ts";
@@ -12,8 +12,9 @@ import { uuidV4 } from "./storage.ts";
 
 export const GENERATED_HISTORY_LIMIT = 200;
 
+/** 로또 config의 odd(홀수 개수, task-047)는 엔진에만 전달된다 — 지난 설정에는 남기지 않는다(last-config). */
 export type GenerateRequest =
-  | { game: "lotto"; config: LottoGeneratorConfig }
+  | { game: "lotto"; config: LottoGenerateConfig }
   | { game: "pension"; config: PensionGeneratorConfig };
 
 /**
@@ -126,7 +127,7 @@ export class GenerateService {
 function methodOf(request: GenerateRequest): GenerationMethod {
   if (request.game === "lotto") {
     const c = request.config;
-    return c.fixed.length > 0 || c.excluded.length > 0 ? "condition" : "random";
+    return c.fixed.length > 0 || c.excluded.length > 0 || c.odd !== undefined ? "condition" : "random";
   }
   const c = request.config;
   return c.positions.some((p) => p !== null) || c.groups.length < PENSION_GROUP_MAX ? "condition" : "random";

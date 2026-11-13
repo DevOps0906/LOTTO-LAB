@@ -1,4 +1,4 @@
-// 로또 6/45 번호 생성(task-013, 01#9 1·2·3, ADR-0002). P0 조건은 고정·제외·게임 수만(결정 ①).
+// 로또 6/45 번호 생성(task-013, 01#9 1·2·3, ADR-0002). P0 조건은 고정·제외·게임 수(결정 ①), 홀짝(odd, task-047)은 선택.
 // 순서: 입력 검증(INVALID_INPUT) → 불가능 판정(IMPOSSIBLE_COMBINATION, C(p,k) 정확 계산) → 생성.
 // 같은 Rng 시드·같은 입력의 출력이 바뀌는 변경은 LOTTO_ENGINE_VERSION을 올린다(골든 벡터 테스트가 강제, 결정 ②).
 import {
@@ -23,6 +23,9 @@ export const LOTTO_ENUMERATE_LIMIT = 10_000;
 /** 재추첨 경로의 게임당 시도 상한(무한 대기 금지). C > 10,000·게임 ≤ 50이라 실제로 닿지 않는다. */
 const MAX_ATTEMPTS_PER_GAME = 1_000;
 
+/** 엔진 입력 = 공통 생성 조건 + 홀짝(odd = 게임당 홀수 개수 0~6, 없으면 무관). 저장 형식(LottoGeneratorConfig)에는 odd가 없다. */
+export type LottoGenerateConfig = LottoGeneratorConfig & { odd?: number };
+
 export type LottoGenerateResult = { games: number[][]; engine_version: typeof LOTTO_ENGINE_VERSION };
 
 /** 정확한 이항계수 C(n, k). 로또 범위에서는 최대 C(45,6) = 8,145,060이라 정수 연산이 정확하다. */
@@ -44,12 +47,14 @@ function validNumberList(v: unknown, max: number): v is number[] {
   return new Set(v).size === v.length;
 }
 
-function validate(config: LottoGeneratorConfig): void {
+function validate(config: LottoGenerateConfig): void {
   if (typeof config !== "object" || config === null) throw invalidInput("lotto.config");
   if (!validNumberList(config.fixed, LOTTO_FIXED_MAX)) throw invalidInput("lotto.fixed");
   if (!validNumberList(config.excluded, LOTTO_EXCLUDED_MAX)) throw invalidInput("lotto.excluded");
   const g = config.games;
   if (!Number.isInteger(g) || g < GAMES_PER_REQUEST_MIN || g > GAMES_PER_REQUEST_MAX) throw invalidInput("lotto.games");
+  const odd = config.odd;
+  if (odd !== undefined && (!Number.isInteger(odd) || odd < 0 || odd > LOTTO_PICK_COUNT)) throw invalidInput("lotto.odd");
 }
 
 function impossible(hint: string, detail: Record<string, number>): EngineError {
@@ -88,14 +93,29 @@ function allCombinations(pool: readonly number[], k: number): number[][] {
 }
 
 const ascending = (a: number, b: number): number => a - b;
+const isOdd = (n: number): boolean => n % 2 === 1;
+
+/** 후보 묶음 하나에서 k개를 뽑는다. 게임 = 고정수 + 묶음마다 뽑은 번호(홀짝 없으면 묶음 1개). */
+type Part = { pool: number[]; k: number };
+
+/** 묶음별 조합의 곱(묶음 1개면 allCombinations와 같은 순서). */
+function partCombinations(parts: readonly Part[]): number[][] {
+  let out: number[][] = [[]];
+  for (const p of parts) {
+    const combos = allCombinations(p.pool, p.k);
+    out = out.flatMap((head) => combos.map((c) => [...head, ...c]));
+  }
+  return out;
+}
 
 /**
  * 고정·제외·게임 수 조건으로 로또 번호를 만든다. 각 게임은 6개·1~45·중복 없음·오름차순이고, 한 배치 안 게임은 서로 다르다.
- * - INVALID_INPUT: 범위 밖·정수 아님·목록 안 중복(hint `lotto.config|fixed|excluded|games`)
+ * odd가 있으면 모든 게임의 홀수 개수가 odd다(고정수 포함).
+ * - INVALID_INPUT: 범위 밖·정수 아님·목록 안 중복(hint `lotto.config|fixed|excluded|games|odd`)
  * - IMPOSSIBLE_COMBINATION: `lotto.fixed_excluded_overlap`(detail.overlap) · `lotto.not_enough_pool`(pool·need)
- *   · `lotto.too_few_combinations`(max·requested)
+ *   · `lotto.parity`(odd·fixed_odd·fixed_even·pool_odd·pool_even) · `lotto.too_few_combinations`(max·requested)
  */
-export function generateLotto(config: LottoGeneratorConfig, rng: Rng): LottoGenerateResult {
+export function generateLotto(config: LottoGenerateConfig, rng: Rng): LottoGenerateResult {
   validate(config);
   const fixed = [...config.fixed].sort(ascending);
   const excludedSet = new Set(config.excluded);
@@ -112,7 +132,25 @@ export function generateLotto(config: LottoGeneratorConfig, rng: Rng): LottoGene
   // 현재 상한(고정 ≤ 6·제외 ≤ 39)에서는 pool ≥ need가 항상 성립한다. 상한이 바뀔 때를 위한 판정.
   if (pool.length < need) throw impossible("lotto.not_enough_pool", { pool: pool.length, need });
 
-  const max = binomial(pool.length, need);
+  let parts: Part[] = [{ pool, k: need }];
+  if (config.odd !== undefined) {
+    const odd = config.odd;
+    const fixedOdd = fixed.filter(isOdd).length;
+    const fixedEven = fixed.length - fixedOdd;
+    const oddPool = pool.filter(isOdd);
+    const evenPool = pool.filter((n) => !isOdd(n));
+    const needOdd = odd - fixedOdd;
+    const needEven = LOTTO_PICK_COUNT - odd - fixedEven;
+    if (needOdd < 0 || needEven < 0 || needOdd > oddPool.length || needEven > evenPool.length) {
+      throw impossible("lotto.parity", { odd, fixed_odd: fixedOdd, fixed_even: fixedEven, pool_odd: oddPool.length, pool_even: evenPool.length });
+    }
+    parts = [
+      { pool: oddPool, k: needOdd },
+      { pool: evenPool, k: needEven },
+    ];
+  }
+
+  const max = parts.reduce((m, p) => m * binomial(p.pool.length, p.k), 1);
   const requested = config.games;
   if (requested > max) throw impossible("lotto.too_few_combinations", { max, requested });
 
@@ -120,7 +158,7 @@ export function generateLotto(config: LottoGeneratorConfig, rng: Rng): LottoGene
   let games: number[][];
   if (max <= LOTTO_ENUMERATE_LIMIT) {
     // 전체 조합 열거 → 인덱스 비복원 추출(중복 판정 오탐 0).
-    const combos = allCombinations(pool, need);
+    const combos = partCombinations(parts);
     const indexes = Array.from({ length: combos.length }, (_, i) => i);
     games = pickK(indexes, requested, rng).map((i) => toGame(combos[i]!));
   } else {
@@ -130,7 +168,7 @@ export function generateLotto(config: LottoGeneratorConfig, rng: Rng): LottoGene
     let attempts = 0;
     while (games.length < requested) {
       if (++attempts > requested * MAX_ATTEMPTS_PER_GAME) throw impossible("lotto.too_few_combinations", { max, requested });
-      const game = toGame(pickK(pool, need, rng));
+      const game = toGame(parts.flatMap((p) => pickK(p.pool, p.k, rng)));
       const key = game.join(",");
       if (seen.has(key)) continue;
       seen.add(key);

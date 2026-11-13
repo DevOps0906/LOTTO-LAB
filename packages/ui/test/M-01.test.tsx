@@ -149,6 +149,18 @@ describe("M-01 홈", () => {
     expect(within(summary).queryByRole("list", { name: "출현 횟수가 많은 조" })).not.toBeInTheDocument();
   });
 
+  it("task-047: h1은 제목 그대로(워드마크는 장식), draws가 있을 때만 최신 회차 › 링크", async () => {
+    const m = mockCore();
+    const { unmount } = render(<Home core={m.core} links={links} />);
+    expect(screen.getByRole("heading", { level: 1, name: "홈" })).toBeInTheDocument();
+    await screen.findByText("제 1,132회");
+    expect(screen.queryByRole("link", { name: "로또 회차 결과 더 보기" })).not.toBeInTheDocument();
+    unmount();
+
+    render(<Home core={m.core} links={{ ...links, draws: "#/draws?game=lotto" }} />);
+    expect(await screen.findByRole("link", { name: "로또 회차 결과 더 보기" })).toHaveAttribute("href", "#/draws?game=lotto");
+  });
+
   it("알림은 P1 비활성, 설정은 #/settings 링크", () => {
     const m = mockCore();
     render(<Home core={m.core} links={links} />);

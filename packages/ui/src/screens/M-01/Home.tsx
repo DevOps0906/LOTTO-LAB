@@ -45,6 +45,8 @@ export type HomeLinks = {
   tickets?: string;
   settings: string;
   register?: string;
+  /** 회차 목록(선택) — 있으면 ~767 최신 회차 줄 끝에 › 링크 */
+  draws?: string;
 };
 
 export type HomeProps = {
@@ -95,14 +97,27 @@ export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
   return (
     <div className="ll-home">
       <Header
-        title={title}
+        title={
+          <>
+            {/* ~767 머리글 워드마크(task-047 H1, 자체 워드마크 — 공식 로고 모방 금지). 768~에서는 숨고 제목이 보인다 */}
+            <span className="ll-home__brand" aria-hidden="true">
+              <Icon name="bars" />
+              <span className="ll-home__brand-ko">로또랩</span>
+              <span className="ll-home__brand-en">LOTTO LAB</span>
+            </span>
+            <span className="ll-home__title">{title}</span>
+          </>
+        }
         actions={
           <>
             <button type="button" className="ll-icon-button" disabled aria-label="알림 (준비 중)" title="알림은 준비 중입니다">
               <Icon name="bell" />
             </button>
-            <a className="ll-icon-button" href={links.settings} aria-label="설정">
+            <a className="ll-icon-button ll-home__settings" href={links.settings} aria-label="설정">
               <Icon name="gear" />
+              <span className="ll-home__avatar">
+                <Icon name="user" />
+              </span>
             </a>
           </>
         }
@@ -124,6 +139,9 @@ export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
         <div className="ll-hero__art" aria-hidden="true">
           <span className="ll-deco" data-game="pension">45</span>
           <span className="ll-deco">6</span>
+          <span className="ll-hero__crown">
+            <Icon name="crown" />
+          </span>
         </div>
       </section>
 
@@ -141,6 +159,7 @@ export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
           <LatestDrawCard
             lotto={drawResults?.lotto}
             pension={drawResults?.pension}
+            drawsHref={links.draws}
             onRetry={() => reloadDraws(true)}
             onOpenSource={(url) => void core.adapters.openExternal.open(url)}
           />
@@ -159,6 +178,11 @@ export function Home({ core, links, title = "홈", leftExtra }: HomeProps) {
               <span className="ll-product__desc">조 · 여섯 자리 번호 생성</span>
               <Icon name="arrow" />
               <span className="ll-product__art" aria-hidden="true">
+                <span className="ll-coins">
+                  <i />
+                  <i />
+                  <i />
+                </span>
                 <Icon name="calendar" />
               </span>
             </a>
@@ -193,11 +217,13 @@ function SkeletonBalls({ count }: { count: number }) {
 function LatestDrawCard({
   lotto,
   pension,
+  drawsHref,
   onRetry,
   onOpenSource,
 }: {
   lotto: ReadResult<LottoDraw> | undefined;
   pension: ReadResult<PensionDraw> | undefined;
+  drawsHref: string | undefined;
   onRetry: () => void;
   onOpenSource: (url: string) => void;
 }) {
@@ -229,16 +255,24 @@ function LatestDrawCard({
             {lv.kind === "loading" && <SkeletonBalls count={7} />}
             {lv.kind === "success" && (
               <>
-                <span className="ll-balls" role="list" aria-label="당첨 번호">
-                  {lv.data.nums.map((n) => (
-                    <span role="listitem" key={n}>
-                      <Ball number={n} />
+                {/* ll-draw__line: 768~ display:contents(배치 그대로), ~767 공 한 줄 + › */}
+                <div className="ll-draw__line">
+                  <span className="ll-balls" role="list" aria-label="당첨 번호">
+                    {lv.data.nums.map((n) => (
+                      <span role="listitem" key={n}>
+                        <Ball number={n} />
+                      </span>
+                    ))}
+                    <span role="listitem">
+                      <Ball number={lv.data.bonus} state="bonus" />
                     </span>
-                  ))}
-                  <span role="listitem">
-                    <Ball number={lv.data.bonus} state="bonus" />
                   </span>
-                </span>
+                  {drawsHref && (
+                    <a className="ll-icon-button ll-draw__more" href={drawsHref} aria-label="로또 회차 결과 더 보기">
+                      <Icon name="chevron" />
+                    </a>
+                  )}
+                </div>
                 <DrawSource url={lv.data.source_url} verifiedAt={lv.data.source_verified_at} onOpen={onOpenSource} />
               </>
             )}
@@ -246,7 +280,7 @@ function LatestDrawCard({
             {lv.kind === "error" && <p className="ll-muted">로또 회차 정보를 불러오지 못했습니다.</p>}
           </section>
 
-          <section className="ll-draw" aria-label="연금복권 720+ 최신 회차">
+          <section className="ll-draw ll-draw--pension" aria-label="연금복권 720+ 최신 회차">
             <div className="ll-draw__head">
               <strong>연금복권 720+</strong>
               {pv.kind === "success" && (
@@ -273,6 +307,10 @@ function LatestDrawCard({
             {pv.kind === "empty" && <p className="ll-muted">연금복권 회차 정보가 아직 수집되지 않았습니다(미갱신).</p>}
             {pv.kind === "error" && <p className="ll-muted">연금복권 회차 정보를 불러오지 못했습니다.</p>}
           </section>
+          <MergedSource
+            draws={[lv.kind === "success" ? lv.data : null, pv.kind === "success" ? pv.data : null]}
+            onOpen={onOpenSource}
+          />
           {(lv.kind === "error" || pv.kind === "error") && (
             <Button variant="secondary" onClick={onRetry}>
               다시 시도
@@ -281,6 +319,44 @@ function LatestDrawCard({
         </>
       )}
     </Card>
+  );
+}
+
+const KST = new Intl.DateTimeFormat("ko-KR", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+/**
+ * ~767 전용(task-047 H3): 로또·연금 출처·검증 시각을 카드 맨 아래 한 줄로 합친다(768~에서는 숨고 회차별 DrawSource가 보인다).
+ * 출처 호스트는 중복 없이, 검증 시각은 둘 중 오래된 쪽(보수적으로), 공식 결과 링크는 로또 우선.
+ */
+function MergedSource({
+  draws,
+  onOpen,
+}: {
+  draws: (Pick<LottoDraw, "source_url" | "source_verified_at"> | null)[];
+  onOpen: (url: string) => void;
+}) {
+  const list = draws.filter((d): d is NonNullable<typeof d> => d !== null);
+  const first = list[0];
+  if (!first) return null;
+  const hosts = [...new Set(list.map((d) => sourceHost(d.source_url)))].join(" · ");
+  const oldest = list.map((d) => new Date(d.source_verified_at)).reduce((a, b) => (b < a ? b : a));
+  return (
+    <p className="ll-latest__source">
+      <span>
+        출처 {hosts} 공개 결과 · 검증 <time dateTime={oldest.toISOString()}>{KST.format(oldest)}</time>
+      </span>
+      <button type="button" className="ll-link" onClick={() => onOpen(first.source_url)}>
+        공식 결과 보기
+      </button>
+    </p>
   );
 }
 
@@ -326,6 +402,8 @@ function SummaryCard({
           <strong>미래 예측 아님</strong> · 지난 회차 출현 횟수 요약입니다. 기준선은 모든 번호가 고르게 나올 때의 기대 횟수입니다. 동률은 작은
           번호부터 표시합니다.
         </p>
+        {/* ~767 전용 한 줄 고지(긴 note는 ~767에서 숨김, 768~에서는 이 줄이 숨는다) */}
+        <p className="ll-summary__caption">미래 예측 아님 · 기준선 = 고르게 나올 때 기대 횟수</p>
         {statsHref && (
           <a className="ll-link" href={statsHref}>
             통계 자세히 보기

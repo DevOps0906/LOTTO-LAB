@@ -26,7 +26,7 @@ describe("M-03 연금 생성", () => {
     expect(screen.getByRole("button", { name: "1조" })).toHaveAttribute("aria-pressed", "true");
     for (const label of LABELS) expect(screen.getByRole("textbox", { name: `${label} 자리` })).toHaveValue("");
     expect(view.container.querySelector('input[type="number"]')).toBeNull();
-    expect(screen.getByText(/총/)).toHaveTextContent("기본 번호 1개 × 조 1개 = 총 1장");
+    expect(screen.getByText(/총/, { selector: ".ll-gen__summary" })).toHaveTextContent("기본 번호 1개 × 조 1개 = 총 1장");
   });
 
   it("1조 000719 입력 → 생성 → 저장 → 복사 문자열이 000719(앞자리 0 유지)", async () => {
@@ -36,6 +36,8 @@ describe("M-03 연금 생성", () => {
     expect(m.generate).toHaveBeenCalledWith({ game: "pension", config: { groups: [1], positions: ["0", "0", "0", "7", "1", "9"], games: 1 } });
     await screen.findByRole("heading", { name: "추천 번호 (총 1장)" });
     expect(rows()).toHaveLength(1);
+    // ~767: 결과 아래 고지는 한 줄 캡션(전문은 결과 카드·정보 시트)
+    expect(screen.getByText("미래 예측 아님", { selector: ".ll-gen__caption strong" })).toBeInTheDocument();
     expect(rows()[0]).toHaveTextContent("1조");
     expect(rows()[0]).toHaveTextContent("000719");
     await user.click(screen.getByRole("checkbox", { name: "1조 000719 선택" }));
@@ -158,5 +160,73 @@ describe("M-03 연금 생성", () => {
     renderWithNotice(<PensionGenerator core={m.core} links={GEN_LINKS} restoreLast />);
     expect(await screen.findByText(/지난 설정을 읽지 못해 기본값으로 시작합니다/)).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "낱장(조 1개)" })).toBeChecked();
+  });
+
+  it("~767 시안(task-047): 앱바·탭·상금 배너, 당첨 구조 탭 표와 출처", async () => {
+    const { user } = setup();
+    expect(screen.getByRole("heading", { level: 1, name: "연금복권 720+" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "번호 생성" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("link", { name: "분석 통계" })).toHaveAttribute("href", GEN_LINKS.stats);
+    await user.click(screen.getByRole("button", { name: /1등: 매월 700만원 × 20년/ }));
+    expect(screen.getByRole("tab", { name: "당첨 구조" })).toHaveAttribute("aria-selected", "true");
+    const table = screen.getByRole("table", { name: /연금복권720\+ 등위/ });
+    expect(within(table).getAllByRole("row")).toHaveLength(9);
+    expect(within(table).getByRole("row", { name: /보너스/ })).toHaveTextContent("월 100만원 × 10년");
+    expect(screen.getByText(/출처: 동행복권/)).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "번호 생성" }));
+    expect(screen.queryByRole("table", { name: /연금복권720\+ 등위/ })).toBeNull();
+  });
+
+  it("탭 키보드: roving tabindex, 좌우 방향키(순환)·Home·End로 선택과 포커스 이동", async () => {
+    const { user } = setup();
+    const gen = screen.getByRole("tab", { name: "번호 생성" });
+    const prize = screen.getByRole("tab", { name: "당첨 구조" });
+    expect(gen).toHaveAttribute("tabindex", "0");
+    expect(prize).toHaveAttribute("tabindex", "-1");
+    gen.focus();
+    await user.keyboard("{ArrowRight}");
+    expect(prize).toHaveFocus();
+    expect(prize).toHaveAttribute("aria-selected", "true");
+    expect(prize).toHaveAttribute("tabindex", "0");
+    expect(gen).toHaveAttribute("tabindex", "-1");
+    await user.keyboard("{ArrowRight}");
+    expect(gen).toHaveFocus();
+    await user.keyboard("{End}");
+    expect(prize).toHaveFocus();
+    await user.keyboard("{Home}");
+    expect(gen).toHaveFocus();
+    await user.keyboard("{ArrowLeft}");
+    expect(prize).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("스테퍼: 자동 → 0 → 1, 내리기는 자동 → 9 (문자열, 앞자리 0 유지)", async () => {
+    const { m, user } = setup();
+    const box = screen.getByRole("textbox", { name: "십만 자리" });
+    await user.click(screen.getByRole("button", { name: "십만 자리 올리기" }));
+    expect(box).toHaveValue("0");
+    await user.click(screen.getByRole("button", { name: "십만 자리 올리기" }));
+    expect(box).toHaveValue("1");
+    await user.click(screen.getByRole("button", { name: "십만 자리 내리기" }));
+    await user.click(screen.getByRole("button", { name: "십만 자리 내리기" }));
+    expect(box).toHaveValue("");
+    await user.click(screen.getByRole("button", { name: "일 자리 내리기" }));
+    expect(screen.getByRole("textbox", { name: "일 자리" })).toHaveValue("9");
+    await user.click(screen.getByRole("button", { name: "십만 자리 올리기" }));
+    await user.click(screen.getByRole("button", { name: "번호 생성" }));
+    expect(m.generate).toHaveBeenCalledWith({ game: "pension", config: { groups: [1], positions: ["0", null, null, null, null, "9"], games: 1 } });
+  });
+
+  it("생성 방식 카드: 3조 고른 뒤 5조 세트 → 1~5조 결과에서 3조 강조", async () => {
+    const { m, user } = setup();
+    await user.click(screen.getByRole("button", { name: "3조" }));
+    await user.click(screen.getByRole("radio", { name: /^5조 세트\s*\(1~5조 같은 번호\)$/}));
+    expect(screen.getByRole("radio", { name: "5조 세트" })).toBeChecked();
+    await user.click(screen.getByRole("button", { name: "세트 생성" }));
+    expect(m.generate).toHaveBeenCalledWith({ game: "pension", config: { groups: [1, 2, 3, 4, 5], positions: [null, null, null, null, null, null], games: 1 } });
+    await waitFor(() => expect(rows()).toHaveLength(5));
+    expect(rows().map((r) => r.querySelector("[data-focus]") !== null)).toEqual([false, false, true, false, false]);
+    await user.click(screen.getByRole("radio", { name: "낱장 (1조)" }));
+    expect(screen.getByRole("radio", { name: "낱장(조 1개)" })).toBeChecked();
+    expect(screen.getByRole("button", { name: "3조" })).toHaveAttribute("aria-pressed", "true");
   });
 });

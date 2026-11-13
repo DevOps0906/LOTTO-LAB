@@ -84,7 +84,8 @@ describe("생성 화면 연결", () => {
     const { state } = confirmedCore();
     window.location.hash = "#/generate/lotto";
     render(<App core={state} />);
-    await screen.findByRole("heading", { level: 1, name: "로또 번호 생성" });
+    // jsdom은 CSS가 없어 ~767 앱바 h1과 768+ Header h1이 함께 잡힌다(task-047)
+    await screen.findAllByRole("heading", { level: 1, name: "로또 번호 생성" });
     fireEvent.click(screen.getByRole("radio", { name: "조건 지정" }));
     for (const n of [1, 2, 3, 4, 5]) fireEvent.click(screen.getByRole("button", { name: `${n}번` }));
     fireEvent.click(screen.getByRole("radio", { name: "직접" }));
