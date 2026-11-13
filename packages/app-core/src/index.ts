@@ -4,6 +4,7 @@ import type { Adapters, AppConfig } from "./adapters.ts";
 import { AgeGate } from "./age-gate.ts";
 import { AuthService } from "./auth/auth-service.ts";
 import { CheckService } from "./check-service.ts";
+import { FortuneProfileService } from "./fortune-profile-service.ts";
 import { FortuneService } from "./fortune-service.ts";
 import { GenerateService } from "./generate-service.ts";
 import { LastConfigStore } from "./last-config.ts";
@@ -56,6 +57,14 @@ export {
   type GenerateResult,
   type GeneratedLine,
 } from "./generate-service.ts";
+export {
+  FortuneProfileService,
+  SAJU_HOURS,
+  type FortuneProfileErrorCode,
+  type FortuneProfileField,
+  type FortuneProfileInput,
+  type FortuneProfileOutcome,
+} from "./fortune-profile-service.ts";
 export { FORTUNE_SECRET_KEY, FortuneService, type FortuneOutcome } from "./fortune-service.ts";
 // 테마 번호 화면(ui)이 쓰는 선택 목록·입력 타입 — ui는 엔진을 직접 의존하지 않는다.
 export {
@@ -110,6 +119,8 @@ export type AppCore = {
   theme: ThemeStore;
   /** 로그인·가입·계정 삭제(P1). 셸이 AuthClient를 주입하지 않으면 null(게스트 전용). */
   auth: AuthService | null;
+  /** 사주 프로필 저장·삭제(P1, A-17). 셸이 FortuneProfileClient를 주입하지 않으면 null. */
+  fortuneProfile: FortuneProfileService | null;
   adapters: Adapters;
 };
 
@@ -134,6 +145,7 @@ export function createAppCore(
     data: new LocalData(store, adapters.store, adapters.clock),
     theme: new ThemeStore(store, adapters.store),
     auth: adapters.auth ? new AuthService(adapters.auth, { returnPaths: options.authReturnPaths }) : null,
+    fortuneProfile: adapters.fortuneProfile ? new FortuneProfileService(adapters.fortuneProfile) : null,
     adapters,
   };
 }

@@ -1,16 +1,18 @@
 // 라우트 → 화면. 화면 로직은 @lotto-lab/ui(screens)에 있고, 셸은 app-core 인스턴스와 해시 링크만 넘긴다.
 // 생성기 주소에 `?from=last`가 붙으면 지난 설정을 복원해 연다("지난 설정으로 다시 만들기").
-import { DREAM_KEYWORDS, DREAM_KEYWORDS_MAX, type AppCore } from "@lotto-lab/app-core";
+import { DREAM_KEYWORDS, DREAM_KEYWORDS_MAX, SAJU_HOURS, type AppCore } from "@lotto-lab/app-core";
 import {
   Auth,
   DrawDetail,
   DrawList,
+  FortuneProfile,
   GenerateSelect,
   Home,
   LottoGenerator,
   MyTickets,
   PensionGenerator,
   PurchaseRegister,
+  SajuNumbers,
   Settings,
   Statistics,
   TicketCheck,
@@ -43,8 +45,10 @@ const SELECT_LINKS = {
   theme: href("/generate/theme"),
 };
 const GENERATOR_LINKS = { home: href("/"), generate: href("/generate"), stats: href("/stats") };
-// M-17 행운 숫자 → 로또 생성(M-02) 고정 번호. 사주 번호(M-19)는 아직 없어 링크를 넘기지 않는다.
-const THEME_LINKS = { home: href("/"), generate: href("/generate"), lotto: href("/generate/lotto") };
+// M-17 행운 숫자 → 로또 생성(M-02) 고정 번호, 사주 번호(회원) → M-19(로그인은 M-19가 안내).
+const THEME_LINKS = { home: href("/"), generate: href("/generate"), lotto: href("/generate/lotto"), saju: href("/fortune/saju") };
+const PROFILE_LINKS = { home: href("/"), generate: href("/generate"), saju: href("/fortune/saju") };
+const SAJU_LINKS = { home: href("/"), generate: href("/generate"), profile: href("/fortune/profile"), theme: href("/generate/theme") };
 const DREAM = { keywords: DREAM_KEYWORDS, max: DREAM_KEYWORDS_MAX };
 const STATS_LINKS = { home: href("/"), draws: drawsHref };
 // M-11 "내 번호에서 확인하기" → 구매 기록 당첨 확인(M-08).
@@ -107,6 +111,24 @@ export function RouteScreen({ path, query = "", title, core, onThemeChange = () 
       return <PensionGenerator core={core} links={GENERATOR_LINKS} restoreLast={restoreLast} />;
     case "/generate/theme":
       return <ThemeGenerator core={core} links={THEME_LINKS} dream={DREAM} />;
+    case "/fortune/profile": {
+      const { auth, fortuneProfile } = core;
+      if (!auth || !fortuneProfile) return <Placeholder title={title} />;
+      return <FortuneProfile core={{ auth, fortuneProfile }} links={PROFILE_LINKS} hours={SAJU_HOURS} onLogin={() => goLogin(core, path)} navigate={navigate} />;
+    }
+    case "/fortune/saju": {
+      const { auth, fortuneProfile } = core;
+      if (!auth || !fortuneProfile) return <Placeholder title={title} />;
+      return (
+        <SajuNumbers
+          core={{ auth, fortuneProfile, fortune: core.fortune, tickets: core.tickets, adapters: core.adapters }}
+          links={SAJU_LINKS}
+          hours={SAJU_HOURS}
+          onLogin={() => goLogin(core, path)}
+          navigate={navigate}
+        />
+      );
+    }
     case "/stats":
       return <Statistics core={core} links={STATS_LINKS} initialGame={gameOf(params.get("game"))} />;
     case "/draws":

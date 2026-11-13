@@ -92,7 +92,32 @@ const FIELD_ERROR: Record<Field, string> = {
   dream: "꿈 키워드를 사전 목록에서 골라 주세요.",
 };
 
-type Batch = { batch_id: string; records: GeneratedRecord[]; saved: boolean; method: string; game: Game };
+/** 테마·사주 번호 결과(M-17·M-19 공용). */
+export type FortuneBatch = { batch_id: string; records: GeneratedRecord[]; saved: boolean; method: string; game: Game };
+type Batch = FortuneBatch;
+
+/** 결과 요약(출처·저장 상태)·번호 목록(선택 저장·복사·공유)·고지. kind = 제목에 붙는 말(테마·사주). */
+export function FortuneBatchResult({ core, batch, kind }: { core: Pick<GeneratorCore, "tickets" | "adapters">; batch: FortuneBatch; kind: "테마" | "사주" }) {
+  return (
+    <>
+      <p className="ll-gen__summary" role="status">
+        {kind} 출처 <strong>{FORTUNE_METHOD_LABEL[batch.method] ?? batch.method}</strong> ·{" "}
+        {batch.saved ? "생성 이력에 저장됨" : "생성 이력에 저장하지 못함(결과는 그대로 볼 수 있어요)"}
+      </p>
+      <GeneratedResults
+        key={batch.batch_id}
+        core={core}
+        title={batch.game === "lotto" ? `오늘의 ${kind} 번호 (${batch.records.length}게임)` : `오늘의 ${kind} 번호 (${batch.records.length}장)`}
+        rows={batch.game === "lotto" ? lottoRows(batch.records) : pensionRows(batch.records)}
+        savable={batch.saved}
+        variant={batch.game === "pension" ? "pension" : "primary"}
+      />
+      <p className="ll-gen__note">
+        <strong>{FORTUNE_NOTICE}</strong> · {kind} 번호도 추천 번호이며 구매·당첨 기록이 아닙니다.
+      </p>
+    </>
+  );
+}
 
 export function ThemeGenerator({ core, links, dream }: ThemeGeneratorProps) {
   const [game, setGame] = useState<Game>("lotto");
@@ -341,23 +366,7 @@ export function ThemeGenerator({ core, links, dream }: ThemeGeneratorProps) {
             />
           )}
           {batch ? (
-            <>
-              <p className="ll-gen__summary" role="status">
-                테마 출처 <strong>{FORTUNE_METHOD_LABEL[batch.method] ?? batch.method}</strong> ·{" "}
-                {batch.saved ? "생성 이력에 저장됨" : "생성 이력에 저장하지 못함(결과는 그대로 볼 수 있어요)"}
-              </p>
-              <GeneratedResults
-                key={batch.batch_id}
-                core={core}
-                title={batch.game === "lotto" ? `오늘의 테마 번호 (${batch.records.length}게임)` : `오늘의 테마 번호 (${batch.records.length}장)`}
-                rows={batch.game === "lotto" ? lottoRows(batch.records) : pensionRows(batch.records)}
-                savable={batch.saved}
-                variant={batch.game === "pension" ? "pension" : "primary"}
-              />
-              <p className="ll-gen__note">
-                <strong>{FORTUNE_NOTICE}</strong> · 테마 번호도 추천 번호이며 구매·당첨 기록이 아닙니다.
-              </p>
-            </>
+            <FortuneBatchResult core={core} batch={batch} kind="테마" />
           ) : (
             !busy && (
               <Card title="오늘의 테마 번호">

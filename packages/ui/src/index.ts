@@ -37,7 +37,9 @@ export type { GeneratorCore } from "./screens/common/generator";
 export {
   FORTUNE_METHOD_LABEL,
   FORTUNE_NOTICE,
+  FortuneBatchResult,
   ThemeGenerator,
+  type FortuneBatch,
   type DreamDictionary,
   type FortuneCore,
   type FortuneRequestInput,
@@ -45,6 +47,19 @@ export {
   type ThemeGeneratorLinks,
   type ThemeGeneratorProps,
 } from "./screens/M-17/ThemeGenerator";
+export {
+  FORTUNE_PROFILE_MESSAGES,
+  FortuneProfile,
+  type FortuneProfileCore,
+  type FortuneProfileLinks,
+  type FortuneProfileProps,
+  type SajuHourOption,
+  type SajuProfile,
+  type SajuProfileErrorCode,
+  type SajuProfileOutcome,
+} from "./screens/M-18/FortuneProfile";
+export { SajuGate, type SajuAuth, type SajuAuthState } from "./screens/M-18/SajuGate";
+export { SajuNumbers, type SajuNumbersCore, type SajuNumbersLinks, type SajuNumbersProps } from "./screens/M-19/SajuNumbers";
 export { Statistics, type StatisticsLinks, type StatisticsProps } from "./screens/M-04/Statistics";
 export { DrawList, type DrawListLinks, type DrawListProps } from "./screens/M-16/DrawList";
 export { DrawDetail, type DrawDetailLinks, type DrawDetailProps } from "./screens/M-11/DrawDetail";

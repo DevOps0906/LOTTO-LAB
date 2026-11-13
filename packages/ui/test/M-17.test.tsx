@@ -168,4 +168,14 @@ describe("M-15 테마 번호 진입", () => {
     renderWithNotice(<GenerateSelect core={core} links={base} />);
     expect(screen.queryByRole("link", { name: "운세·테마 번호" })).not.toBeInTheDocument();
   });
+
+  it("links.saju가 있으면 사주 번호(회원) 링크, 없으면 숨김", () => {
+    const m2 = mockGeneratorCore();
+    const core = { ...(m2.core as object), fortune: { generate: vi.fn() } } as unknown as FortuneCore;
+    const { unmount } = renderWithNotice(<ThemeGenerator core={core} links={{ ...LINKS, saju: "#/fortune/saju" }} dream={DREAM} />);
+    expect(screen.getByRole("link", { name: "사주 번호(회원)" })).toHaveAttribute("href", "#/fortune/saju");
+    unmount();
+    renderWithNotice(<ThemeGenerator core={core} links={LINKS} dream={DREAM} />);
+    expect(screen.queryByRole("link", { name: "사주 번호(회원)" })).not.toBeInTheDocument();
+  });
 });

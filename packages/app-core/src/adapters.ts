@@ -89,6 +89,31 @@ export interface AuthClient {
   clearLocalSession(): Promise<void>;
 }
 
+/** 사주 프로필 행(A-17 fortune_profiles). 생년월일·시진은 개인정보 — 로그·분석·로컬 저장소에 남기지 않는다. */
+export type FortuneProfileRow = {
+  birth_date: string;
+  calendar: "solar" | "lunar";
+  is_leap_month: boolean;
+  birth_hour: string | null;
+};
+
+/** 프로필 요청 실패(셸이 PostgREST 오류에서 코드만 옮긴다). detail·message·hint(생년월일 원문 포함 가능)는 담지 않는다. */
+export type FortuneProfileFailure = { code: string | null; status: number | null; network?: boolean };
+
+export type FortuneProfileResult<T> = { ok: true; value: T } | { ok: false; failure: FortuneProfileFailure };
+
+/**
+ * 사주 프로필 클라이언트(task-041). 셸이 auth와 같은 Supabase 클라이언트로 구현한다.
+ * user_id는 호출 시점 세션 uid를 셸이 넣는다(세션 없으면 status 401 실패).
+ */
+export interface FortuneProfileClient {
+  /** 본인 행(0행이면 null). */
+  get(): Promise<FortuneProfileResult<FortuneProfileRow | null>>;
+  /** 5개 열을 항상 모두 보내 upsert(이전 값 잔존 방지). */
+  upsert(row: FortuneProfileRow): Promise<FortuneProfileResult<null>>;
+  delete(): Promise<FortuneProfileResult<null>>;
+}
+
 export interface Adapters {
   store: KeyValueStore;
   clock: Clock;
@@ -99,6 +124,8 @@ export interface Adapters {
   openExternal: OpenExternal;
   /** 로그인(P1, 선택). 없으면 AppCore.auth = null(게스트 전용 — Windows는 task-043b). */
   auth?: AuthClient;
+  /** 사주 프로필(P1, task-041). 없으면 AppCore.fortuneProfile = null. */
+  fortuneProfile?: FortuneProfileClient;
 }
 
 /** 셸이 빌드 설정에서 주입하는 공개 값. publishable(anon) 키만 — 서버 키 금지(AGENTS 4장). */

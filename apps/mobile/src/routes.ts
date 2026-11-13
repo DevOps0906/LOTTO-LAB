@@ -19,6 +19,8 @@ export const SUB_ROUTES: readonly SubRoute[] = [
   { path: "/generate/lotto", title: "로또 번호 생성", tab: "/generate" },
   { path: "/generate/pension", title: "연금복권 번호 생성", tab: "/generate" },
   { path: "/generate/theme", title: "테마 번호", tab: "/generate" },
+  { path: "/fortune/profile", title: "사주 프로필", tab: "/generate" },
+  { path: "/fortune/saju", title: "사주 번호", tab: "/generate" },
   { path: "/draws", title: "회차 목록", tab: "/stats" },
   { path: "/tickets/register", title: "구매 등록", tab: "/tickets" },
   { path: "/tickets/check", title: "당첨 확인", tab: "/tickets" },

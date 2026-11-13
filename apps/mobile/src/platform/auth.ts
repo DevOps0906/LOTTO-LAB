@@ -5,13 +5,23 @@
 import { KeychainAccess, SecureStorage, StorageError, StorageErrorType } from "@aparajita/capacitor-secure-storage";
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
-import type { AppConfig, AuthClient, AuthFailure, AuthUser } from "@lotto-lab/app-core";
+import type {
+  AppConfig,
+  AuthClient,
+  AuthFailure,
+  AuthUser,
+  FortuneProfileClient,
+  FortuneProfileFailure,
+  FortuneProfileResult,
+  FortuneProfileRow,
+} from "@lotto-lab/app-core";
 import {
   FunctionsFetchError,
   FunctionsHttpError,
   createClient,
   isAuthRetryableFetchError,
   type AuthError,
+  type SupabaseClient,
   type SupportedStorage,
   type User,
 } from "@supabase/supabase-js";
@@ -73,8 +83,9 @@ export function failureOf(error: AuthError | null): AuthFailure | null {
   return { code: error.code ?? null, status: error.status ?? null };
 }
 
-export function createAuthClient(config: AppConfig, storage: SupportedStorage = Capacitor.isNativePlatform() ? secureStorage() : memoryStorage()): AuthClient {
-  const supabase = createClient(config.supabaseUrl, config.publishableKey, {
+/** 앱에 하나인 Supabase 클라이언트(auth·사주 프로필이 같은 세션을 쓴다, task-041 결정 ①). */
+function createSupabase(config: AppConfig, storage: SupportedStorage): SupabaseClient {
+  return createClient(config.supabaseUrl, config.publishableKey, {
     auth: {
       storage,
       storageKey: AUTH_STORAGE_KEY,
@@ -84,6 +95,57 @@ export function createAuthClient(config: AppConfig, storage: SupportedStorage = 
       flowType: "pkce",
     },
   });
+}
+
+const PROFILE_COLUMNS = "birth_date,calendar,is_leap_month,birth_hour";
+
+/** PostgREST 오류 → 코드만(message·detail·hint는 생년월일 원문을 담을 수 있어 버린다). */
+function profileFailure(error: { code?: string }, status: number): FortuneProfileFailure {
+  return status === 0 ? { code: null, status: 0, network: true } : { code: error.code || null, status };
+}
+
+/** 사주 프로필(A-17). user_id는 호출 시점 세션 uid. 세션이 없으면 401. */
+export function createFortuneProfileClient(supabase: SupabaseClient): FortuneProfileClient {
+  const uid = async (): Promise<string | null> => (await supabase.auth.getSession()).data.session?.user.id ?? null;
+  const noSession = (): FortuneProfileResult<never> => ({ ok: false, failure: { code: null, status: 401 } });
+  return {
+    async get() {
+      const { data, error, status } = await supabase.from("fortune_profiles").select(PROFILE_COLUMNS).limit(1);
+      if (error) return { ok: false, failure: profileFailure(error, status) };
+      return { ok: true, value: (data[0] as FortuneProfileRow | undefined) ?? null };
+    },
+    async upsert(row) {
+      const user_id = await uid();
+      if (!user_id) return noSession();
+      // 5개 열 모두 명시(birth_hour null 포함) — 이전 값 잔존 방지.
+      const { error, status } = await supabase.from("fortune_profiles").upsert(
+        { user_id, birth_date: row.birth_date, calendar: row.calendar, is_leap_month: row.is_leap_month, birth_hour: row.birth_hour },
+        { onConflict: "user_id" },
+      );
+      return error ? { ok: false, failure: profileFailure(error, status) } : { ok: true, value: null };
+    },
+    async delete() {
+      const user_id = await uid();
+      if (!user_id) return noSession();
+      const { error, status } = await supabase.from("fortune_profiles").delete().eq("user_id", user_id);
+      return error ? { ok: false, failure: profileFailure(error, status) } : { ok: true, value: null };
+    },
+  };
+}
+
+const defaultStorage = (): SupportedStorage => (Capacitor.isNativePlatform() ? secureStorage() : memoryStorage());
+
+/** auth·사주 프로필 클라이언트를 같은 Supabase 클라이언트(= 같은 세션)로 만든다. */
+export function createSupabaseClients(config: AppConfig, storage: SupportedStorage = defaultStorage()): { auth: AuthClient; fortuneProfile: FortuneProfileClient } {
+  const supabase = createSupabase(config, storage);
+  return { auth: authClientOf(supabase, storage), fortuneProfile: createFortuneProfileClient(supabase) };
+}
+
+export function createAuthClient(config: AppConfig, storage: SupportedStorage = defaultStorage()): AuthClient {
+  return authClientOf(createSupabase(config, storage), storage);
+}
+
+function authClientOf(supabase: SupabaseClient, storage: SupportedStorage): AuthClient {
   const auth = supabase.auth;
 
   // 앱이 앞으로 오면 토큰 자동 갱신, 뒤로 가면 멈춘다(결정 ③).
