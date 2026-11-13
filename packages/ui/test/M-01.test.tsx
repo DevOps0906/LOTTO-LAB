@@ -44,8 +44,14 @@ describe("M-01 홈", () => {
     expect(within(summary).getByText(/요약 기간 제 1123~1132회/)).toBeInTheDocument();
     expect(within(summary).getByText("미래 예측 아님")).toBeInTheDocument();
     expect(within(summary).getByText(/로또 제 1123~1132회 · 표본 10회/)).toBeInTheDocument();
-    const top = within(summary).getByRole("list", { name: "출현 횟수가 많은 번호" });
-    expect(within(top).getAllByRole("img").map((b) => b.getAttribute("aria-label"))).toEqual(["12번", "18번", "27번", "34번", "40번"]);
+    // 순위 없이 순서대로(사용자 결정 2026-11-14): 로또 = 번호 구간 5칸 합, 연금 = 1~5조
+    const cells = (name: string) =>
+      within(within(summary).getByRole("list", { name })).getAllByRole("listitem").map((li) => li.textContent);
+    expect(cells("로또 구간별 출현 횟수")).toEqual(["1~1010회", "11~2016회", "21~3013회", "31~4016회", "41~455회"]);
+    expect(cells("연금복권 조별 출현 횟수")).toEqual(["1조1회", "2조1회", "3조4회", "4조1회", "5조3회"]);
+    expect(within(summary).getByText(/최근 10회 구간별 출현 횟수 · 기준선 번호당 1.3회/)).toBeInTheDocument();
+    expect(within(summary).getByText(/최근 10회 조별 출현 횟수 · 기준선 2.0회/)).toBeInTheDocument();
+    expect(summary.textContent).not.toMatch(/많이 나온|적게 나온|많은 번호|많은 조/);
     expect(m.statistics).toHaveBeenCalledWith("lotto", "last10", "lotto.number_freq", { force: false });
   });
 
@@ -129,7 +135,7 @@ describe("M-01 홈", () => {
     );
     render(<Home core={m.core} links={links} />);
     const summary = await screen.findByRole("region", { name: "이번 주 통계 요약" });
-    expect(await within(summary).findByRole("list", { name: "출현 횟수가 많은 번호" })).toBeInTheDocument();
+    expect(await within(summary).findByRole("list", { name: "로또 구간별 출현 횟수" })).toBeInTheDocument();
     expect(within(summary).getByRole("alert")).toHaveTextContent("연금 통계를 불러오지 못했습니다.");
     await userEvent.click(within(summary).getByRole("button", { name: "다시 시도" }));
     await waitFor(() => expect(m.statistics).toHaveBeenLastCalledWith("pension", "last10", "pension.group_freq", { force: true }));
@@ -145,8 +151,21 @@ describe("M-01 홈", () => {
     render(<Home core={m.core} links={links} />);
     const summary = await screen.findByRole("region", { name: "이번 주 통계 요약" });
     expect(await within(summary).findAllByText("기준선을 확인할 수 없어 표시하지 않아요.")).toHaveLength(2);
-    expect(within(summary).queryByRole("list", { name: "출현 횟수가 많은 번호" })).not.toBeInTheDocument();
-    expect(within(summary).queryByRole("list", { name: "출현 횟수가 많은 조" })).not.toBeInTheDocument();
+    expect(within(summary).queryByRole("list", { name: "로또 구간별 출현 횟수" })).not.toBeInTheDocument();
+    expect(within(summary).queryByRole("list", { name: "연금복권 조별 출현 횟수" })).not.toBeInTheDocument();
+  });
+
+  it("집계 칸 수가 맞지 않으면(로또 45·연금 5 아님) 그 요약을 숨긴다", async () => {
+    const m = mockCore();
+    m.statistics.mockImplementation(async (game) =>
+      game === "lotto"
+        ? ok({ ...LOTTO_STAT, payload: { ...LOTTO_STAT.payload, values: [1, 2, 3] } })
+        : ok({ ...PENSION_STAT, payload: { ...PENSION_STAT.payload, values: [1, 2, 3, 4, 5, 6] } }),
+    );
+    render(<Home core={m.core} links={links} />);
+    const summary = await screen.findByRole("region", { name: "이번 주 통계 요약" });
+    expect(await within(summary).findAllByText("집계 형식을 확인할 수 없어 표시하지 않아요.")).toHaveLength(2);
+    expect(within(summary).queryByRole("list")).not.toBeInTheDocument();
   });
 
   it("task-047: h1은 제목 그대로(워드마크는 장식), draws가 있을 때만 최신 회차 › 링크", async () => {

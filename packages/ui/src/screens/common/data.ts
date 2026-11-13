@@ -180,12 +180,3 @@ export function formatWon(won: number): string {
 export function formatFraction(f: { num: number; den: number }): string {
   return (f.num / f.den).toFixed(1);
 }
-
-/** 횟수 배열에서 많이 나온 순 상위 n개(1부터 센 번호). 동률은 작은 번호 우선. */
-export function topIndexes(values: readonly number[], n: number): number[] {
-  return values
-    .map((count, i) => ({ no: i + 1, count }))
-    .sort((a, b) => b.count - a.count || a.no - b.no)
-    .slice(0, n)
-    .map((e) => e.no);
-}

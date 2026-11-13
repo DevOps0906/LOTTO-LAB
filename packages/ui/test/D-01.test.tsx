@@ -131,4 +131,15 @@ describe("D-01 Windows 대시보드", () => {
     render(<Dashboard core={m.core} links={links} />);
     expect(await within(recentCard()).findByText(/아직 수집되지 않았습니다/)).toBeInTheDocument();
   });
+
+  it("통계 요약(M-01 공용): 순위 없이 로또 구간 5칸·연금 1~5조 순서, 과대·순위 문구 없음", async () => {
+    const m = mockCore();
+    render(<Dashboard core={m.core} links={links} />);
+    const summary = await screen.findByRole("region", { name: "이번 주 통계 요약" });
+    const lotto = await within(summary).findByRole("list", { name: "로또 구간별 출현 횟수" });
+    expect(within(lotto).getAllByRole("listitem").map((li) => li.firstChild?.textContent)).toEqual(["1~10", "11~20", "21~30", "31~40", "41~45"]);
+    const pension = within(summary).getByRole("list", { name: "연금복권 조별 출현 횟수" });
+    expect(within(pension).getAllByRole("listitem").map((li) => li.firstChild?.textContent)).toEqual(["1조", "2조", "3조", "4조", "5조"]);
+    expect(summary.textContent).not.toMatch(/많이 나온|적게 나온|많은 번호|많은 조/);
+  });
 });

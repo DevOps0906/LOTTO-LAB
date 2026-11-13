@@ -17,7 +17,6 @@ import {
   formatFraction,
   readView,
   sourceHost,
-  topIndexes,
   useAsync,
   type Async,
   type Game,
@@ -399,8 +398,8 @@ function SummaryCard({
         <SummaryBlock game="lotto" view={lv} onRetry={onRetry} />
         <SummaryBlock game="pension" view={pv} onRetry={onRetry} />
         <p className="ll-summary__note">
-          <strong>미래 예측 아님</strong> · 지난 회차 출현 횟수 요약입니다. 기준선은 모든 번호가 고르게 나올 때의 기대 횟수입니다. 동률은 작은
-          번호부터 표시합니다.
+          <strong>미래 예측 아님</strong> · 지난 회차 출현 횟수를 번호 구간·조 순서대로 보여 줍니다. 기준선은 모든 번호가 고르게 나올 때의 기대
+          횟수입니다.
         </p>
         {/* ~767 전용 한 줄 고지(긴 note는 ~767에서 숨김, 768~에서는 이 줄이 숨는다) */}
         <p className="ll-summary__caption">미래 예측 아님 · 기준선 = 고르게 나올 때 기대 횟수</p>
@@ -415,9 +414,34 @@ function SummaryCard({
 }
 
 const SUMMARY_TEXT = {
-  lotto: { title: "로또 번호별 출현 횟수", short: "로또", top: 5, unit: "번호 5개", icon: "stats" },
-  pension: { title: "연금복권 조별 출현 횟수", short: "연금", top: 2, unit: "조", icon: "layers" },
+  lotto: { title: "로또 구간별 출현 횟수", short: "로또", unit: "구간별", baseline: "번호당 ", icon: "stats" },
+  pension: { title: "연금복권 조별 출현 횟수", short: "연금", unit: "조별", baseline: "", icon: "layers" },
 } as const;
+
+/** 로또 번호 구간(번호공 색 구간과 같음). [첫 번호, 끝 번호, 번호공 색 클래스] */
+const LOTTO_RANGES = [
+  [1, 10, "b1"],
+  [11, 20, "b11"],
+  [21, 30, "b21"],
+  [31, 40, "b31"],
+  [41, 45, "b41"],
+] as const;
+
+type SummaryCell = { label: string; count: number; range?: string };
+
+/** 순위 없이 순서대로: 로또 = number_freq(45칸)를 구간별 합, 연금 = group_freq(5칸) 1~5조. 칸 수가 다르면 null. */
+function summaryCells(game: Game, values: number[]): SummaryCell[] | null {
+  if (game === "lotto") {
+    if (values.length !== 45) return null;
+    return LOTTO_RANGES.map(([from, to, range]) => ({
+      label: `${from}~${to}`,
+      count: values.slice(from - 1, to).reduce((a, b) => a + b, 0),
+      range,
+    }));
+  }
+  if (values.length !== 5) return null;
+  return values.map((count, i) => ({ label: `${i + 1}조`, count }));
+}
 
 /** 복권별 요약 블록: 로딩·오류(재시도)·미갱신·기준선 확인 불가·성공을 블록 안에서 각각 보인다. */
 function SummaryBlock({ game, view, onRetry }: { game: Game; view: ReadView<StatRow>; onRetry: () => void }) {
@@ -476,7 +500,19 @@ function SummaryBlock({ game, view, onRetry }: { game: Game; view: ReadView<Stat
       </div>
     );
   }
-  const top = topIndexes(numberValues(row), t.top);
+  const cells = summaryCells(game, numberValues(row));
+  if (!cells) {
+    return (
+      <div className="ll-summary__row">
+        {head}
+        <span>
+          <strong>{t.title}</strong>
+          <span className="ll-muted">집계 형식을 확인할 수 없어 표시하지 않아요.</span>
+        </span>
+        <span />
+      </div>
+    );
+  }
   return (
     <div className="ll-summary__block">
       <div className="ll-summary__row">
@@ -484,26 +520,18 @@ function SummaryBlock({ game, view, onRetry }: { game: Game; view: ReadView<Stat
         <span>
           <strong>{t.title}</strong>
           <span className="ll-muted">
-            최근 {row.sample_size}회 중 출현 횟수가 많은 {t.unit} · 기준선 {formatFraction(baseline)}회
+            최근 {row.sample_size}회 {t.unit} 출현 횟수 · 기준선 {t.baseline}
+            {formatFraction(baseline)}회
           </span>
         </span>
-        {game === "lotto" ? (
-          <span className="ll-balls ll-balls--small" role="list" aria-label="출현 횟수가 많은 번호">
-            {top.map((n) => (
-              <span role="listitem" key={n}>
-                <Ball number={n} />
-              </span>
-            ))}
-          </span>
-        ) : (
-          <span className="ll-chips" role="list" aria-label="출현 횟수가 많은 조">
-            {top.map((g) => (
-              <span role="listitem" key={g} className="ll-chip" data-game="pension">
-                {g}조
-              </span>
-            ))}
-          </span>
-        )}
+        <ul className="ll-summary__cells" aria-label={t.title} data-game={game === "pension" ? "pension" : undefined}>
+          {cells.map((c) => (
+            <li key={c.label} className="ll-summary__cell" data-range={c.range}>
+              <span className="ll-summary__cell-label">{c.label}</span>
+              <span className="ll-summary__cell-count ll-num">{c.count}회</span>
+            </li>
+          ))}
+        </ul>
       </div>
       <Updated
         source={row.source}

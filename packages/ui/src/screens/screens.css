@@ -485,6 +485,51 @@
   background: var(--color-pension-soft);
   color: var(--color-pension-soft-fg);
 }
+/* 요약 칸(순위 없이 순서대로): 로또 = 번호 구간 5칸(번호공 구간색 띠), 연금 = 1~5조 5칸 */
+.ll-summary__row > .ll-summary__cells {
+  grid-column: 1 / -1;
+}
+.ll-summary__cells {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--spacing);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ll-summary__cell {
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--spacing) / 2);
+  padding: calc(var(--spacing) * 1.5) var(--spacing);
+  border-radius: var(--radius-control);
+  border-top: calc(var(--spacing) * 0.75) solid var(--cell-band, var(--color-primary));
+  background: var(--color-surface);
+}
+.ll-summary__cell[data-range="b1"] { --cell-band: var(--color-ball-1); }
+.ll-summary__cell[data-range="b11"] { --cell-band: var(--color-ball-11); }
+.ll-summary__cell[data-range="b21"] { --cell-band: var(--color-ball-21); }
+.ll-summary__cell[data-range="b31"] { --cell-band: var(--color-ball-31); }
+.ll-summary__cell[data-range="b41"] { --cell-band: var(--color-ball-41); }
+.ll-summary__cells[data-game="pension"] .ll-summary__cell {
+  --cell-band: var(--color-pension);
+  background: var(--color-pension-soft);
+  color: var(--color-pension-soft-fg);
+}
+.ll-summary__cell-label {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.ll-summary__cells[data-game="pension"] .ll-summary__cell-label {
+  color: inherit;
+  font-weight: 700;
+}
+.ll-summary__cell-count {
+  font-size: var(--text-body);
+  font-weight: 800;
+  white-space: nowrap;
+}
 .ll-summary__note {
   margin: calc(var(--spacing) * 2) 0 0;
   font-size: var(--text-caption);
