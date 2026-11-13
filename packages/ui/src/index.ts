@@ -53,4 +53,15 @@ export { MyTickets, TICKET_PAGE, type MyTicketsLinks, type MyTicketsProps, type 
 export { TicketCheck, type TicketCheckLinks, type TicketCheckProps } from "./screens/M-08/TicketCheck";
 export { TicketDetail, type TicketDetailLinks, type TicketDetailProps } from "./screens/M-08/TicketDetail";
 export { PurchaseRegister, type PurchaseRegisterLinks, type PurchaseRegisterProps } from "./screens/M-09/PurchaseRegister";
-export { CLEAR_PHRASE, Settings, type SettingsCore, type SettingsProps, type ThemePreference } from "./screens/M-12/Settings";
+export { CLEAR_PHRASE, Settings, type SettingsAuth, type SettingsCore, type SettingsProps, type ThemePreference } from "./screens/M-12/Settings";
+export {
+  Auth,
+  type AuthConsent,
+  type AuthCore,
+  type AuthField,
+  type AuthLinks,
+  type AuthOutcome,
+  type AuthProps,
+  type AuthTab,
+  type AuthViewState,
+} from "./screens/M-06/Auth";

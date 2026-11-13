@@ -2,6 +2,7 @@
 // 생성기 주소에 `?from=last`가 붙으면 지난 설정을 복원해 연다("지난 설정으로 다시 만들기").
 import { DREAM_KEYWORDS, DREAM_KEYWORDS_MAX, type AppCore } from "@lotto-lab/app-core";
 import {
+  Auth,
   DrawDetail,
   DrawList,
   GenerateSelect,
@@ -19,7 +20,7 @@ import {
   type ThemePreference,
 } from "@lotto-lab/ui";
 import { version as APP_VERSION } from "../../package.json";
-import { DRAW_DETAIL, TICKET_DETAIL, drawDetailHref, drawsHref, href, registerFromHref, ticketDetailHref } from "../routes.ts";
+import { DRAW_DETAIL, LOGIN_PATH, TICKET_DETAIL, drawDetailHref, drawsHref, href, registerFromHref, ticketDetailHref } from "../routes.ts";
 import { Placeholder } from "../screens/Placeholder.tsx";
 
 const LAST = "?from=last";
@@ -59,6 +60,7 @@ const TICKETS_LINKS = {
 const CHECK_LINKS = { tickets: href("/tickets?tab=purchased"), register: href("/tickets/register"), detail: ticketDetailHref };
 const DETAIL_LINKS = { tickets: href("/tickets"), registerFrom: registerFromHref, drawDetail: drawDetailHref };
 const REGISTER_LINKS = { tickets: href("/tickets"), detail: ticketDetailHref };
+const AUTH_LINKS = { guest: href("/") };
 const TABS: readonly MyTicketsTab[] = ["favorite", "purchased", "generated"];
 const tabOf = (value: string | null): MyTicketsTab => TABS.find((t) => t === value) ?? "favorite";
 
@@ -69,6 +71,12 @@ const roundOf = (value: string): number | null => (/^[0-9]{1,6}$/.test(value) &&
 
 function navigate(target: string) {
   window.location.hash = target.replace(/^#/, "");
+}
+
+/** 로그인 화면으로 — 복귀 경로는 기기 메모리에만(허용 경로만, 결정 ⑥). */
+function goLogin(core: AppCore, from: string) {
+  core.auth?.returnTo.set(from);
+  navigate(href(LOGIN_PATH));
 }
 
 export type RouteScreenProps = {
@@ -118,7 +126,20 @@ export function RouteScreen({ path, query = "", title, core, onThemeChange = () 
         />
       );
     case "/settings":
-      return <Settings core={core} appVersion={APP_VERSION} onThemeChange={onThemeChange} onCleared={onCleared} />;
+      return (
+        <Settings
+          core={core}
+          appVersion={APP_VERSION}
+          onThemeChange={onThemeChange}
+          onCleared={onCleared}
+          onLogin={() => goLogin(core, "/settings")}
+        />
+      );
+    case LOGIN_PATH: {
+      const auth = core.auth;
+      if (!auth) return <Placeholder title={title} />;
+      return <Auth core={{ auth }} links={AUTH_LINKS} onDone={() => navigate(href(auth.returnTo.take()))} />;
+    }
     default:
       return <Placeholder title={title} />;
   }

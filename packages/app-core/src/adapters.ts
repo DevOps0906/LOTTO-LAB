@@ -50,6 +50,45 @@ export type HttpFetch = (
   init: { method: "GET"; headers: Record<string, string> },
 ) => Promise<HttpResponse>;
 
+/** 인증 사용자(세션 토큰은 app-core로 넘기지 않는다 — 셸 안의 보안 저장소에만 있다). */
+export type AuthUser = { id: string; email: string | null };
+
+/** 인증 요청 실패(셸이 Supabase 오류에서 옮긴다). code = Supabase 오류 코드, network = 서버에 닿지 못함. 문구·토큰을 담지 않는다. */
+export type AuthFailure = { code: string | null; status: number | null; network?: boolean };
+
+/** 6자리 코드 종류(메일 링크·딥링크 없음, task-043 결정 ①). */
+export type OtpType = "signup" | "recovery";
+
+/** 가입 동의 기록 행(task-043a user_consents). user_id·consented_at은 서버가 검증·기록한다. */
+export type ConsentRecord = { terms_version: string; privacy_version: string; adult_confirmed: true };
+
+/**
+ * 인증 클라이언트(task-043). 셸이 Supabase Auth로 구현한다 — 세션은 Keychain/Keystore 보안 저장소에만(.claude/rules/mobile.md).
+ * 실패는 throw 대신 AuthFailure로 돌려준다(getUser는 저장소 읽기·복호화 실패 시 throw).
+ */
+export interface AuthClient {
+  /** 이 기기에 저장된 세션의 사용자(없으면 null). 복호화 실패는 셸이 저장 값을 지우고 null, 그 밖의 읽기 실패는 throw. */
+  getUser(): Promise<AuthUser | null>;
+  /** 세션 변화(로그인·로그아웃·만료) 구독. 해제 함수를 돌려준다. */
+  onChange(listener: (user: AuthUser | null) => void): () => void;
+  signUp(email: string, password: string): Promise<AuthFailure | null>;
+  resendSignup(email: string): Promise<AuthFailure | null>;
+  verifyOtp(email: string, token: string, type: OtpType): Promise<AuthFailure | null>;
+  signIn(email: string, password: string): Promise<AuthFailure | null>;
+  requestReset(email: string): Promise<AuthFailure | null>;
+  /** 로그인 상태에서 비밀번호 변경(재설정 코드 확인 직후). */
+  updatePassword(password: string): Promise<AuthFailure | null>;
+  insertConsent(userId: string, consent: ConsentRecord): Promise<AuthFailure | null>;
+  /** 본인 동의 기록(user_consents) 중 현재 약관·개인정보 버전과 같은 행이 있는지(개정 시 재동의). 조회 실패(오프라인 등)는 throw. */
+  hasConsent(userId: string, versions: Pick<ConsentRecord, "terms_version" | "privacy_version">): Promise<boolean>;
+  /** 계정 삭제 Edge Function(account-delete, JWT 필수). */
+  deleteAccount(): Promise<AuthFailure | null>;
+  /** 이 기기에서만 로그아웃(scope local). */
+  signOut(): Promise<void>;
+  /** 서버 응답과 무관하게 이 기기의 세션 저장 값을 지운다. */
+  clearLocalSession(): Promise<void>;
+}
+
 export interface Adapters {
   store: KeyValueStore;
   clock: Clock;
@@ -58,6 +97,8 @@ export interface Adapters {
   clipboard: Clipboard;
   share: Share;
   openExternal: OpenExternal;
+  /** 로그인(P1, 선택). 없으면 AppCore.auth = null(게스트 전용 — Windows는 task-043b). */
+  auth?: AuthClient;
 }
 
 /** 셸이 빌드 설정에서 주입하는 공개 값. publishable(anon) 키만 — 서버 키 금지(AGENTS 4장). */

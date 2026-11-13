@@ -12,6 +12,9 @@ export const ROUTES: readonly Route[] = [
   { path: "/tickets", label: "내번호", title: "내 번호", icon: "tickets" },
 ];
 
+/** M-06 로그인·가입·재설정 */
+export const LOGIN_PATH = "/login";
+
 export const SUB_ROUTES: readonly SubRoute[] = [
   { path: "/generate/lotto", title: "로또 번호 생성", tab: "/generate" },
   { path: "/generate/pension", title: "연금복권 번호 생성", tab: "/generate" },
@@ -20,7 +23,11 @@ export const SUB_ROUTES: readonly SubRoute[] = [
   { path: "/tickets/register", title: "구매 등록", tab: "/tickets" },
   { path: "/tickets/check", title: "당첨 확인", tab: "/tickets" },
   { path: "/settings", title: "설정", tab: "/settings" },
+  { path: LOGIN_PATH, title: "로그인", tab: "/settings" },
 ];
+
+/** 로그인 뒤 복귀 허용 경로(결정 ⑥) — 탭·하위 화면 경로만(로그인 화면 자신 제외). 상세 화면(id 포함)은 소속 목록으로 돌아간다. */
+export const AUTH_RETURN_PATHS: readonly string[] = [...ROUTES.map((r) => r.path), ...SUB_ROUTES.map((r) => r.path).filter((p) => p !== LOGIN_PATH)];
 
 /** 회차 상세(M-11) 주소: /draws/{lotto|pension}/{회차}. 회차가 숫자가 아니면 화면이 잘못된 주소로 안내한다. */
 export const DRAW_DETAIL = /^\/draws\/(lotto|pension)\/([^/]+)$/;

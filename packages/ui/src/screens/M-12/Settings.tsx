@@ -1,7 +1,10 @@
 // M-12 설정(P0 범위): 화면 테마(시스템·라이트·다크 — 셸이 <html>.dark로 토큰 적용), 만 19세 확인 정보, 기기 권한 상태,
 // 로컬 데이터 내보내기(JSON 복사·공유)·모두 삭제(문구 재입력 + AlertDialog 이중 확인), 앱 버전·오픈소스 라이선스·약관·개인정보(준비 중).
-// 알림·로그인·동기화·계정 삭제는 P1 안내만, 광고 동의 변경(M-20)은 P1이라 보이지 않는다.
-import { useState } from "react";
+// 알림·동기화는 P1 안내만, 광고 동의 변경(M-20)은 P1이라 보이지 않는다.
+// 계정(task-043): core.auth가 있으면 로그인 상태·로그인 진입·로그아웃·계정 삭제
+// (AlertDialog → 비밀번호 재입력 → 재인증 → account-delete → 로컬 세션 삭제).
+// core.auth가 없으면(Windows — task-043b) 예전처럼 준비 중 안내만 보인다.
+import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { AlertDialog } from "../../components/AlertDialog";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card";
@@ -9,10 +12,23 @@ import { Header } from "../../components/Header";
 import { useNotice } from "../../components/Notice";
 import { StateView } from "../../components/StateView";
 import { formatTime, useAsync } from "../common/data";
+import type { AuthViewState } from "../M-06/Auth";
 import { Segment } from "../common/generator";
 
 export type ThemePreference = "system" | "light" | "dark";
 export type LocalDataSummary = { tickets: number; favorites: number; purchased: number; generated: number };
+
+/** 설정 화면이 쓰는 app-core AuthService 기능. */
+export type SettingsAuth = {
+  state(): AuthViewState;
+  subscribe(listener: (state: unknown) => void): () => void;
+  /** 기기 저장소 읽기 실패·동의 기록 조회 실패 뒤 다시 확인 */
+  retry(): Promise<unknown>;
+  /** 저장 값을 지우지 못하면 실패(로그인 상태 유지). */
+  signOut(): Promise<{ ok: true } | { ok: false; message: string }>;
+  /** 비밀번호 재입력으로 재인증한 뒤 삭제한다(서버는 최근 10분 안의 비밀번호 인증을 요구). */
+  deleteAccount(password: string): Promise<{ ok: true } | { ok: false; message: string }>;
+};
 
 /** 설정 화면이 쓰는 app-core(AppCore) 기능. */
 export type SettingsCore = {
@@ -23,6 +39,8 @@ export type SettingsCore = {
     clipboard: { writeText(text: string): Promise<void> };
     share: { share(content: { title?: string; text: string }): Promise<void> };
   };
+  /** 로그인(P1). 없거나 null이면 계정 항목은 준비 중 안내만. */
+  auth?: SettingsAuth | null;
 };
 
 export type SettingsProps = {
@@ -35,6 +53,8 @@ export type SettingsProps = {
   onCleared: () => void;
   /** false면 "내보내기(공유)"를 숨긴다(Windows: 공유 = 클립보드 복사라 JSON 복사와 겹친다) */
   canShare?: boolean;
+  /** 로그인 화면(M-06)으로 이동 — 셸이 복귀 경로를 기억한다. core.auth가 있을 때만 쓴다. */
+  onLogin?: () => void;
 };
 
 /** 모두 삭제 확인 문구(사용자가 그대로 입력해야 삭제 버튼이 켜진다). */
@@ -42,7 +62,7 @@ export const CLEAR_PHRASE = "모두 삭제";
 
 type Loaded = { theme: ThemePreference; confirmedAt: string | null; summary: LocalDataSummary };
 
-export function Settings({ core, appVersion, onThemeChange, onCleared, canShare = true }: SettingsProps) {
+export function Settings({ core, appVersion, onThemeChange, onCleared, canShare = true, onLogin }: SettingsProps) {
   const [state, reload] = useAsync<Loaded>(async () => {
     const [theme, confirmedAt, summary] = await Promise.all([core.theme.get(), core.ageGate.confirmedAt(), core.data.summary()]);
     return { theme, confirmedAt, summary };
@@ -67,7 +87,15 @@ export function Settings({ core, appVersion, onThemeChange, onCleared, canShare 
           action={<Button onClick={() => reload()}>다시 시도</Button>}
         />
       ) : (
-        <Body core={core} loaded={state.value} appVersion={appVersion} onThemeChange={onThemeChange} onCleared={onCleared} canShare={canShare} />
+        <Body
+          core={core}
+          loaded={state.value}
+          appVersion={appVersion}
+          onThemeChange={onThemeChange}
+          onCleared={onCleared}
+          canShare={canShare}
+          onLogin={onLogin}
+        />
       )}
     </div>
   );
@@ -80,6 +108,7 @@ function Body({
   onThemeChange,
   onCleared,
   canShare,
+  onLogin,
 }: {
   core: SettingsCore;
   loaded: Loaded;
@@ -87,6 +116,7 @@ function Body({
   onThemeChange: (theme: ThemePreference) => void;
   onCleared: () => void;
   canShare: boolean;
+  onLogin?: () => void;
 }) {
   const notice = useNotice();
   const [theme, setTheme] = useState(loaded.theme);
@@ -230,13 +260,17 @@ function Body({
         />
       </Card>
 
-      <Card title="알림·계정">
-        <ul className="ll-tickets__activity">
-          <li>회차·구매 번호 결과 알림 — 준비 중(다음 업데이트)</li>
-          <li>로그인·기기 간 동기화 — 준비 중(다음 업데이트)</li>
-          <li>계정 삭제 — 로그인 기능과 함께 제공 예정</li>
-        </ul>
-      </Card>
+      {core.auth ? (
+        <Account auth={core.auth} onLogin={onLogin} />
+      ) : (
+        <Card title="알림·계정">
+          <ul className="ll-tickets__activity">
+            <li>회차·구매 번호 결과 알림 — 준비 중(다음 업데이트)</li>
+            <li>로그인·기기 간 동기화 — 준비 중(다음 업데이트)</li>
+            <li>계정 삭제 — 로그인 기능과 함께 제공 예정</li>
+          </ul>
+        </Card>
+      )}
 
       <Card title="앱 정보">
         <dl className="ll-tickets__info">
@@ -260,5 +294,168 @@ function Body({
         <p className="ll-muted">LOTTO LAB은 복권 공식 서비스가 아니며 복권을 판매하지 않습니다.</p>
       </Card>
     </div>
+  );
+}
+
+function Account({ auth, onLogin }: { auth: SettingsAuth; onLogin?: () => void }) {
+  const notice = useNotice();
+  const state = useSyncExternalStore(
+    (listener) => auth.subscribe(listener),
+    () => auth.state(),
+  );
+  const [dialog, setDialog] = useState(false);
+  const [reauth, setReauth] = useState(false);
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function signOut() {
+    setBusy(true);
+    setError(null);
+    try {
+      const out = await auth.signOut();
+      if (out.ok) notice.toast("로그아웃했어요");
+      else setError(out.message);
+    } catch {
+      setError("로그아웃하지 못했어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function cancelDelete() {
+    setReauth(false);
+    setPassword("");
+    setError(null);
+  }
+
+  async function deleteAccount(e: FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const out = await auth.deleteAccount(password);
+      setPassword("");
+      if (out.ok) {
+        setReauth(false);
+        notice.toast("계정을 삭제했어요");
+      } else setError(out.message);
+    } catch {
+      setError("계정을 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card title="계정·알림">
+      {state.status === "signedIn" || state.status === "consentRequired" ? (
+        <>
+          <dl className="ll-tickets__info">
+            <div>
+              <dt>로그인</dt>
+              <dd>{state.user.email ?? "로그인됨"}</dd>
+            </div>
+          </dl>
+          {state.status === "consentRequired" && (
+            <>
+              <p className="ll-muted" role="status">
+                {state.checkFailed ? "가입 동의 기록을 확인하지 못했어요. 회원 기능은 확인 후 쓸 수 있습니다." : "가입 동의가 끝나지 않아 회원 기능을 쓸 수 없습니다."}
+              </p>
+              <div className="ll-gen__actions">
+                {state.checkFailed ? (
+                  <Button disabled={busy} onClick={() => void auth.retry()}>
+                    다시 확인
+                  </Button>
+                ) : (
+                  <Button disabled={busy || !onLogin} onClick={onLogin}>
+                    가입 동의하기
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+          <p className="ll-muted">이 기기의 번호 기록은 자동으로 서버에 올라가지 않습니다(동기화 준비 중).</p>
+          {error && (
+            <p className="ll-gen__error" role="alert">
+              {error}
+            </p>
+          )}
+          {reauth ? (
+            <form className="ll-field" onSubmit={(e) => void deleteAccount(e)} aria-busy={busy || undefined}>
+              <label className="ll-field__legend" htmlFor="settings-delete-password">
+                계정 삭제 확인을 위해 비밀번호를 다시 입력하세요
+              </label>
+              <input
+                id="settings-delete-password"
+                className="ll-input"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={error ? true : undefined}
+              />
+              <div className="ll-gen__actions">
+                <Button type="submit" variant="danger" disabled={busy || password.length === 0}>
+                  {busy ? "삭제하는 중" : "비밀번호 확인 후 삭제"}
+                </Button>
+                <Button variant="secondary" disabled={busy} onClick={cancelDelete}>
+                  취소
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="ll-gen__actions">
+              <Button variant="secondary" disabled={busy} onClick={() => void signOut()}>
+                로그아웃
+              </Button>
+              <Button variant="danger" disabled={busy} onClick={() => setDialog(true)}>
+                계정 삭제
+              </Button>
+            </div>
+          )}
+          <AlertDialog
+            open={dialog}
+            title="LOTTO LAB 계정을 삭제할까요?"
+            description="계정과 서버에 저장된 동의 기록·회원 정보가 삭제되며 되돌릴 수 없습니다. 이 기기에 저장된 번호 기록은 지워지지 않습니다. 다음 단계에서 비밀번호를 다시 입력합니다."
+            confirmLabel="계정 삭제"
+            onConfirm={() => {
+              setDialog(false);
+              setReauth(true);
+            }}
+            onCancel={() => setDialog(false)}
+          />
+        </>
+      ) : state.status === "signedOut" ? (
+        <>
+          <p className="ll-muted">로그인은 선택입니다. 로그인 전에는 이 기기의 번호를 서버로 보내지 않습니다.</p>
+          <div className="ll-gen__actions">
+            <Button disabled={!onLogin} onClick={onLogin}>
+              로그인·가입
+            </Button>
+          </div>
+        </>
+      ) : state.status === "unavailable" ? (
+        <>
+          <p className="ll-gen__error" role="alert">
+            이 기기에 저장된 로그인 정보를 읽지 못했어요.
+          </p>
+          <div className="ll-gen__actions">
+            <Button variant="secondary" onClick={() => void auth.retry()}>
+              다시 확인
+            </Button>
+          </div>
+        </>
+      ) : (
+        <p className="ll-muted" role="status">
+          로그인 상태를 확인하는 중입니다
+        </p>
+      )}
+      <ul className="ll-tickets__activity">
+        <li>회차·구매 번호 결과 알림 — 준비 중(다음 업데이트)</li>
+        <li>기기 간 동기화 — 준비 중(다음 업데이트)</li>
+      </ul>
+    </Card>
   );
 }

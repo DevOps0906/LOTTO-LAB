@@ -14,6 +14,7 @@
     "build:release": "node scripts/build-release.mjs"
   },
   "dependencies": {
+    "@aparajita/capacitor-secure-storage": "8.0.1",
     "@capacitor/android": "8.6.0",
     "@capacitor/app": "8.1.2",
     "@capacitor/browser": "8.0.5",
@@ -24,6 +25,7 @@
     "@lotto-lab/app-core": "workspace:*",
     "@lotto-lab/design-tokens": "workspace:*",
     "@lotto-lab/ui": "workspace:*",
+    "@supabase/supabase-js": "2.119.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

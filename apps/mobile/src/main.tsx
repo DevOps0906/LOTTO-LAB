@@ -10,7 +10,10 @@ import { createThemeController } from "./theme.ts";
 
 const theme = createThemeController();
 handleBackButton();
-const core = bootstrap(createAdapters(), readAppConfig());
+const config = readAppConfig();
+const core = bootstrap(createAdapters(config), config);
+// 저장된 로그인 세션 확인(복호화 실패는 로그아웃 상태로 정리된다).
+void core.core?.auth?.init();
 // 저장된 테마 선호를 적용한다(읽기 실패면 시스템 설정 유지).
 core.core?.theme.get().then((t) => theme.set(t), () => {});
 

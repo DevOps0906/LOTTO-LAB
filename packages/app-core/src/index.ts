@@ -2,6 +2,7 @@
 // 상대 import는 `.ts` 확장자를 명시한다.
 import type { Adapters, AppConfig } from "./adapters.ts";
 import { AgeGate } from "./age-gate.ts";
+import { AuthService } from "./auth/auth-service.ts";
 import { CheckService } from "./check-service.ts";
 import { FortuneService } from "./fortune-service.ts";
 import { GenerateService } from "./generate-service.ts";
@@ -14,6 +15,28 @@ import { TicketService } from "./ticket-service.ts";
 export type * from "./adapters.ts";
 export * from "./errors.ts";
 export { AgeGate } from "./age-gate.ts";
+export {
+  AuthService,
+  CONSENT_VERSIONS,
+  type AuthField,
+  type AuthOutcome,
+  type AuthState,
+  type ConsentInput,
+} from "./auth/auth-service.ts";
+export {
+  AUTH_MESSAGES,
+  EMAIL_MAX,
+  PASSWORD_MAX,
+  PASSWORD_MIN,
+  RESET_SENT_MESSAGE,
+  ReturnToMemory,
+  SIGNUP_SENT_MESSAGE,
+  authErrorCode,
+  isValidOtp,
+  isValidPassword,
+  normalizeEmail,
+  type AuthErrorCode,
+} from "./auth/rules.ts";
 export { CheckService, type CheckOutcome } from "./check-service.ts";
 export { LastConfigStore } from "./last-config.ts";
 export {
@@ -85,11 +108,17 @@ export type AppCore = {
   data: LocalData;
   /** 화면 테마 선호(M-12) */
   theme: ThemeStore;
+  /** 로그인·가입·계정 삭제(P1). 셸이 AuthClient를 주입하지 않으면 null(게스트 전용). */
+  auth: AuthService | null;
   adapters: Adapters;
 };
 
 /** 셸이 어댑터·설정을 주입해 한 번 만든다. 저장 큐는 인스턴스당 하나 — 앱에서 하나만 만든다(결정 ①). */
-export function createAppCore(adapters: Adapters, config: AppConfig, options: { migrations?: Migrations } = {}): AppCore {
+export function createAppCore(
+  adapters: Adapters,
+  config: AppConfig,
+  options: { migrations?: Migrations; /** 로그인 뒤 복귀 허용 경로(셸 라우트) */ authReturnPaths?: readonly string[] } = {},
+): AppCore {
   const store = new LocalStore(adapters.store, options.migrations);
   const reader = new PublicReader(config, adapters.fetch, adapters.clock, store);
   const tickets = new TicketService(store, adapters.clock, adapters.random, reader);
@@ -104,6 +133,7 @@ export function createAppCore(adapters: Adapters, config: AppConfig, options: { 
     lastConfig: new LastConfigStore(store),
     data: new LocalData(store, adapters.store, adapters.clock),
     theme: new ThemeStore(store, adapters.store),
+    auth: adapters.auth ? new AuthService(adapters.auth, { returnPaths: options.authReturnPaths }) : null,
     adapters,
   };
 }

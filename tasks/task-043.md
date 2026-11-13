@@ -24,6 +24,6 @@
 - 소셜 로그인, 매직 링크, 딥링크 복귀, 클라우드 동기화 병합(M-14), 로그인 전 로컬 번호 전송
 
 ## 완료 조건 (실행 가능한 확인)
-- [ ] 로컬 Supabase 통합 테스트: 가입→메일 코드 확인(로컬 메일 서버 API로 코드 읽기)→로그인→로그아웃→재설정→새 비밀번호 로그인→계정 삭제 후 로그인 실패
-- [ ] app-core 단위 테스트: 오류 문구 통일·비밀번호 규칙·returnTo 화이트리스트·복호화 실패 시 로그아웃 상태
-- [ ] ui M-06 테스트, `pnpm --filter @lotto-lab/mobile build`, 루트 typecheck·lint·test, `secscan license` 통과
+- [x] 로컬 Supabase 통합 테스트: 가입→메일 코드 확인(로컬 메일 서버 API로 코드 읽기)→로그인→로그아웃→재설정→새 비밀번호 로그인→계정 삭제 후 로그인 실패
+- [x] app-core 단위 테스트: 오류 문구 통일·비밀번호 규칙·returnTo 화이트리스트·복호화 실패 시 로그아웃 상태
+- [x] ui M-06 테스트, `pnpm --filter @lotto-lab/mobile build`, 루트 typecheck·lint·test, `secscan license` 통과

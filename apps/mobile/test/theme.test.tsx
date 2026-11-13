@@ -69,7 +69,9 @@ describe("테마 번호 연결", () => {
     const first = firstGame();
     expect(first).toHaveLength(6);
 
-    fireEvent.click(screen.getByRole("button", { name: "같은 조건으로 다시 생성" }));
+    // 다시 생성 버튼은 없다(같은 날 같은 입력 = 같은 번호, task-038 ④) — 생성 버튼을 다시 누른다.
+    expect(screen.queryByRole("button", { name: "같은 조건으로 다시 생성" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "오늘의 번호 생성" }));
     await screen.findByText(/테마 출처/);
     await vi.waitFor(() => expect([...map.keys()].filter((k) => k.startsWith("ll:v1:generated:"))).toHaveLength(10));
     expect(firstGame()).toStrictEqual(first);
