@@ -18,7 +18,7 @@
     { "name": "구매 13월", "fields": { "purchase_status": "purchased", "purchase_date": "2026-13-01" }, "valid": false, "sqlstate": "22008" },
     { "name": "상태 generated(추천은 저장 상태 아님)", "fields": { "purchase_status": "generated" }, "valid": false },
     { "name": "상태 대문자", "fields": { "purchase_status": "Purchased", "purchase_date": "2026-11-07" }, "valid": false },
-    { "name": "상태에 인용 부호·$$ 포함", "fields": { "purchase_status": "favorite$$'); drop table public.saved_tickets; --" }, "valid": false },
+    { "name": "상태에 인용 부호·$$ 포함", "fields": { "purchase_status": "favorite$$'); drop table nomad_lottolab.saved_tickets; --" }, "valid": false },
     { "name": "회차 int4 최대 2147483647", "fields": { "round": 2147483647, "purchase_status": "favorite" }, "valid": true },
     { "name": "회차 int4 초과 2147483648", "fields": { "round": 2147483648, "purchase_status": "favorite" }, "valid": false, "sqlstate": "22003" },
     { "name": "구매 금액 null(앱은 키 생략만 허용)", "fields": { "purchase_status": "purchased", "purchase_date": "2026-11-07", "amount_won": null }, "app": false, "db": true },

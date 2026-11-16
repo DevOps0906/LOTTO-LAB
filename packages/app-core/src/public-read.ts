@@ -231,7 +231,8 @@ export class PublicReader {
       const res = await fetchFn(`${this.base}/rest/v1/${path}`, {
         method: "GET",
         // publishable 키는 JWT가 아니므로 Authorization 없이 apikey 헤더만 보낸다(anon 역할).
-        headers: { apikey: this.config.publishableKey, Accept: "application/json" },
+        // 공개 테이블은 nomad_lottolab 스키마(API 노출 스키마) — Accept-Profile로 고른다.
+        headers: { apikey: this.config.publishableKey, Accept: "application/json", "Accept-Profile": "nomad_lottolab" },
       });
       if (!res.ok) return { error: "HTTP" };
       body = await res.json();

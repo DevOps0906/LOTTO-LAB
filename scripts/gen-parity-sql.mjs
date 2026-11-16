@@ -32,7 +32,7 @@ const bool = (b) => {
 const GAMES = ["lotto", "pension"];
 const gameLit = (g) => {
   if (!GAMES.includes(g)) throw new Error(`game 값 오류: ${g}`);
-  return `${lit(g)}::public.game_type`;
+  return `${lit(g)}::nomad_lottolab.game_type`;
 };
 // 키 없음(undefined)과 null은 둘 다 SQL NULL.
 const nullable = (v, f) => (v === undefined || v === null ? "null" : f(v));
@@ -48,7 +48,7 @@ const keyFor = (i) => `00000000-0000-4000-8000-${(0xd0000 + i).toString(16).padS
 
 const lines = [];
 const fnTest = (fn, kind, c) =>
-  `select is(private.${fn}(${gameLit(c.game)}, ${jsonbLit(c.data)}), ${dbExpect(c)}, ${lit(`${kind}: ${c.name}`)});`;
+  `select is(nomad_lottolab_private.${fn}(${gameLit(c.game)}, ${jsonbLit(c.data)}), ${dbExpect(c)}, ${lit(`${kind}: ${c.name}`)});`;
 
 for (const c of numbers.cases) lines.push(fnTest("valid_numbers", "numbers", c));
 for (const c of tickets.cases) lines.push(fnTest("valid_ticket", "ticket", c));
@@ -57,7 +57,7 @@ const base = status.base;
 status.cases.forEach((c, i) => {
   const f = c.fields;
   const insert =
-    "insert into public.saved_tickets (user_id, game, round, ticket_data, purchase_status, purchase_date, amount_won, idempotency_key) values (" +
+    "insert into nomad_lottolab.saved_tickets (user_id, game, round, ticket_data, purchase_status, purchase_date, amount_won, idempotency_key) values (" +
     [
       `${lit(PARITY_USER)}::uuid`,
       gameLit(base.game),
@@ -79,7 +79,7 @@ status.cases.forEach((c, i) => {
 
 const sql = `-- 자동 생성 파일 — 손으로 고치지 않는다. 생성: node scripts/gen-parity-sql.mjs
 -- 근거: task-011 팀장 결정 ⑤. 공용 판정 벡터(packages/validation/test/vectors/*.json)를 DB 정본
--- (private.valid_numbers · private.valid_ticket · saved_tickets 상태-열 CHECK)에 그대로 돌려 Zod와 같은 판정임을 증명한다.
+-- (nomad_lottolab_private.valid_numbers · nomad_lottolab_private.valid_ticket · saved_tickets 상태-열 CHECK)에 그대로 돌려 Zod와 같은 판정임을 증명한다.
 -- 소유자 권한(테스트 실행 역할)으로 호출한다. 시드에 기대지 않고 트랜잭션 안에서 넣고 rollback.
 begin;
 create extension if not exists pgtap with schema extensions;

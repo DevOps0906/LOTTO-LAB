@@ -75,7 +75,14 @@ async function relogin(email: string): Promise<{ token: string }> {
 function rest(token: string, path: string, init: RequestInit = {}) {
   return fetch(`${IT!.url}/rest/v1/${path}`, {
     ...init,
-    headers: { apikey: IT!.key, authorization: `Bearer ${token}`, "content-type": "application/json", ...init.headers },
+    headers: {
+      apikey: IT!.key,
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+      "accept-profile": "nomad_lottolab",
+      "content-profile": "nomad_lottolab",
+      ...init.headers,
+    },
   });
 }
 

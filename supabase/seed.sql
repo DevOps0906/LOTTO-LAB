@@ -3,9 +3,9 @@
 -- 원격 프로젝트에 `db reset --linked`·`db push --include-seed` 금지(docs/05_DATA_MODEL.md#1, supabase/README.md#시드).
 
 -- 합성 수집 이력: 회차마다 1행(game·draw_no 일치) -----------------------------------
-insert into public.ingestion_runs
+insert into nomad_lottolab.ingestion_runs
   (id, game, draw_no, source_url, fetched_at, payload_sha256, raw_payload, status)
-select id::uuid, game::public.game_type, draw_no,
+select id::uuid, game::nomad_lottolab.game_type, draw_no,
        'https://synthetic.invalid/' || game || '/' || draw_no, now(),
        encode(sha256(convert_to(payload, 'UTF8')), 'hex'), payload::jsonb, 'verified'
 from (values
@@ -20,7 +20,7 @@ cross join lateral (
 ) p;
 
 -- 합성 로또 회차 (실제 회차 아님) ------------------------------------------------
-insert into public.draws_lotto
+insert into nomad_lottolab.draws_lotto
   (draw_no, draw_date, nums, bonus, prizes, source_url, ingestion_run_id, source_verified_at)
 values
   (1, '2026-01-03', '{3,11,19,27,35,43}', 7,
@@ -35,7 +35,7 @@ values
    'https://synthetic.invalid/lotto/3', '00000000-0000-4000-8000-000000000103', now());
 
 -- 합성 연금 회차 (실제 회차 아님, 앞자리 0 보존 확인용) --------------------------
-insert into public.draws_pension
+insert into nomad_lottolab.draws_pension
   (draw_no, draw_date, group_no, digits, bonus_digits, prizes, source_url, ingestion_run_id, source_verified_at)
 values
   (1, '2026-01-08', 1, '000719', '052381',

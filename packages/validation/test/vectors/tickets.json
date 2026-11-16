@@ -1,5 +1,5 @@
 {
-  "description": "saved_tickets.ticket_data 판정 벡터 — Zod TICKET_SCHEMAS[game]과 DB private.valid_ticket(game, data)가 같은 valid를 내야 한다. 바꾸면 node scripts/gen-parity-sql.mjs 재실행.",
+  "description": "saved_tickets.ticket_data 판정 벡터 — Zod TICKET_SCHEMAS[game]과 DB nomad_lottolab_private.valid_ticket(game, data)가 같은 valid를 내야 한다. 바꾸면 node scripts/gen-parity-sql.mjs 재실행.",
   "cases": [
     { "name": "로또 정상", "game": "lotto", "data": { "nums": [1, 2, 3, 4, 5, 45] }, "valid": true },
     { "name": "로또 중복", "game": "lotto", "data": { "nums": [7, 7, 8, 9, 10, 11] }, "valid": false },
