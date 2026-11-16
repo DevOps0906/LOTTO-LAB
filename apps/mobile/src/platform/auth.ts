@@ -97,6 +97,9 @@ function createSupabase(config: AppConfig, storage: SupportedStorage): SupabaseC
   });
 }
 
+/** 앱 데이터 스키마(nomad DB 이식본, API 노출 스키마). */
+const DB_SCHEMA = "nomad_lottolab";
+
 const PROFILE_COLUMNS = "birth_date,calendar,is_leap_month,birth_hour";
 
 /** PostgREST 오류 → 코드만(message·detail·hint는 생년월일 원문을 담을 수 있어 버린다). */
@@ -110,7 +113,7 @@ export function createFortuneProfileClient(supabase: SupabaseClient): FortunePro
   const noSession = (): FortuneProfileResult<never> => ({ ok: false, failure: { code: null, status: 401 } });
   return {
     async get() {
-      const { data, error, status } = await supabase.from("fortune_profiles").select(PROFILE_COLUMNS).limit(1);
+      const { data, error, status } = await supabase.schema(DB_SCHEMA).from("fortune_profiles").select(PROFILE_COLUMNS).limit(1);
       if (error) return { ok: false, failure: profileFailure(error, status) };
       return { ok: true, value: (data[0] as FortuneProfileRow | undefined) ?? null };
     },
@@ -118,7 +121,7 @@ export function createFortuneProfileClient(supabase: SupabaseClient): FortunePro
       const user_id = await uid();
       if (!user_id) return noSession();
       // 5개 열 모두 명시(birth_hour null 포함) — 이전 값 잔존 방지.
-      const { error, status } = await supabase.from("fortune_profiles").upsert(
+      const { error, status } = await supabase.schema(DB_SCHEMA).from("fortune_profiles").upsert(
         { user_id, birth_date: row.birth_date, calendar: row.calendar, is_leap_month: row.is_leap_month, birth_hour: row.birth_hour },
         { onConflict: "user_id" },
       );
@@ -127,7 +130,7 @@ export function createFortuneProfileClient(supabase: SupabaseClient): FortunePro
     async delete() {
       const user_id = await uid();
       if (!user_id) return noSession();
-      const { error, status } = await supabase.from("fortune_profiles").delete().eq("user_id", user_id);
+      const { error, status } = await supabase.schema(DB_SCHEMA).from("fortune_profiles").delete().eq("user_id", user_id);
       return error ? { ok: false, failure: profileFailure(error, status) } : { ok: true, value: null };
     },
   };
@@ -189,7 +192,7 @@ function authClientOf(supabase: SupabaseClient, storage: SupportedStorage): Auth
       return failureOf((await auth.updateUser({ password })).error);
     },
     async insertConsent(userId, consent) {
-      const { error, status } = await supabase.from("user_consents").insert({ user_id: userId, ...consent });
+      const { error, status } = await supabase.schema(DB_SCHEMA).from("user_consents").insert({ user_id: userId, ...consent });
       if (!error) return null;
       return status === 0 ? { code: null, status: 0, network: true } : { code: error.code || null, status };
     },
@@ -197,6 +200,7 @@ function authClientOf(supabase: SupabaseClient, storage: SupportedStorage): Auth
       // 본인 행만 보인다(RLS user_consents_select_own). 현재 버전과 같은 행만 인정(개정 시 재동의).
       // 조회 실패는 throw → AuthService가 checkFailed로 재시도 안내.
       const { data, error } = await supabase
+        .schema(DB_SCHEMA)
         .from("user_consents")
         .select("user_id")
         .eq("user_id", userId)

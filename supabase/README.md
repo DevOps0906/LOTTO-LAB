@@ -27,9 +27,9 @@
 - 원격 배포 전·후 합성 표식 검사 — 행이 하나라도 있으면 예외로 중단한다:
   ```sql
   do $$ begin
-    if exists (select 1 from public.ingestion_runs where source_url like 'https://synthetic.invalid/%')
-       or exists (select 1 from public.draws_lotto where source_url like 'https://synthetic.invalid/%')
-       or exists (select 1 from public.draws_pension where source_url like 'https://synthetic.invalid/%') then
+    if exists (select 1 from nomad_lottolab.ingestion_runs where source_url like 'https://synthetic.invalid/%')
+       or exists (select 1 from nomad_lottolab.draws_lotto where source_url like 'https://synthetic.invalid/%')
+       or exists (select 1 from nomad_lottolab.draws_pension where source_url like 'https://synthetic.invalid/%') then
       raise exception '합성 시드 행 발견(synthetic.invalid) — 배포 중단';
     end if;
   end $$;
@@ -81,5 +81,5 @@
 | 이름 | 일정 | 내용 |
 |---|---|---|
 | `waitlist_purge_6m` | 매일 03:17 | `waitlist_signups.created_at` 6개월 지난 행 삭제 |
-| `rate_limits_purge` | 매일 03:27 | `private.rate_limits` 1일 지난 창 삭제 |
+| `rate_limits_purge` | 매일 03:27 | `nomad_lottolab_private.rate_limits` 1일 지난 창 삭제 |
 | `waitlist_purge_unconfirmed` | 매시 47분 | 미확인(`confirmed_at` NULL)·확인 만료(`confirm_expires_at` 지남) 행 삭제 |

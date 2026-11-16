@@ -1,5 +1,5 @@
 {
-  "description": "generated_numbers.numbers 판정 벡터 — Zod NUMBERS_SCHEMAS[game]과 DB private.valid_numbers(game, data)가 같은 valid를 내야 한다. 바꾸면 node scripts/gen-parity-sql.mjs 재실행.",
+  "description": "generated_numbers.numbers 판정 벡터 — Zod NUMBERS_SCHEMAS[game]과 DB nomad_lottolab_private.valid_numbers(game, data)가 같은 valid를 내야 한다. 바꾸면 node scripts/gen-parity-sql.mjs 재실행.",
   "cases": [
     { "name": "로또 정상 최소·최대 경계", "game": "lotto", "data": { "nums": [1, 2, 3, 4, 5, 45] }, "valid": true },
     { "name": "로또 정상 중간값", "game": "lotto", "data": { "nums": [3, 11, 19, 27, 33, 40] }, "valid": true },

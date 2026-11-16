@@ -12,6 +12,8 @@ function headers(cfg: RestConfig): HeadersInit {
     apikey: cfg.serviceRoleKey,
     authorization: `Bearer ${cfg.serviceRoleKey}`,
     "content-type": "application/json",
+    // RPC는 nomad_lottolab 스키마(API 노출 스키마) — POST는 Content-Profile로 고른다.
+    "content-profile": "nomad_lottolab",
   };
 }
 

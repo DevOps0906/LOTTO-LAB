@@ -1,5 +1,5 @@
 // 번호(generated_numbers.numbers)·티켓(saved_tickets.ticket_data) 스키마.
-// DB 정본: private.valid_numbers / private.valid_ticket(20261112180000_user_data.sql) — 추가 키 금지(strict).
+// DB 정본: nomad_lottolab_private.valid_numbers / nomad_lottolab_private.valid_ticket(20261112180000_user_data.sql) — 추가 키 금지(strict).
 import { z } from "zod";
 import type { GameType } from "@lotto-lab/types";
 import { lottoNums, pensionDigits, pensionGroup } from "./primitives.ts";

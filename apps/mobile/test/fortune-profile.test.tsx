@@ -156,12 +156,13 @@ describe("사주 프로필·번호 연결", () => {
 });
 
 describe("셸 FortuneProfileClient(Supabase)", () => {
-  type Call = { table: string; op: string; arg?: unknown; opts?: unknown; eq?: [string, string] };
+  type Call = { schema?: string; table: string; op: string; arg?: unknown; opts?: unknown; eq?: [string, string] };
   function fakeSupabase(result: { data?: unknown; error?: { code?: string; message?: string; details?: string } | null; status?: number }, session: { user: { id: string } } | null = { user: { id: "u-1" } }) {
     const calls: Call[] = [];
     const settle = () => Promise.resolve({ data: result.data ?? [], error: result.error ?? null, status: result.status ?? 200 });
+    let schema: string | undefined;
     const builder = (op: string, arg?: unknown, opts?: unknown) => {
-      const call: Call = { table: "fortune_profiles", op, arg, opts };
+      const call: Call = { schema, table: "fortune_profiles", op, arg, opts };
       calls.push(call);
       const chain = {
         limit: () => settle(),
@@ -172,11 +173,13 @@ describe("셸 FortuneProfileClient(Supabase)", () => {
     };
     const supabase = {
       auth: { getSession: async () => ({ data: { session } }) },
-      from: (table: string) => ({
-        select: (cols: string) => builder("select", cols),
-        upsert: (row: unknown, opts: unknown) => builder("upsert", row, opts),
-        delete: () => builder("delete"),
-        __table: table,
+      schema: (name: string) => ((schema = name), {
+        from: (table: string) => ({
+          select: (cols: string) => builder("select", cols),
+          upsert: (row: unknown, opts: unknown) => builder("upsert", row, opts),
+          delete: () => builder("delete"),
+          __table: table,
+        }),
       }),
     };
     return { calls, client: createFortuneProfileClient(supabase as never) };
@@ -186,6 +189,7 @@ describe("셸 FortuneProfileClient(Supabase)", () => {
     const { calls, client } = fakeSupabase({});
     expect(await client.upsert({ birth_date: DATE, calendar: "solar", is_leap_month: false, birth_hour: null })).toEqual({ ok: true, value: null });
     expect(calls[0]).toMatchObject({
+      schema: "nomad_lottolab",
       op: "upsert",
       arg: { user_id: "u-1", birth_date: DATE, calendar: "solar", is_leap_month: false, birth_hour: null },
       opts: { onConflict: "user_id" },

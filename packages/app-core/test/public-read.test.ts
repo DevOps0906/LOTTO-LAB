@@ -60,7 +60,7 @@ describe("회차 읽기 — 캐시·TTL·오프라인", () => {
     expect(call.url).toBe(
       "https://project.example.test/rest/v1/draws_lotto?select=draw_no,draw_date,nums,bonus,prizes,source_url,source_verified_at&order=draw_no.desc&limit=1",
     );
-    expect(call.headers).toStrictEqual({ apikey: CONFIG.publishableKey, Accept: "application/json" });
+    expect(call.headers).toStrictEqual({ apikey: CONFIG.publishableKey, Accept: "application/json", "Accept-Profile": "nomad_lottolab" });
 
     clock.advance(DRAW_CACHE_TTL_MS - 1);
     expect((await core.reader.latestDraw("lotto")).fetched_at).toBe(a.fetched_at);

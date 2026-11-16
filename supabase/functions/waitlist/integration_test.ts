@@ -115,7 +115,7 @@ interface Row {
 async function rows(emailNormPrefix: string): Promise<Row[]> {
   const res = await fetch(
     `${IT!.url}/rest/v1/waitlist_signups?select=email_norm,consented_at,created_at,confirmed_at,confirm_sends&email_norm=like.${encodeURIComponent(emailNormPrefix)}*`,
-    { headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}` } },
+    { headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}`, "accept-profile": "nomad_lottolab" } },
   );
   assert.equal(res.status, 200);
   return await res.json();
@@ -124,7 +124,7 @@ async function rows(emailNormPrefix: string): Promise<Row[]> {
 async function cleanup(prefix: string) {
   const res = await fetch(`${IT!.url}/rest/v1/waitlist_signups?email_norm=like.${encodeURIComponent(prefix)}*`, {
     method: "DELETE",
-    headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}` },
+    headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}`, "content-profile": "nomad_lottolab" },
   });
   await res.body?.cancel();
   await flush();
@@ -239,7 +239,7 @@ Deno.test({
       // 링크 만료 흉내 → 다음 신청에서만 새 토큰 발급
       const res = await fetch(`${IT!.url}/rest/v1/waitlist_signups?email_norm=eq.${encodeURIComponent(addr)}`, {
         method: "PATCH",
-        headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}`, "content-type": "application/json" },
+        headers: { apikey: IT!.key, authorization: `Bearer ${IT!.key}`, "content-type": "application/json", "content-profile": "nomad_lottolab" },
         body: JSON.stringify({ confirm_expires_at: new Date(Date.now() - 1000).toISOString() }),
       });
       assert.equal(res.status, 204);
