@@ -24,7 +24,7 @@ export async function getUser(cfg: RestConfig, jwt: string): Promise<AuthUser> {
   throw new Error(`get_user_http_${res.status}`);
 }
 
-// 하드 삭제(auth.users 행 삭제 → 사용자 테이블 ON DELETE CASCADE). 이미 없음(404)도 성공(멱등).
+// 하드 삭제(auth.users 행 삭제 → 사용자 테이블 ON DELETE CASCADE, user_consents는 FK 없이 보관). 이미 없음(404)도 성공(멱등).
 export async function deleteUser(cfg: RestConfig, id: string): Promise<void> {
   const res = await fetch(`${cfg.supabaseUrl}/auth/v1/admin/users/${id}`, {
     method: "DELETE",

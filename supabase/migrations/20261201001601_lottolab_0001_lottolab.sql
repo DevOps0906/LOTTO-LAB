@@ -619,7 +619,7 @@ create trigger fortune_profiles_touch_updated_at
 
 create table nomad_lottolab.user_consents (
   id               uuid        primary key default gen_random_uuid(),
-  user_id          uuid        not null references auth.users (id) on delete cascade,
+  user_id          uuid        not null,  -- FK 없음: 계정 삭제 뒤에도 동의 이력 보관(2026-11-16 결정, 보관 기간은 법무 확인 전 미정)
   terms_version    text        not null,
   privacy_version  text        not null,
   adult_confirmed  boolean     not null,
@@ -628,7 +628,7 @@ create table nomad_lottolab.user_consents (
   constraint user_consents_terms_version_chk check (char_length(terms_version) between 1 and 32),
   constraint user_consents_privacy_version_chk check (char_length(privacy_version) between 1 and 32)
 );
-comment on table nomad_lottolab.user_consents is '가입 동의 기록(약관·개인정보·만 19세). 본인 SELECT/INSERT만(추가 전용), consented_at은 서버 시각.';
+comment on table nomad_lottolab.user_consents is '가입 동의 기록(약관·개인정보·만 19세). 본인 SELECT/INSERT만(추가 전용), consented_at은 서버 시각. 계정 삭제 뒤에도 보관(user_id는 FK 없는 값).';
 create index user_consents_user_id_idx on nomad_lottolab.user_consents (user_id, consented_at desc);
 alter table nomad_lottolab.user_consents enable row level security;
 revoke all on table nomad_lottolab.user_consents from anon, authenticated, public, service_role;

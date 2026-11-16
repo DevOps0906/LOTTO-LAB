@@ -101,7 +101,7 @@ async function count(token: string, table: string, uid: string): Promise<number>
 }
 
 Deno.test({
-  name: "IT account-delete: JWT 없음·위조 → 401, 본인만 삭제 + CASCADE, 재호출 200(멱등)",
+  name: "IT account-delete: JWT 없음·위조 → 401, 본인만 삭제 + CASCADE(동의 이력은 보관), 재호출 200(멱등)",
   ignore: !IT,
   sanitizeResources: false,
   fn: async () => {
@@ -142,12 +142,13 @@ Deno.test({
     assert.equal(await userExists(a.id), true);
     assert.equal(await count(a.token, "user_consents", a.id), 1);
 
-    // A 본인 삭제 → auth 사용자 삭제 + CASCADE 파기(만료 전 A 토큰으로 0행 확인)
+    // A 본인 삭제 → auth 사용자 삭제 + CASCADE 파기(만료 전 A 토큰으로 확인)
+    // user_consents는 FK 없이 보관(2026-11-16 결정) — RLS는 서명만 보므로 만료 전 A 토큰은 본인 행을 여전히 읽는다.
     const ra = await call(h, `Bearer ${a.token}`);
     assert.equal(ra.status, 200);
     await ra.body?.cancel();
     assert.equal(await userExists(a.id), false);
-    assert.equal(await count(a.token, "user_consents", a.id), 0);
+    assert.equal(await count(a.token, "user_consents", a.id), 1);
     assert.equal(await count(a.token, "fortune_profiles", a.id), 0);
 
     // 같은 토큰 재호출 → 200(이미 삭제됨, 멱등)

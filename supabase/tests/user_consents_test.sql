@@ -1,10 +1,10 @@
--- task-043a user_consents 회귀 테스트 (RLS · 열 권한 · 추가 전용 · CHECK · CASCADE)
+-- task-043a user_consents 회귀 테스트 (RLS · 열 권한 · 추가 전용 · CHECK · 계정 삭제 후 보관)
 -- 시드에 기대지 않는다: 트랜잭션 안에서 사용자 A·B와 각자의 행을 넣고 끝에 rollback.
 -- A = ...a001, B = ...b001.
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(26);
+select plan(27);
 
 select ok((select relrowsecurity from pg_class where oid = 'nomad_lottolab.user_consents'::regclass), 'user_consents RLS 활성');
 
@@ -70,14 +70,19 @@ set local role service_role;
 select throws_ok($$select * from nomad_lottolab.user_consents$$, '42501', null, 'service_role SELECT 없음');
 reset role;
 
--- 계정 삭제 → CASCADE 파기 ----------------------------------------------------------
+-- 계정 삭제 → 동의 이력 보관(2026-11-16 결정, user_id는 auth.users FK 없음) ----------------
 select is((select count(*) from nomad_lottolab.user_consents where user_id = '00000000-0000-4000-8000-00000000a001'), 2::bigint,
   '삭제 전 A 행 2개');
 delete from auth.users where id = '00000000-0000-4000-8000-00000000a001';
-select is((select count(*) from nomad_lottolab.user_consents where user_id = '00000000-0000-4000-8000-00000000a001'), 0::bigint,
-  '계정 삭제 시 A 행 CASCADE 파기');
+select is((select count(*) from nomad_lottolab.user_consents where user_id = '00000000-0000-4000-8000-00000000a001'), 2::bigint,
+  '계정 삭제 뒤에도 A 행 2개 보관');
 select is((select count(*) from nomad_lottolab.user_consents where user_id = '00000000-0000-4000-8000-00000000b001'), 1::bigint,
   'B 행은 유지');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-00000000b001","role":"authenticated"}', true);
+select is((select count(*) from nomad_lottolab.user_consents where user_id = '00000000-0000-4000-8000-00000000a001'), 0::bigint,
+  '탈퇴한 A의 보관 행을 B는 못 읽음');
+reset role;
 
 select * from finish();
 rollback;
